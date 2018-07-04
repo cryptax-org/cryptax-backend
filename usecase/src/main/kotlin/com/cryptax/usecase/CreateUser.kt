@@ -11,7 +11,7 @@ class CreateUser(private val repository: UserRepository, private val passwordEnc
 
 	fun create(user: User): User {
 		UserValidator.validateCreateUser(user)
-		if (repository.findByEmail(user.email).isPresent) {
+		repository.findByEmail(user.email)?.run {
 			throw UserAlreadyExistsException(user.email)
 		}
 		val userToSave = User(
