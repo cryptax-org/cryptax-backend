@@ -35,9 +35,9 @@ subprojects {
 	}
 
 	sourceSets {
-		test {
+		main {
 			java {
-				srcDirs = ["test"]  // Note @Peter's comment below
+				srcDirs = ['src/main/kotlin']
 			}
 		}
 	}
