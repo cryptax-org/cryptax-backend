@@ -23,6 +23,16 @@ subprojects {
 	repositories {
 		jcenter()
 	}
+
+	compileJava {
+		doFirst {
+			options.compilerArgs = [
+				'--module-path', classpath.asPath,
+			]
+			classpath = files()
+		}
+	}
+
 	afterEvaluate {
 		repositories {
 			jcenter()
@@ -30,16 +40,14 @@ subprojects {
 	}
 
 	dependencies {
-		compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+		implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 	}
+
 	compileKotlin {
-		kotlinOptions {
-			jvmTarget = "1.8"
-		}
+		kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+		destinationDir = compileJava.destinationDir
 	}
 	compileTestKotlin {
-		kotlinOptions {
-			jvmTarget = "1.8"
-		}
+		kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
 	}
 }
