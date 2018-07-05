@@ -10,10 +10,13 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.RoutingContext
-import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 
 class VertxUserController(private val createUser: CreateUser, private val findUser: FindUser, private val loginUser: LoginUser) {
+
+	companion object {
+		private val JWT_OPTIONS = JWTOptions(algorithm = "ES512", issuer = "Cryptax")
+	}
 
 	fun createUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
@@ -36,8 +39,8 @@ class VertxUserController(private val createUser: CreateUser, private val findUs
 			sendError(400, response)
 		} else {
 			val user = loginUser.login(email, password)
-			val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
-			val token = jwtProvider.generateToken(result, JWTOptions(algorithm = "ES512"))
+			val result = JsonObject().put("id", user.id)
+			val token = jwtProvider.generateToken(result, JWT_OPTIONS)
 			result.put("token", token)
 			sendSuccess(result, response)
 		}
