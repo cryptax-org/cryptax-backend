@@ -1,5 +1,5 @@
 module cryptax.encoder {
-	exports com.cryptax.domain.encoder;
+	exports com.cryptax.encoder;
 
 	requires kotlin.stdlib;
 	requires org.apache.commons.codec;

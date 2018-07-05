@@ -1,0 +1,10 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.id'
+
+dependencies {
+	implementation(
+		project(':domain'),
+		'com.fasterxml.uuid:java-uuid-generator:3.1.5',
+	)
+}

@@ -4,5 +4,9 @@ include ':config'
 include ':domain'
 include ':usecase'
 include ':encoder'
+include ':id-generator'
+include ':in-memory-db-simple'
 
 project(":encoder").projectDir = file("adapter/encoder")
+project(":id-generator").projectDir = file("adapter/id-generator")
+project(":in-memory-db-simple").projectDir = file("adapter/repository/in-memory-simple")

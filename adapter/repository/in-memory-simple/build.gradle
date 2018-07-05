@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.db.simple'
+
+dependencies {
+	implementation(
+		project(':domain')
+	)
+}

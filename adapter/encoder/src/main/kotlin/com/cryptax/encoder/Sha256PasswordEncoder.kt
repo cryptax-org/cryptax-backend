@@ -1,4 +1,4 @@
-package com.cryptax.domain.encoder
+package com.cryptax.encoder
 
 import com.cryptax.domain.port.PasswordEncoder
 import org.apache.commons.codec.digest.DigestUtils
