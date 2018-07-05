@@ -3,3 +3,6 @@ rootProject.name = 'cryptax-backend'
 include ':config'
 include ':domain'
 include ':usecase'
+include ':encoder'
+
+project(":encoder").projectDir = file("adapter/encoder")

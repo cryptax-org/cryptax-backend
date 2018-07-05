@@ -1,0 +1,10 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.encoder'
+
+dependencies {
+	implementation(
+		project(':domain'),
+		'commons-codec:commons-codec:1.11'
+	)
+}
