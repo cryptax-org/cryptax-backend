@@ -1,5 +1,6 @@
 rootProject.name = 'cryptax-backend'
 
+include ':application'
 include ':config'
 include ':domain'
 include ':usecase'

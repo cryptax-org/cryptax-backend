@@ -4,7 +4,11 @@ ext.moduleName = 'cryptax.config'
 
 dependencies {
 	implementation(
+		project(':usecase'),
 		project(':domain'),
-		'org.apache.commons:commons-lang3:3.7'
+		project(':in-memory-db-simple'),
+		project(':id-generator'),
+		project(':encoder'),
+		project(':controller'),
 	)
 }

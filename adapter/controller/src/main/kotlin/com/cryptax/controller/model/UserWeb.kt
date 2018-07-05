@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 class UserWeb(
-	val id: String,
+	val id: String? = null,
 	val email: String,
-	val password: String,
+	private val password: String? = null,
 	val lastName: String,
 	val firstName: String) {
 
@@ -15,7 +15,7 @@ class UserWeb(
 		return User(
 			id = id,
 			email = email,
-			password = password,
+			password = password!!,
 			lastName = lastName,
 			firstName = firstName)
 	}
@@ -25,7 +25,6 @@ class UserWeb(
 		fun toUserWeb(user: User): UserWeb {
 			return UserWeb(id = user.id,
 				email = user.email,
-				password = user.password,
 				lastName = user.lastName,
 				firstName = user.firstName)
 		}

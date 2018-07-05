@@ -8,7 +8,7 @@ class InMemoryUserRepository : UserRepository {
 	private val inMemoryDb = HashMap<String, User>()
 
 	override fun create(user: User): User {
-		inMemoryDb[user.id] = user
+		inMemoryDb[user.id!!] = user
 		return user
 	}
 
@@ -17,7 +17,7 @@ class InMemoryUserRepository : UserRepository {
 	}
 
 	override fun findByEmail(email: String): User? {
-		return inMemoryDb.values.first { user -> user.email == email }
+		return inMemoryDb.values.firstOrNull { user -> user.email == email }
 	}
 
 	override fun findAllUsers(): List<User> {
