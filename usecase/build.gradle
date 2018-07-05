@@ -7,8 +7,8 @@ dependencies {
 		project(':domain'),
 	)
 	testImplementation(
-		'org.mockito:mockito-core:2.19.0',
-		'org.mockito:mockito-junit-jupiter:2.19.0',
-		'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC1'
+		[group: 'org.mockito', name: 'mockito-core', version: mockito_version],
+		[group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockito_version],
+		[group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: '2.0.0-RC1']
 	)
 }

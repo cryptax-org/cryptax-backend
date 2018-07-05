@@ -5,6 +5,6 @@ ext.moduleName = 'cryptax.id'
 dependencies {
 	implementation(
 		project(':domain'),
-		'com.fasterxml.uuid:java-uuid-generator:3.1.5',
+		[group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.5'],
 	)
 }

@@ -7,11 +7,11 @@ plugins {
 ext.moduleName = 'cryptax.app'
 
 dependencies {
-	compile(
+	implementation(
 		project(':config'),
 		project(':controller'),
-		'io.vertx:vertx-web:3.5.2',
-		'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.5'
+		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
+		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jackson_version],
 	)
 }
 

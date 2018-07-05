@@ -1,6 +1,11 @@
 buildscript {
-	ext.kotlin_version = '1.2.51'
-	ext.junit_version = '5.2.0'
+	ext {
+		kotlin_version = '1.2.51'
+		junit_version = '5.2.0'
+		mockito_version = '2.19.0'
+		jackson_version = '2.9.6'
+		vertx_version = '3.5.2'
+	}
 
 	repositories {
 		mavenCentral()

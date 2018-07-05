@@ -5,6 +5,6 @@ ext.moduleName = 'cryptax.encoder'
 dependencies {
 	implementation(
 		project(':domain'),
-		'commons-codec:commons-codec:1.11'
+		[group: 'commons-codec', name: 'commons-codec', version: '1.11'],
 	)
 }
