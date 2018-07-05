@@ -8,6 +8,7 @@ dependencies {
 		project(':domain'),
 		[group: 'io.vertx', name: 'vertx-core', version: vertx_version],
 		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
+		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
 		[group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jackson_version],
 	)
 }

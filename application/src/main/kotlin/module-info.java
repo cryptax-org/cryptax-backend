@@ -7,4 +7,6 @@ open module cryptax.app {
 	requires jackson.annotations;
 	requires com.fasterxml.jackson.databind;
 	requires com.fasterxml.jackson.module.kotlin;
+	requires vertx.auth.common;
+	requires vertx.auth.jwt;
 }

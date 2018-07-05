@@ -11,6 +11,7 @@ dependencies {
 		project(':config'),
 		project(':controller'),
 		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
+		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
 		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jackson_version],
 	)
 }
