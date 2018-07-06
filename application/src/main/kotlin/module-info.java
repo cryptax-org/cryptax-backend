@@ -4,9 +4,10 @@ open module cryptax.app {
 	requires vertx.web;
 	requires cryptax.config;
 	requires cryptax.controller;
-	requires jackson.annotations;
 	requires com.fasterxml.jackson.databind;
 	requires com.fasterxml.jackson.module.kotlin;
 	requires vertx.auth.common;
 	requires vertx.auth.jwt;
+	requires com.fasterxml.jackson.annotation;
+	requires vertx.web.api.contract;
 }

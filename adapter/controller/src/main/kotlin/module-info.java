@@ -7,7 +7,7 @@ module cryptax.controller {
 	requires cryptax.domain;
 	requires vertx.web;
 	requires vertx.core;
-	requires jackson.annotations;
+	//requires jackson.annotations;
 	requires vertx.auth.jwt;
 	requires vertx.auth.common;
 

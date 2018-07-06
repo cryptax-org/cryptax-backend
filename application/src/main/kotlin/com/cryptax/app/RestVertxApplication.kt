@@ -1,11 +1,15 @@
 package com.cryptax.app
 
+import com.cryptax.app.RestValidation.createUserValidation
+import com.cryptax.app.RestValidation.getUserValidation
+import com.cryptax.app.RestValidation.loginValidation
 import com.cryptax.config.VertxConfig
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Launcher
+import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.Json
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
@@ -31,20 +35,25 @@ class RestVertxApplication : AbstractVerticle() {
 		router.route().handler(BodyHandler.create())
 
 		router.post("/users")
+			.handler(createUserValidation)
 			.handler { event -> userController.createUser(event) }
 
 		router.get("/token")
+			.handler(loginValidation)
 			.handler { event -> userController.login(event, provider) }
 
 		router.get("/users/:userId")
 			.handler(jwtAuthHandler)
+			.handler(getUserValidation)
 			.handler { event -> userController.findUser(event) }
 
 		router.get("/users")
 			.handler(jwtAuthHandler)
 			.handler { event -> userController.findAllUser(event) }
 
-		vertx.createHttpServer().requestHandler { router.accept(it) }.listen(8080)
+		val options = HttpServerOptions()
+		options.logActivity = true
+		vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(8080)
 	}
 
 	companion object {
