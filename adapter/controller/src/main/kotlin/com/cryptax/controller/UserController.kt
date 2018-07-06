@@ -12,7 +12,7 @@ import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.RoutingContext
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 
-class VertxUserController(private val createUser: CreateUser, private val findUser: FindUser, private val loginUser: LoginUser) {
+class UserController(private val createUser: CreateUser, private val findUser: FindUser, private val loginUser: LoginUser) {
 
 	companion object {
 		private val JWT_OPTIONS = JWTOptions(algorithm = "ES512", issuer = "Cryptax")

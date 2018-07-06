@@ -20,11 +20,10 @@ dependencies {
 		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
 		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertx_version],
 		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jackson_version],
-		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jackson_version],
 	)
 }
 
-mainClassName = 'com.cryptax.app.RestVertxApplication'
+mainClassName = 'com.cryptax.app.RestApplication'
 
 shadowJar {
 	classifier = 'fat'
