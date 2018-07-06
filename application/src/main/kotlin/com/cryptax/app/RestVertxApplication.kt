@@ -33,7 +33,7 @@ class RestVertxApplication : AbstractVerticle() {
 		router.post("/users")
 			.handler { event -> userController.createUser(event) }
 
-		router.get("/login")
+		router.get("/token")
 			.handler { event -> userController.login(event, provider) }
 
 		router.get("/users/:userId")

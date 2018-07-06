@@ -9,6 +9,7 @@ module cryptax.controller {
 	requires vertx.core;
 	requires jackson.annotations;
 	requires vertx.auth.jwt;
+	requires vertx.auth.common;
 
 	opens com.cryptax.controller.model to com.fasterxml.jackson.databind;
 }

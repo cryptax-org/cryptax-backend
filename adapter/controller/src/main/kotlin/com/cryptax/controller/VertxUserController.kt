@@ -52,12 +52,16 @@ class VertxUserController(private val createUser: CreateUser, private val findUs
 		if (userId == null) {
 			sendError(400, response)
 		} else {
-			val user = findUser.findById(userId)
-			if (user != null) {
-				val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
-				sendSuccess(result, response)
+			if (routingContext.user().principal().getString("id") == userId) {
+				val user = findUser.findById(userId)
+				if (user != null) {
+					val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
+					sendSuccess(result, response)
+				} else {
+					sendError(404, response)
+				}
 			} else {
-				sendError(404, response)
+				sendError(401, response)
 			}
 		}
 	}
