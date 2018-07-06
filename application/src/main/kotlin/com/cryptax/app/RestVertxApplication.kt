@@ -1,9 +1,9 @@
 package com.cryptax.app
 
-import com.cryptax.app.RestValidation.createUserValidation
-import com.cryptax.app.RestValidation.getUserValidation
-import com.cryptax.app.RestValidation.loginValidation
 import com.cryptax.config.VertxConfig
+import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.getUserValidation
+import com.cryptax.validation.RestValidation.loginValidation
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule

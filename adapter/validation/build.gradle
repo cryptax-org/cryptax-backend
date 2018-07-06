@@ -1,0 +1,15 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.validation'
+
+// needed for new jigsaw module
+configurations.all {
+	exclude module: 'swagger-parser-v2-converter'
+}
+
+dependencies {
+	implementation(
+		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
+		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertx_version],
+	)
+}

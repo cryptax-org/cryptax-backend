@@ -15,17 +15,12 @@ dependencies {
 	implementation(
 		project(':config'),
 		project(':controller'),
+		project(':validation'),
 		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
 		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
 		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertx_version],
 		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jackson_version],
 		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jackson_version],
-
-		// needed for new jigsaw module
-		[group: 'io.swagger.parser.v3', name: 'swagger-parser', version: '2.0.1'],
-		[group: 'org.slf4j', name: 'slf4j-api', version: '1.8.0-beta2'],
-		//[group: 'org.slf4j', name: 'slf4j-simple', version: '1.8.0-beta2'],
-		//[group: 'org.slf4j', name: 'slf4j-ext', version: '1.8.0-beta2'],
 	)
 }
 

@@ -1,4 +1,4 @@
-package com.cryptax.app
+package com.cryptax.validation
 
 import io.vertx.ext.web.api.validation.HTTPRequestValidationHandler
 import io.vertx.ext.web.api.validation.ParameterType
