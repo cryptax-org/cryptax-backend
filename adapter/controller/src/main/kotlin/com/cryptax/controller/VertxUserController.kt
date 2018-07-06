@@ -21,6 +21,7 @@ class VertxUserController(private val createUser: CreateUser, private val findUs
 	fun createUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
 		val body = routingContext.body
+		// TODO remove that check when this is validated upstream
 		if (isNull(body)) {
 			sendError(400, response)
 		} else {
@@ -32,42 +33,33 @@ class VertxUserController(private val createUser: CreateUser, private val findUs
 	}
 
 	fun login(routingContext: RoutingContext, jwtProvider: JWTAuth) {
-		val response = routingContext.response()
 		val email = routingContext.request().getParam("email")
 		val password = routingContext.request().getParam("password")
-		if (email == null || password == null) {
-			sendError(400, response)
-		} else {
-			val user = loginUser.login(email, password)
-			val result = JsonObject().put("id", user.id)
-			val token = jwtProvider.generateToken(result, JWT_OPTIONS)
-			result.put("token", token)
-			sendSuccess(result, response)
-		}
+
+		val userId = loginUser.login(email, password).id
+		val result = JsonObject().put("id", userId)
+		val token = jwtProvider.generateToken(result, JWT_OPTIONS)
+		result.put("token", token)
+		sendSuccess(result, routingContext.response())
 	}
 
 	fun findUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
 		val userId = routingContext.request().getParam("userId")
-		if (userId == null) {
-			sendError(400, response)
-		} else {
-			if (routingContext.user().principal().getString("id") == userId) {
-				val user = findUser.findById(userId)
-				if (user != null) {
-					val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
-					sendSuccess(result, response)
-				} else {
-					sendError(404, response)
-				}
+		if (routingContext.user().principal().getString("id") == userId) {
+			val user = findUser.findById(userId)
+			if (user != null) {
+				val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
+				sendSuccess(result, response)
 			} else {
-				sendError(401, response)
+				sendError(404, response)
 			}
+		} else {
+			sendError(401, response)
 		}
 	}
 
 	fun findAllUser(routingContext: RoutingContext) {
-		val response = routingContext.response()
 		val users = findUser.findAllUsers()
 
 		val result: JsonArray = users
@@ -81,7 +73,7 @@ class VertxUserController(private val createUser: CreateUser, private val findUs
 				accumulator
 			}
 
-		response
+		routingContext.response()
 			.putHeader("content-type", "application/json")
 			.end(result.encodePrettily())
 	}
