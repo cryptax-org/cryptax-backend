@@ -3,8 +3,9 @@ package com.cryptax.domain.entity
 import java.time.LocalDateTime
 
 data class Transaction(
-	val id: String,
+	val id: String? = null,
 	val userId: String,
+	val source: Source,
 	val date: LocalDateTime,
 	val type: Type,
 	val price: Double,

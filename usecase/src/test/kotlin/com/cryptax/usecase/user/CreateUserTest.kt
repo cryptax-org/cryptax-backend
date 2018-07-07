@@ -1,4 +1,4 @@
-package com.cryptax.usecase
+package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException

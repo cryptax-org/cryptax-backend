@@ -1,9 +1,9 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.UserWeb
-import com.cryptax.usecase.CreateUser
-import com.cryptax.usecase.FindUser
-import com.cryptax.usecase.LoginUser
+import com.cryptax.usecase.user.CreateUser
+import com.cryptax.usecase.user.FindUser
+import com.cryptax.usecase.user.LoginUser
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonArray

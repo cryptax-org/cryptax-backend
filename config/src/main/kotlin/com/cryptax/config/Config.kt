@@ -4,9 +4,9 @@ import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.security.SecurePassword
 import com.cryptax.id.JugIdGenerator
-import com.cryptax.usecase.CreateUser
-import com.cryptax.usecase.FindUser
-import com.cryptax.usecase.LoginUser
+import com.cryptax.usecase.user.CreateUser
+import com.cryptax.usecase.user.FindUser
+import com.cryptax.usecase.user.LoginUser
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule

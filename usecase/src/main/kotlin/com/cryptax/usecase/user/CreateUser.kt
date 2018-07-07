@@ -1,17 +1,17 @@
-package com.cryptax.usecase
+package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.usecase.validator.UserValidator
+import com.cryptax.usecase.validator.validateCreateUser
 import java.util.Arrays
 
 class CreateUser(private val repository: UserRepository, private val securePassword: SecurePassword, private val idGenerator: IdGenerator) {
 
 	fun create(user: User): User {
-		UserValidator.validateCreateUser(user)
+		validateCreateUser(user)
 		repository.findByEmail(user.email)?.run {
 			throw UserAlreadyExistsException(user.email)
 		}
