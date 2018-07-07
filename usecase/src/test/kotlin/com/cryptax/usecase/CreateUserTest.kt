@@ -36,8 +36,6 @@ class CreateUserTest {
 	private val hashedPassword = "fqfdwfewfwfwef"
 	private val email = "john.doe@proton.com"
 	private val password = "mypassword".toCharArray()
-	private val expectedPassword = password.copyOf()
-	//private val expectedHashedPassword =
 	private val user = User("1", email, password, "Doe", "John")
 
 	@Test

@@ -2,27 +2,37 @@ package com.cryptax.security
 
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.security.encoder.Encoder
-import com.cryptax.security.encoder.Sha256Encoder
+import com.cryptax.security.encoder.Sha3512Encoder
+import com.cryptax.security.util.str
 import java.security.SecureRandom
+import java.util.Base64
+import java.util.Random
 
-class SecurePassword(private val encoder: Encoder = Sha256Encoder()) : SecurePassword {
+class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePassword {
 
 	override fun securePassword(password: CharArray): String {
-		val hashedPassword = encoder.encode(password.joinToString(""))
+		val hashedPassword = encoder.encode(password.str())
 		val hashedSalt = generateSalt()
-		return hashedSalt + encoder.encode("$hashedPassword$hashedSalt")
+		return hashedSalt + DELIMITER + encoder.encode("$hashedPassword$hashedSalt")
 	}
 
 	override fun matchPassword(challengingPassword: CharArray, hashedSaltPassword: CharArray): Boolean {
-		val hashedChallengingPassword = encoder.encode(challengingPassword.joinToString(""))
-		val hashedSalt = hashedSaltPassword.joinToString("").substring(IntRange(0, 63))
-		val hashedPassword = hashedSaltPassword.joinToString("").substring(IntRange(64, hashedSaltPassword.size - 1))
+		val hashedChallengingPassword = encoder.encode(challengingPassword.str())
+		val hashedSalt = hashedSaltPassword.str().substringBefore(DELIMITER)
+		val hashedPassword = hashedSaltPassword.str().substringAfter(DELIMITER)
 		val hashToCompare = encoder.encode(hashedChallengingPassword + hashedSalt)
 		return hashToCompare == hashedPassword
 	}
 
 	private fun generateSalt(): String {
-		val random = SecureRandom()
-		return encoder.encode(random.toString())
+		val bytes = ByteArray(20)
+		secureRandom.nextBytes(bytes)
+		return Base64.getEncoder().encodeToString(bytes)
+	}
+
+	private val secureRandom: Random by lazy { SecureRandom() }
+
+	companion object {
+		private const val DELIMITER = "_"
 	}
 }
