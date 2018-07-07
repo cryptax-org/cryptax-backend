@@ -8,7 +8,7 @@ dependencies {
 		project(':domain'),
 		project(':in-memory-db-simple'),
 		project(':id-generator'),
-		project(':encoder'),
+		project(':security'),
 		project(':controller'),
 		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
 		[group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jackson_version],

@@ -3,12 +3,12 @@ package com.cryptax.usecase
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.port.IdGenerator
-import com.cryptax.domain.port.PasswordEncoder
+import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.usecase.util.Util
 import com.cryptax.usecase.validator.UserValidator
+import java.util.Arrays
 
-class CreateUser(private val repository: UserRepository, private val passwordEncoder: PasswordEncoder, private val idGenerator: IdGenerator) {
+class CreateUser(private val repository: UserRepository, private val securePassword: SecurePassword, private val idGenerator: IdGenerator) {
 
 	fun create(user: User): User {
 		UserValidator.validateCreateUser(user)
@@ -19,12 +19,11 @@ class CreateUser(private val repository: UserRepository, private val passwordEnc
 		val userToSave = User(
 			id = idGenerator.generate(),
 			email = user.email,
-			// TODO hash password with a salt
-			password = passwordEncoder.encode(user.email + user.password.joinToString(separator = "")).toCharArray(),
+			password = securePassword.securePassword(user.password).toCharArray(),
 			lastName = user.lastName,
 			firstName = user.firstName
 		)
-		Util.nullifyCharArray(user.password)
+		Arrays.fill(user.password, '\u0000')
 		return repository.create(userToSave)
 	}
 }

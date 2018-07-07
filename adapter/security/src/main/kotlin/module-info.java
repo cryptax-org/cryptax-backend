@@ -1,5 +1,5 @@
-module cryptax.encoder {
-	exports com.cryptax.encoder;
+module cryptax.security {
+	exports com.cryptax.security;
 
 	requires kotlin.stdlib;
 	requires org.apache.commons.codec;

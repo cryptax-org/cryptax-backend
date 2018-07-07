@@ -2,9 +2,8 @@ package com.cryptax.usecase
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.NotAllowedException
-import com.cryptax.domain.port.PasswordEncoder
+import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -23,13 +22,13 @@ class LoginUserTest {
 	@Mock
 	lateinit var userRepository: UserRepository
 	@Mock
-	lateinit var passwordEncoder: PasswordEncoder
+	lateinit var securePassword: SecurePassword
 	@InjectMocks
 	lateinit var loginUser: LoginUser
 
 	private val id = "1"
 	private val email = "john.doe@proton.com"
-	private val password = "mypassword"
+	private val password = "mypassword".toCharArray()
 	private val hashedPassword = "hashedPassword"
 	private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John")
 
@@ -38,15 +37,15 @@ class LoginUserTest {
 	fun testLogin() {
 		//given
 		given(userRepository.findByEmail(email)).willReturn(user)
-		given(passwordEncoder.encode(email + password)).willReturn(hashedPassword)
+		given(securePassword.matchPassword(password, user.password)).willReturn(true)
 
 		//when
-		val actual = loginUser.login(email, password.toCharArray())
+		val actual = loginUser.login(email, password)
 
 		//then
 		assertEquals(user, actual)
 		then(userRepository).should().findByEmail(email)
-		then(passwordEncoder).should().encode(email + password)
+		then(securePassword).should().matchPassword(password, user.password)
 	}
 
 	@Test
@@ -57,7 +56,7 @@ class LoginUserTest {
 
 		//when
 		val exception = assertThrows(NotAllowedException::class.java) {
-			loginUser.login(email, password.toCharArray())
+			loginUser.login(email, password)
 		}
 
 		//then
@@ -70,7 +69,7 @@ class LoginUserTest {
 	fun testLoginWrongPassword() {
 		//given
 		given(userRepository.findByEmail(email)).willReturn(user)
-		given(passwordEncoder.encode(email + "wrong password")).willReturn("wrong hashed password")
+		given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
 
 		//when
 		val exception = assertThrows(NotAllowedException::class.java) {
@@ -80,5 +79,6 @@ class LoginUserTest {
 		//then
 		assertEquals("Not allowed", exception.message)
 		then(userRepository).should().findByEmail(email)
+		then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
 	}
 }

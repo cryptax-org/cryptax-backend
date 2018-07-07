@@ -1,6 +1,6 @@
 apply plugin: 'java-library'
 
-ext.moduleName = 'cryptax.encoder'
+ext.moduleName = 'cryptax.security'
 
 dependencies {
 	implementation(

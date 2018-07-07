@@ -4,13 +4,13 @@ include ':application'
 include ':config'
 include ':domain'
 include ':usecase'
-include ':encoder'
+include ':security'
 include ':id-generator'
 include ':in-memory-db-simple'
 include ':controller'
 include ':validation'
 
-project(":encoder").projectDir = file("adapter/encoder")
+project(":security").projectDir = file("adapter/security")
 project(":id-generator").projectDir = file("adapter/id-generator")
 project(":in-memory-db-simple").projectDir = file("adapter/repository/in-memory-simple")
 project(":controller").projectDir = file("adapter/controller")

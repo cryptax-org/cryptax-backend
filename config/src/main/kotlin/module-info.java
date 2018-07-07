@@ -5,7 +5,7 @@ module cryptax.config {
 	requires cryptax.domain;
 	requires cryptax.id;
 	requires cryptax.db.simple;
-	requires cryptax.encoder;
+	requires cryptax.security;
 	requires cryptax.controller;
 	requires com.fasterxml.jackson.databind;
 	requires com.fasterxml.jackson.module.kotlin;
