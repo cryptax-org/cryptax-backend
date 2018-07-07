@@ -19,6 +19,7 @@ class CreateUser(private val repository: UserRepository, private val passwordEnc
 		val userToSave = User(
 			id = idGenerator.generate(),
 			email = user.email,
+			// TODO hash password with a salt
 			password = passwordEncoder.encode(user.email + user.password.joinToString(separator = "")).toCharArray(),
 			lastName = user.lastName,
 			firstName = user.firstName
