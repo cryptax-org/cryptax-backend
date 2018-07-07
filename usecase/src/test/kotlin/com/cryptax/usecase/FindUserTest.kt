@@ -22,7 +22,7 @@ class FindUserTest {
 	@InjectMocks
 	lateinit var findUser: FindUser
 
-	val id = "1"
+	private val id = "1"
 	private val user = User(id, "john.doe@proton.com", "mypassword".toCharArray(), "Doe", "John")
 
 	@Test

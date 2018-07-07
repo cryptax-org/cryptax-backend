@@ -6,9 +6,10 @@ import com.cryptax.security.encoder.Sha3512Encoder
 import com.cryptax.security.util.str
 import java.security.SecureRandom
 import java.util.Base64
-import java.util.Random
 
 class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePassword {
+
+	private val secureRandom = SecureRandom()
 
 	override fun securePassword(password: CharArray): String {
 		val hashedPassword = encoder.encode(password.str())
@@ -29,8 +30,6 @@ class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePa
 		secureRandom.nextBytes(bytes)
 		return Base64.getEncoder().encodeToString(bytes)
 	}
-
-	private val secureRandom: Random by lazy { SecureRandom() }
 
 	companion object {
 		private const val DELIMITER = "_"
