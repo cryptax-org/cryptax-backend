@@ -34,7 +34,7 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 
 	fun login(routingContext: RoutingContext, jwtProvider: JWTAuth) {
 		val email = routingContext.request().getParam("email")
-		val password = routingContext.request().getParam("password")
+		val password = routingContext.request().getParam("password").toCharArray()
 
 		val userId = loginUser.login(email, password).id
 		val result = JsonObject().put("id", userId)

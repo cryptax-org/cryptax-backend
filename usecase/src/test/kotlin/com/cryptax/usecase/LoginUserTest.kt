@@ -31,7 +31,7 @@ class LoginUserTest {
 	private val email = "john.doe@proton.com"
 	private val password = "mypassword"
 	private val hashedPassword = "hashedPassword"
-	private val user = User(id, "john.doe@proton.com", hashedPassword, "Doe", "John")
+	private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John")
 
 	@Test
 	@DisplayName("Login a user")
@@ -41,7 +41,7 @@ class LoginUserTest {
 		given(passwordEncoder.encode(email + password)).willReturn(hashedPassword)
 
 		//when
-		val actual = loginUser.login(email, password)
+		val actual = loginUser.login(email, password.toCharArray())
 
 		//then
 		assertEquals(user, actual)
@@ -57,7 +57,7 @@ class LoginUserTest {
 
 		//when
 		val exception = assertThrows(NotAllowedException::class.java) {
-			loginUser.login(email, password)
+			loginUser.login(email, password.toCharArray())
 		}
 
 		//then
@@ -74,7 +74,7 @@ class LoginUserTest {
 
 		//when
 		val exception = assertThrows(NotAllowedException::class.java) {
-			loginUser.login(email, "wrong password")
+			loginUser.login(email, "wrong password".toCharArray())
 		}
 
 		//then

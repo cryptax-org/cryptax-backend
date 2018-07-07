@@ -15,7 +15,7 @@ class UserWeb(
 		return User(
 			id = id,
 			email = email,
-			password = password!!,
+			password = password!!.toCharArray(),
 			lastName = lastName,
 			firstName = firstName)
 	}

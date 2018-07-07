@@ -15,7 +15,7 @@ class UserValidatorTest {
 	@Test
 	fun testValidateCreateUser() {
 		//given
-		val user = User("eeqqqw", "eeee", "eeeee", "ee", "ee")
+		val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee")
 
 		//when
 		UserValidator.validateCreateUser(user)
@@ -43,12 +43,12 @@ class UserValidatorTest {
 		fun userProvider(): Stream<Arguments> {
 			return Stream.of(
 				Arguments.of(null, "User should not be null"),
-				Arguments.of(User("eeqqqw", "", "eeeee", "ee", "ee"), "Email should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee", "ee", ""), "First name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee", "", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee", "      ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee", " ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee", "				", "eqweqwe"), "Last name should not be blank")
+				Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee"), "Email should not be blank"),
+				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", ""), "First name should not be blank"),
+				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe"), "Last name should not be blank"),
+				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe"), "Last name should not be blank"),
+				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe"), "Last name should not be blank"),
+				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe"), "Last name should not be blank")
 			)
 		}
 	}

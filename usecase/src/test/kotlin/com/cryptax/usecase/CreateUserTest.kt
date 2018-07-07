@@ -35,7 +35,9 @@ class CreateUserTest {
 	private val id = "random id"
 	private val hashedPassword = "fqfdwfewfwfwef"
 	private val email = "john.doe@proton.com"
-	private val password = "mypassword"
+	private val password = "mypassword".toCharArray()
+	private val expectedPassword = password.copyOf()
+	//private val expectedHashedPassword =
 	private val user = User("1", email, password, "Doe", "John")
 
 	@Test
@@ -44,7 +46,7 @@ class CreateUserTest {
 		//given
 		given(userRepository.findByEmail(user.email)).willReturn(null)
 		given(idGenerator.generate()).willReturn(id)
-		given(passwordEncoder.encode(email + password)).willReturn(hashedPassword)
+		given(passwordEncoder.encode(email + password.joinToString(separator = ""))).willReturn(hashedPassword)
 		given(userRepository.create(any())).willReturn(user)
 
 		//when
@@ -54,13 +56,13 @@ class CreateUserTest {
 		assertNotNull(actual)
 		then(userRepository).should().findByEmail(user.email)
 		then(idGenerator).should().generate()
-		then(passwordEncoder).should().encode(user.email + user.password)
+		then(passwordEncoder).should().encode(user.email + expectedPassword.joinToString(separator = ""))
 		// TODO see if there a better way to use mockito-kotlin for argument captor
 		argumentCaptor<User>().apply {
 			then(userRepository).should().create(capture())
 			assertEquals(id, firstValue.id)
 			assertEquals(user.email, firstValue.email)
-			assertEquals(hashedPassword, firstValue.password)
+			assertEquals(hashedPassword, firstValue.password.joinToString(separator = ""))
 			assertEquals(user.lastName, firstValue.lastName)
 			assertEquals(user.firstName, firstValue.firstName)
 		}
