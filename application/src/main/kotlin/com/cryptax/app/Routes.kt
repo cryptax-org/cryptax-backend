@@ -11,6 +11,7 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 object Routes {
 
 	private val userController = Config.userController
+	private val transactionController = Config.transactionController
 	private val jwtOptions = Config.jwtOptions
 
 	fun setupRoutes(vertx: Vertx, router: Router) {
@@ -39,5 +40,11 @@ object Routes {
 		router.get("/users")
 			.handler(jwtAuthHandler)
 			.handler { event -> userController.findAllUser(event) }
+
+		// Add transaction to user
+		router.post("/users/:userId/transactions")
+			.handler(RestValidation.addTransactionValidation)
+			.handler(jwtAuthHandler)
+			.handler { event -> transactionController.addTransaction(event) }
 	}
 }

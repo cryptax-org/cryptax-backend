@@ -10,6 +10,7 @@ module cryptax.config {
 	requires com.fasterxml.jackson.databind;
 	requires com.fasterxml.jackson.module.kotlin;
 	requires com.fasterxml.jackson.annotation;
+	requires com.fasterxml.jackson.datatype.jsr310;
 	requires vertx.auth.jwt;
 	requires vertx.auth.common;
 }

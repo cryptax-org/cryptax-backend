@@ -8,6 +8,9 @@ object RestValidation {
 	// FIXME Add json body schema validation with schema http://json-schema.org/draft-04/schema#
 	val createUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
 
+	// FIXME Add json body schema validation with schema http://json-schema.org/draft-04/schema#
+	val addTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
+
 	val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
 		.addQueryParam("email", ParameterType.EMAIL, true)

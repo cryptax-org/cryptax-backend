@@ -1,6 +1,9 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.UserWeb
+import com.cryptax.controller.utils.isNull
+import com.cryptax.controller.utils.sendError
+import com.cryptax.controller.utils.sendSuccess
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
@@ -76,23 +79,5 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 		routingContext.response()
 			.putHeader("content-type", "application/json")
 			.end(result.encodePrettily())
-	}
-
-
-	private fun isNull(buffer: Buffer?): Boolean {
-		return buffer == null || "" == buffer.toString()
-	}
-
-	private fun sendError(statusCode: Int, response: HttpServerResponse) {
-		response
-			.putHeader("content-type", "application/json")
-			.setStatusCode(statusCode)
-			.end()
-	}
-
-	private fun sendSuccess(body: JsonObject, response: HttpServerResponse) {
-		response
-			.putHeader("content-type", "application/json")
-			.end(body.encodePrettily())
 	}
 }
