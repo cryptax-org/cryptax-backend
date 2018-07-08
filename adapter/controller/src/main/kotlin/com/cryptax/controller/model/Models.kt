@@ -4,7 +4,7 @@ import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 class UserWeb(
 	val id: String? = null,
@@ -36,7 +36,7 @@ class UserWeb(
 class TransactionWeb(
 	val id: String? = null,
 	val source: Source,
-	val date: LocalDateTime,
+	val date: ZonedDateTime,
 	val type: Transaction.Type,
 	val price: Double,
 	val amount: Double,

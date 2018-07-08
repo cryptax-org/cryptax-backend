@@ -17,11 +17,14 @@ object Routes {
 	fun setupRoutes(vertx: Vertx, router: Router) {
 		val jwtProvider = JWTAuth.create(vertx, jwtOptions)
 		val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
+		//jwtAuthHandler.setIgnoreExpiration(false)
+		val bodyHandler = BodyHandler.create()
 
-		router.route().handler(BodyHandler.create())
+		router.route()
 
 		// Create user
 		router.post("/users")
+			.handler(bodyHandler)
 			.handler(RestValidation.createUserValidation)
 			.handler { event -> userController.createUser(event) }
 
@@ -43,6 +46,7 @@ object Routes {
 
 		// Add transaction to user
 		router.post("/users/:userId/transactions")
+			.handler(bodyHandler)
 			.handler(RestValidation.addTransactionValidation)
 			.handler(jwtAuthHandler)
 			.handler { event -> transactionController.addTransaction(event) }

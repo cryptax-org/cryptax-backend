@@ -3,3 +3,4 @@ out
 gen
 /.gradle/
 build/
+.vertx/

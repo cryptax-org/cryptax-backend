@@ -20,6 +20,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @DisplayName("Usescase add a transaction to a user")
 @ExtendWith(MockitoExtension::class)
@@ -35,7 +36,7 @@ class AddTransactionTest {
 	lateinit var addTransaction: AddTransaction
 
 	private val id = "random id"
-	private val now = LocalDateTime.now()
+	private val now = ZonedDateTime.now()
 	private val userId = "userId"
 	private val transaction = Transaction(
 		userId = userId,

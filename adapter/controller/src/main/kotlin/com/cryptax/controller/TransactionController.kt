@@ -1,7 +1,6 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.TransactionWeb
-import com.cryptax.controller.utils.isNull
 import com.cryptax.controller.utils.sendError
 import com.cryptax.controller.utils.sendSuccess
 import com.cryptax.usecase.transaction.AddTransaction
@@ -14,17 +13,13 @@ class TransactionController(private val addTransaction: AddTransaction) {
 		val response = routingContext.response()
 		val userId = routingContext.request().getParam("userId")
 		val body = routingContext.body
-		// TODO remove that check when this is validated upstream
-		if (isNull(body)) {
-			sendError(400, response)
+
+		if (routingContext.user().principal().getString("id") == userId) {
+			val transactionWeb = body.toJsonObject().mapTo(TransactionWeb::class.java)
+			val result = addTransaction.add(transactionWeb.toTransaction(userId))
+			sendSuccess(JsonObject.mapFrom(TransactionWeb.toTransactionWeb(result)), response)
 		} else {
-			if (routingContext.user().principal().getString("id") == userId) {
-				val transactionWeb = body.toJsonObject().mapTo(TransactionWeb::class.java)
-				val result = addTransaction.add(transactionWeb.toTransaction(userId))
-				sendSuccess(JsonObject.mapFrom(TransactionWeb.toTransactionWeb(result)), response)
-			} else {
-				sendError(401, response)
-			}
+			sendError(401, response)
 		}
 	}
 }

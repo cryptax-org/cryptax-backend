@@ -1,14 +1,11 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.UserWeb
-import com.cryptax.controller.utils.isNull
 import com.cryptax.controller.utils.sendError
 import com.cryptax.controller.utils.sendSuccess
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
-import io.vertx.core.buffer.Buffer
-import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
@@ -18,21 +15,16 @@ import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 class UserController(private val createUser: CreateUser, private val findUser: FindUser, private val loginUser: LoginUser) {
 
 	companion object {
-		private val JWT_OPTIONS = JWTOptions(algorithm = "ES512", issuer = "Cryptax")
+		private val JWT_OPTIONS = JWTOptions(algorithm = "ES512", issuer = "Cryptax", expiresInMinutes = 30)
 	}
 
 	fun createUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
 		val body = routingContext.body
-		// TODO remove that check when this is validated upstream
-		if (isNull(body)) {
-			sendError(400, response)
-		} else {
-			val userWeb = body.toJsonObject().mapTo(UserWeb::class.java)
-			val user = createUser.create(userWeb.toUser())
-			val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
-			sendSuccess(result, response)
-		}
+		val userWeb = body.toJsonObject().mapTo(UserWeb::class.java)
+		val user = createUser.create(userWeb.toUser())
+		val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
+		sendSuccess(result, response)
 	}
 
 	fun login(routingContext: RoutingContext, jwtProvider: JWTAuth) {
@@ -64,7 +56,6 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 
 	fun findAllUser(routingContext: RoutingContext) {
 		val users = findUser.findAllUsers()
-
 		val result: JsonArray = users
 			.map { user -> JsonObject.mapFrom(UserWeb.toUserWeb(user)) }
 			.fold(mutableListOf<JsonObject>()) { accumulator, item ->
