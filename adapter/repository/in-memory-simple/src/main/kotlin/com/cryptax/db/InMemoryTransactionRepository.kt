@@ -11,4 +11,11 @@ class InMemoryTransactionRepository : TransactionRepository {
 		inMemoryDb[transaction.id!!] = transaction
 		return transaction
 	}
+
+	override fun add(transactions: List<Transaction>): List<Transaction> {
+		transactions.forEach {
+			inMemoryDb[it.id!!] = it
+		}
+		return transactions
+	}
 }

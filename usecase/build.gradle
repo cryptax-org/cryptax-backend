@@ -9,6 +9,9 @@ dependencies {
 	testImplementation(
 		[group: 'org.mockito', name: 'mockito-core', version: mockito_version],
 		[group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockito_version],
-		[group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: '2.0.0-RC1']
+		[group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: '2.0.0-RC1'],
+		[group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_version],
+		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jackson_version],
+		[group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jackson_version],
 	)
 }

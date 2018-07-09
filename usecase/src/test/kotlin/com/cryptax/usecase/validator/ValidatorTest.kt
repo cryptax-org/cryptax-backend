@@ -6,8 +6,11 @@ import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserValidationException
+import com.cryptax.usecase.Utils.twoTransactions
+import com.cryptax.usecase.objectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -15,6 +18,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.time.ZonedDateTime
 import java.util.stream.Stream
 
+@DisplayName("Data validation")
 class ValidatorTest {
 
 	@Test
@@ -73,6 +77,29 @@ class ValidatorTest {
 		assertEquals(errorMessage, exception.message)
 	}
 
+	@Test
+	fun testValidateTransactions() {
+		//given
+		val transaction = twoTransactions
+		//when
+		validateAddTransactions(transaction)
+
+		//then
+		// no failure
+	}
+
+	@ParameterizedTest
+	@MethodSource("transactionsProvider")
+	fun testValidateTransactionsFail(transactions: List<Transaction>, errorMessage: String) {
+		//when
+		val exception = assertThrows(TransactionValidationException::class.java) {
+			validateAddTransactions(transactions)
+		}
+
+		//then
+		assertEquals(errorMessage, exception.message)
+	}
+
 	companion object {
 
 		@JvmStatic
@@ -93,6 +120,16 @@ class ValidatorTest {
 				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, -10.0, 4.0, Currency.ETH, Currency.BTC), "Price can't be negative"),
 				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, -4.0, Currency.ETH, Currency.BTC), "Amount can't be negative"),
 				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, 4.0, Currency.ETH, Currency.ETH), "Currency1 and Currency2 can't be the same")
+			)
+		}
+
+		@JvmStatic
+		fun transactionsProvider(): Stream<Arguments> {
+			return Stream.of(
+				Arguments.of(listOf<Transaction>(), "No transactions provided"),
+				Arguments.of(
+					objectMapper.readValue(javaClass.getResourceAsStream("/transaction/batch/Test1.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
+					javaClass.getResourceAsStream("/transaction/batch/Test1-output").bufferedReader().use { it.readLine() })
 			)
 		}
 	}

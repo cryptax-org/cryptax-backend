@@ -1,0 +1,10 @@
+{
+	"source":"MANUAL",
+	"userId":"userId",
+	"date":"2011-12-03T10:15:30Z",
+	"type":"BUY",
+	"price":10.0,
+	"amount": 2.0,
+	"currency1":"ETH",
+	"currency2":"BTC"
+}

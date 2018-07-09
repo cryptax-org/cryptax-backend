@@ -16,3 +16,14 @@ fun validateAddTransaction(transaction: Transaction) {
 	if (transaction.amount < 0) throw TransactionValidationException("Amount can't be negative")
 	if (transaction.currency1 == transaction.currency2) throw TransactionValidationException("Currency1 and Currency2 can't be the same")
 }
+
+fun validateAddTransactions(transactions: List<Transaction>) {
+	if (transactions.isEmpty()) {
+		throw TransactionValidationException("No transactions provided")
+	}
+	transactions.forEach { validateAddTransaction(it) }
+	if (transactions.map { it.userId }.toSet().size != 1) {
+		throw TransactionValidationException("All transactions must have the same user id")
+	}
+}
+
