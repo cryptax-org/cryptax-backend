@@ -25,6 +25,7 @@ import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.JWTAuthHandler
+import io.vertx.ext.web.handler.LoggerHandler
 
 object Routes {
 
@@ -39,6 +40,8 @@ object Routes {
 		val jwtProvider = JWTAuth.create(vertx, jwtAuthOptions)
 		val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
 		val bodyHandler = BodyHandler.create()
+
+		router.route().handler(LoggerHandler.create())
 
 		// Create user
 		router.post("/users")
@@ -152,7 +155,7 @@ object Routes {
 		} else if (event.failure() != null) {
 			val throwable: Throwable = event.failure()
 			if (throwable is ValidationException) {
-				log.debug("Validation exception [${throwable.message}]")
+				log.warn("Validation exception [${throwable.message}]")
 				response
 					.setStatusCode(400)
 					.end(JsonObject().put("error", "${throwable.message}").encodePrettily())

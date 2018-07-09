@@ -26,6 +26,10 @@ class RestApplication : AbstractVerticle() {
 
 	companion object {
 
+		init {
+			System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
+		}
+
 		@JvmStatic
 		fun main(args: Array<String>) {
 			Launcher.executeCommand("run", RestApplication::class.java.name)
