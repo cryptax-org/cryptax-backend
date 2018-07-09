@@ -17,8 +17,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
+import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 import java.time.ZoneId
-import java.util.TimeZone
+import java.util.*
 
 object Config {
 
@@ -43,5 +44,7 @@ object Config {
 		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
 	// FIXME: Secure keystore and password
-	val jwtOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = "keystore.jceks", password = "secret"))
+	val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = "keystore.jceks", password = "secret"))
+	val jwtOptions = JWTOptions(algorithm = "ES512", issuer = "Cryptax", expiresInMinutes = 30)
+
 }
