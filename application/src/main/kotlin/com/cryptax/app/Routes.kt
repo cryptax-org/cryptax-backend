@@ -14,6 +14,7 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.JWTAuthHandler
 
@@ -82,7 +83,12 @@ object Routes {
 				.end(JsonObject().put("error", "Unauthorized").encodePrettily())
 		} else if (event.failure() != null) {
 			val throwable: Throwable = event.failure()
-			if (throwable is LoginException) {
+			if (throwable is ValidationException) {
+				log.debug("Validation exception [${throwable.message}]")
+				response
+					.setStatusCode(400)
+					.end(JsonObject().put("error", "${throwable.message}").encodePrettily())
+			} else if (throwable is LoginException) {
 				log.warn("Unauthorized request for user [${throwable.email}] and with description [${throwable.description}]")
 				response
 					.setStatusCode(401)

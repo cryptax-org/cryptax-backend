@@ -6,4 +6,5 @@ module cryptax.validation {
 	requires vertx.core;
 	requires vertx.web;
 	requires vertx.web.api.contract;
+	requires vertx.auth.common;
 }

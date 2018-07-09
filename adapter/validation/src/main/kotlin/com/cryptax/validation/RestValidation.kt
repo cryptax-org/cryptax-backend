@@ -22,6 +22,12 @@ object RestValidation {
 	val getUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
 		.addPathParam("userId", ParameterType.GENERIC_STRING)
+		.addCustomValidatorFunction { routingContext ->
+			val userId = routingContext.request().getParam("userId")
+			if (routingContext.user().principal().getString("id") != userId) {
+				throw ValidationException("User [$userId] can't be accessed with the given token", ValidationException.ErrorType.NO_MATCH)
+			}
+		}
 }
 
 private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHandlerCustom(listOf("email", "password", "lastName", "firstName")) {

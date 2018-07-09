@@ -21,8 +21,7 @@ class RestApplication : AbstractVerticle() {
 		options.logActivity = true
 
 		// Create server
-		vertx.createHttpServer(options)
-			.requestHandler { router.accept(it) }.listen(8080)
+		vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(8080)
 	}
 
 	companion object {

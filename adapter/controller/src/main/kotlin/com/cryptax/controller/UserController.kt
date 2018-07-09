@@ -41,17 +41,12 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 	fun findUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
 		val userId = routingContext.request().getParam("userId")
-		if (routingContext.user().principal().getString("id") == userId) {
-			val user = findUser.findById(userId)
-			if (user != null) {
-				val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
-				sendSuccess(result, response)
-			} else {
-				sendError(404, response)
-			}
+		val user = findUser.findById(userId)
+		if (user != null) {
+			val result = JsonObject.mapFrom(UserWeb.toUserWeb(user))
+			sendSuccess(result, response)
 		} else {
-			// TODO handle in a different way those errors
-			sendError(401, response)
+			sendError(404, response)
 		}
 	}
 
