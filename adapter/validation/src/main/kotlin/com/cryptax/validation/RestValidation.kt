@@ -2,6 +2,7 @@ package com.cryptax.validation
 
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.api.validation.CustomValidator
 import io.vertx.ext.web.api.validation.HTTPRequestValidationHandler
 import io.vertx.ext.web.api.validation.ParameterType
 import io.vertx.ext.web.api.validation.ValidationException
@@ -13,6 +14,7 @@ object RestValidation {
 
 	val createUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerCreateUser()
 	val addTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerAddTransaction()
+		.addCustomValidatorFunction(userIdPathParamValidation)
 
 	val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
@@ -22,12 +24,14 @@ object RestValidation {
 	val getUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
 		.addPathParam("userId", ParameterType.GENERIC_STRING)
-		.addCustomValidatorFunction { routingContext ->
-			val userId = routingContext.request().getParam("userId")
-			if (routingContext.user().principal().getString("id") != userId) {
-				throw ValidationException("User [$userId] can't be accessed with the given token", ValidationException.ErrorType.NO_MATCH)
-			}
-		}
+		.addCustomValidatorFunction { userIdPathParamValidation }
+}
+
+private val userIdPathParamValidation = CustomValidator { routingContext ->
+	val userId = routingContext.request().getParam("userId")
+	if (routingContext.user().principal().getString("id") != userId) {
+		throw ValidationException("User [$userId] can't be accessed with the given token", ValidationException.ErrorType.NO_MATCH)
+	}
 }
 
 private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHandlerCustom(listOf("email", "password", "lastName", "firstName")) {
@@ -48,7 +52,7 @@ private class HTTPRequestValidationHandlerAddTransaction : HTTPRequestValidation
 			throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be 'MANUAL'")
 		}
 		try {
-			val date = body.getValue("date") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
+			val date = body.getValue("date") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [date] should be a String")
 			ZonedDateTime.parse(date)
 		} catch (e: DateTimeParseException) {
 			throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [date] has a wrong format. It should be similar to 2011-12-03T10:15:30+01:00[Europe/Paris]")

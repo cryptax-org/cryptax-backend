@@ -17,6 +17,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
+import java.time.ZoneId
+import java.util.TimeZone
 
 object Config {
 
@@ -37,6 +39,7 @@ object Config {
 		.registerModule(KotlinModule())
 		.registerModule(JavaTimeModule())
 		.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+		.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
 		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
 	// FIXME: Secure keystore and password
