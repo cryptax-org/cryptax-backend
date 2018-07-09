@@ -18,6 +18,7 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 		private val JWT_OPTIONS = JWTOptions(algorithm = "ES512", issuer = "Cryptax", expiresInMinutes = 30)
 	}
 
+	// FIXME: Remove all dependencies to vertx
 	fun createUser(routingContext: RoutingContext) {
 		val response = routingContext.response()
 		val body = routingContext.body
