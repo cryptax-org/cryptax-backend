@@ -1,6 +1,6 @@
 package com.cryptax.domain.exception
 
-class NotAllowedException(message: String) : RuntimeException(message)
+class LoginException(val email: String, val description: String) : RuntimeException()
 
 class UserNotFoundException(id: String) : RuntimeException(id)
 

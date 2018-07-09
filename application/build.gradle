@@ -14,6 +14,7 @@ configurations.all {
 dependencies {
 	implementation(
 		project(':config'),
+		project(':domain'),
 		project(':controller'),
 		project(':validation'),
 		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],

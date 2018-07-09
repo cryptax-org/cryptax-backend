@@ -1,7 +1,7 @@
 package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
-import com.cryptax.domain.exception.NotAllowedException
+import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -55,12 +55,13 @@ class LoginUserTest {
 		given(userRepository.findByEmail(email)).willReturn(null)
 
 		//when
-		val exception = assertThrows(NotAllowedException::class.java) {
+		val exception = assertThrows(LoginException::class.java) {
 			loginUser.login(email, password)
 		}
 
 		//then
-		assertEquals("Not allowed", exception.message)
+		assertEquals(email, exception.email)
+		assertEquals("User not found", exception.description)
 		then(userRepository).should().findByEmail(email)
 	}
 
@@ -72,12 +73,13 @@ class LoginUserTest {
 		given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
 
 		//when
-		val exception = assertThrows(NotAllowedException::class.java) {
+		val exception = assertThrows(LoginException::class.java) {
 			loginUser.login(email, "wrong password".toCharArray())
 		}
 
 		//then
-		assertEquals("Not allowed", exception.message)
+		assertEquals(email, exception.email)
+		assertEquals("Password do not match", exception.description)
 		then(userRepository).should().findByEmail(email)
 		then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
 	}

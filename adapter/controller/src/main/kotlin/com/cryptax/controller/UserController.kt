@@ -50,6 +50,7 @@ class UserController(private val createUser: CreateUser, private val findUser: F
 				sendError(404, response)
 			}
 		} else {
+			// TODO handle in a different way those errors
 			sendError(401, response)
 		}
 	}
