@@ -2,6 +2,7 @@ package com.cryptax.validation
 
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
+import io.vertx.ext.web.api.impl.RequestParameterImpl
 import io.vertx.ext.web.api.validation.CustomValidator
 import io.vertx.ext.web.api.validation.HTTPRequestValidationHandler
 import io.vertx.ext.web.api.validation.ParameterType
@@ -25,6 +26,15 @@ object RestValidation {
 		.create()
 		.addPathParam("userId", ParameterType.GENERIC_STRING)
 		.addCustomValidatorFunction { userIdPathParamValidation }
+
+	val jsonContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
+		.addHeaderParamWithCustomTypeValidator("Content-Type", { value ->
+			if (value == null || value != "application/json") {
+				throw ValidationException.ValidationExceptionFactory.generateWrongContentTypeExpected(value, "application/json")
+			}
+			RequestParameterImpl("Content-Type", value)
+
+		}, true, false)
 }
 
 private val userIdPathParamValidation = CustomValidator { routingContext ->

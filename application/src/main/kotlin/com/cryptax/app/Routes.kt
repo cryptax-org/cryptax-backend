@@ -9,6 +9,10 @@ import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
 import com.cryptax.validation.RestValidation
+import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.getUserValidation
+import com.cryptax.validation.RestValidation.jsonContentTypeValidation
+import com.cryptax.validation.RestValidation.loginValidation
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerResponse
@@ -38,41 +42,42 @@ object Routes {
 
 		// Create user
 		router.post("/users")
+			.handler(jsonContentTypeValidation)
 			.handler(bodyHandler)
-			.handler(RestValidation.createUserValidation)
-			.handler { event ->
-				val userWeb = event.body.toJsonObject().mapTo(UserWeb::class.java)
+			.handler(createUserValidation)
+			.handler { routingContext ->
+				val userWeb = routingContext.body.toJsonObject().mapTo(UserWeb::class.java)
 				val result = JsonObject.mapFrom(userController.createUser(userWeb))
-				sendSuccess(result, event.response())
+				sendSuccess(result, routingContext.response())
 			}
 			.failureHandler(failureHandler)
 
 		// Get token with user credentials
 		router.get("/token")
-			.handler(RestValidation.loginValidation)
-			.handler { event ->
-				val email = event.request().getParam("email")
-				val password = event.request().getParam("password").toCharArray()
+			.handler(loginValidation)
+			.handler { routingContext ->
+				val email = routingContext.request().getParam("email")
+				val password = routingContext.request().getParam("password").toCharArray()
 				val userWeb = userController.login(email, password)
 				val result = JsonObject().put("id", userWeb.id)
 				val token = jwtProvider.generateToken(result, jwtOptions)
 				result.put("token", token)
-				sendSuccess(result, event.response())
+				sendSuccess(result, routingContext.response())
 			}
 			.failureHandler(failureHandler)
 
 		// Get user with user id and JWT token
 		router.get("/users/:userId")
 			.handler(jwtAuthHandler)
-			.handler(RestValidation.getUserValidation)
-			.handler { event ->
-				val userId = event.request().getParam("userId")
+			.handler(getUserValidation)
+			.handler { routingContext ->
+				val userId = routingContext.request().getParam("userId")
 				val userWeb = userController.findUser(userId)
 				if (userWeb != null) {
 					val result = JsonObject.mapFrom(userWeb)
-					sendSuccess(result, event.response())
+					sendSuccess(result, routingContext.response())
 				} else {
-					sendError(404, event.response())
+					sendError(404, routingContext.response())
 				}
 			}
 			.failureHandler(failureHandler)
@@ -80,7 +85,7 @@ object Routes {
 		// Get all users with JWT token
 		router.get("/users")
 			.handler(jwtAuthHandler)
-			.handler { event ->
+			.handler { routingContext ->
 				val result = userController.findAllUsers()
 					.map { JsonObject.mapFrom(it) }
 					.fold(mutableListOf<JsonObject>()) { accumulator, item ->
@@ -91,21 +96,22 @@ object Routes {
 						accumulator.add(item)
 						accumulator
 					}
-				sendSuccess(result, event.response())
+				sendSuccess(result, routingContext.response())
 			}
 			.failureHandler(failureHandler)
 
 		// Add transaction to user with JWT token
 		router.post("/users/:userId/transactions")
+			.handler(jsonContentTypeValidation)
 			.handler(jwtAuthHandler)
 			.handler(bodyHandler)
 			.handler(RestValidation.addTransactionValidation)
-			.handler { event ->
-				val userId = event.request().getParam("userId")
-				val body = event.body
+			.handler { routingContext ->
+				val userId = routingContext.request().getParam("userId")
+				val body = routingContext.body
 				val transactionWeb = body.toJsonObject().mapTo(TransactionWeb::class.java)
 				val result = transactionController.addTransaction(userId, transactionWeb)
-				sendSuccess(JsonObject.mapFrom(result), event.response())
+				sendSuccess(JsonObject.mapFrom(result), routingContext.response())
 			}
 			.failureHandler(failureHandler)
 
