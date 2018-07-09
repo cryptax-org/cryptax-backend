@@ -129,7 +129,10 @@ class ValidatorTest {
 				Arguments.of(listOf<Transaction>(), "No transactions provided"),
 				Arguments.of(
 					objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test1.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
-					this::class.java.getResourceAsStream("/transaction/batch/Test1-output").bufferedReader().use { it.readLine() })
+					this::class.java.getResourceAsStream("/transaction/batch/Test1-output").bufferedReader().use { it.readLine() }),
+				Arguments.of(
+					objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test2.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
+					this::class.java.getResourceAsStream("/transaction/batch/Test2-output").bufferedReader().use { it.readLine() })
 			)
 		}
 	}
