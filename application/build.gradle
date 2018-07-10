@@ -17,10 +17,10 @@ dependencies {
 		project(':domain'),
 		project(':controller'),
 		project(':validation'),
-		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
-		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertx_version],
-		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertx_version],
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jackson_version],
+		[group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
+		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
+		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
+		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
 	)
 }
 

@@ -10,7 +10,7 @@ configurations.all {
 dependencies {
 	implementation(
 		project(':domain'),
-		[group: 'io.vertx', name: 'vertx-web', version: vertx_version],
-		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertx_version],
+		[group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
+		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
 	)
 }

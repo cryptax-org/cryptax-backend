@@ -1,11 +1,14 @@
 buildscript {
 	ext {
-		kotlin_version = '1.2.51'
-		junit_version = '5.2.0'
-		jackson_version = '2.9.6'
-		log4j2_version = '2.11.0'
-		mockito_version = '2.19.0'
-		vertx_version = '3.5.2'
+		projectName = rootProject.name
+
+		junitVersion = '5.2.0'
+		jacksonVersion = '2.9.6'
+		kotlinVersion = '1.2.51'
+		log4j2Version = '2.11.0'
+		mockitoVersion = '2.19.0'
+		slf4jVersion = '1.8.0-beta2'
+		vertxVersion = '3.5.2'
 	}
 
 	repositories {
@@ -13,7 +16,7 @@ buildscript {
 	}
 
 	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 	}
 }
 
@@ -49,21 +52,20 @@ subprojects {
 	}
 
 	dependencies {
-		implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-		implementation 'org.slf4j:slf4j-api:1.8.0-beta2'
-		implementation "org.apache.logging.log4j:log4j-core:$log4j2_version"
-		implementation "org.apache.logging.log4j:log4j-api:$log4j2_version"
-		implementation "org.apache.logging.log4j:log4j-slf4j-impl:$log4j2_version"
+		implementation(
+			[group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8'],
+			[group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
+			[group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
+			[group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
+			[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4j2Version],
+		)
 
-		testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
-		testImplementation "org.junit.jupiter:junit-jupiter-engine:$junit_version"
-		testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+		testImplementation(
+			[group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion],
+			[group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion],
+			[group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitVersion],
+		)
 	}
-
-	ext {
-		projectName = rootProject.name
-	}
-
 
 	test {
 		useJUnitPlatform()
@@ -75,7 +77,6 @@ subprojects {
 		reports {
 			html.enabled = true
 		}
-
 	}
 
 	compileKotlin {
@@ -110,10 +111,6 @@ apply plugin: 'jacoco'
 
 repositories {
 	jcenter()
-}
-
-ext {
-	projectName = rootProject.name
 }
 
 jar.enabled = false
