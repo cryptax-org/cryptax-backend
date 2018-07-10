@@ -14,7 +14,9 @@ import java.time.format.DateTimeParseException
 object RestValidation {
 
 	val createUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerCreateUser()
-	val transactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerTransaction()
+	val transactionBodyValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerTransaction()
+		.addCustomValidatorFunction(userIdPathParamValidation)
+	val getTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
 		.addCustomValidatorFunction(userIdPathParamValidation)
 
 	val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler

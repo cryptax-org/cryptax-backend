@@ -7,6 +7,7 @@ import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.transaction.AddTransaction
+import com.cryptax.usecase.transaction.FindTransaction
 import com.cryptax.usecase.transaction.UpdateTransaction
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
@@ -34,9 +35,10 @@ object Config {
 	private val loginUser = LoginUser(userRepository, securePassword)
 	private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
 	private val updateTransaction = UpdateTransaction(transactionRepository)
+	private val findTransaction = FindTransaction(transactionRepository)
 
 	val userController = UserController(createUser, findUser, loginUser)
-	val transactionController = TransactionController(addTransaction, updateTransaction)
+	val transactionController = TransactionController(addTransaction, updateTransaction, findTransaction)
 
 	val objectMapper: ObjectMapper = ObjectMapper()
 		.registerModule(KotlinModule())

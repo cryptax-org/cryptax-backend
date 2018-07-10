@@ -12,4 +12,5 @@ class TransactionValidationException(message: String) : RuntimeException(message
 
 class TransactionNotFound(message: String) : RuntimeException(message)
 
-class UserDoNotMatch(message: String) : RuntimeException(message)
+class TransactionUserDoNotMatch(transactionUserId: String, transactionId: String, transactionUserIdFound: String)
+	: RuntimeException("User [$transactionUserId] tried to update [$transactionId], but that transaction is owned by [$transactionUserIdFound]")

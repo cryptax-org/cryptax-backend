@@ -9,10 +9,11 @@ import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
 import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.getTransactionValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
-import com.cryptax.validation.RestValidation.transactionValidation
+import com.cryptax.validation.RestValidation.transactionBodyValidation
 import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerResponse
@@ -108,7 +109,7 @@ object Routes {
 			.handler(jsonContentTypeValidation)
 			.handler(jwtAuthHandler)
 			.handler(bodyHandler)
-			.handler(transactionValidation)
+			.handler(transactionBodyValidation)
 			.handler { routingContext ->
 				val userId = routingContext.request().getParam("userId")
 				val body = routingContext.body
@@ -118,11 +119,49 @@ object Routes {
 			}
 			.failureHandler(failureHandler)
 
+		router.get("/users/:userId/transactions")
+			.handler(jsonContentTypeValidation)
+			.handler(jwtAuthHandler)
+			.handler(bodyHandler)
+			.handler { routingContext ->
+				val userId = routingContext.request().getParam("userId")
+				val result = transactionController.getAllTransactions(userId = userId)
+					.map { JsonObject.mapFrom(it) }
+					.fold(mutableListOf<JsonObject>()) { accumulator, item ->
+						accumulator.add(item)
+						accumulator
+					}
+					.fold(JsonArray()) { accumulator, item ->
+						accumulator.add(item)
+						accumulator
+					}
+				sendSuccess(result, routingContext.response())
+			}
+			.failureHandler(failureHandler)
+
+		router.get("/users/:userId/transactions/:transactionId")
+			.handler(jsonContentTypeValidation)
+			.handler(jwtAuthHandler)
+			.handler(bodyHandler)
+			.handler(getTransactionValidation)
+			.handler { routingContext ->
+				val userId = routingContext.request().getParam("userId")
+				val transactionId = routingContext.request().getParam("transactionId")
+				val transactionWeb = transactionController.getTransaction(id = transactionId, userId = userId)
+				if (transactionWeb != null) {
+					val result = JsonObject.mapFrom(transactionWeb)
+					sendSuccess(result, routingContext.response())
+				} else {
+					sendError(404, routingContext.response())
+				}
+			}
+			.failureHandler(failureHandler)
+
 		router.put("/users/:userId/transactions/:transactionId")
 			.handler(jsonContentTypeValidation)
 			.handler(jwtAuthHandler)
 			.handler(bodyHandler)
-			.handler(transactionValidation)
+			.handler(transactionBodyValidation)
 			.handler { routingContext ->
 				val userId = routingContext.request().getParam("userId")
 				val transactionId = routingContext.request().getParam("transactionId")
@@ -130,6 +169,8 @@ object Routes {
 				val result = transactionController.updateTransaction(transactionId, userId, transactionWeb)
 				sendSuccess(JsonObject.mapFrom(result), routingContext.response())
 			}
+			.failureHandler(failureHandler)
+
 
 		// Exception handler
 		router.exceptionHandler { throwable ->

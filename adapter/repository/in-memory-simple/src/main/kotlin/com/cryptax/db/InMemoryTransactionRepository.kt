@@ -23,6 +23,10 @@ class InMemoryTransactionRepository : TransactionRepository {
 		return inMemoryDb[id]
 	}
 
+	override fun getAllForUser(userId: String): List<Transaction> {
+		return inMemoryDb.values.filter { value -> value.userId == userId }
+	}
+
 	override fun update(transaction: Transaction): Transaction {
 		inMemoryDb[transaction.id!!] = transaction
 		return transaction

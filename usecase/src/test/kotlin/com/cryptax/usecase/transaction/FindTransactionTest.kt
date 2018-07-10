@@ -1,11 +1,12 @@
 package com.cryptax.usecase.transaction
 
-import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.Utils.oneTransactionWithId
 import com.cryptax.usecase.Utils.oneTransactionWithId2
+import com.cryptax.usecase.Utils.twoTransactions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -16,50 +17,45 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 
-@DisplayName("Usescase update a transaction")
+@DisplayName("Usescase find transaction")
 @ExtendWith(MockitoExtension::class)
-class UpdateTransactionTest {
+class FindTransactionTest {
 
 	@Mock
 	lateinit var transactionRepository: TransactionRepository
 	@InjectMocks
-	lateinit var updateTransaction: UpdateTransaction
+	lateinit var findTransaction: FindTransaction
 
 	@Test
-	fun testUpdateTransaction() {
+	fun testFindTransaction() {
 		// given
 		val transaction = oneTransactionWithId
 		given(transactionRepository.get(transaction.id!!)).willReturn(transaction)
-		given(transactionRepository.update(transaction)).willReturn(transaction)
 
 		// when
-		val actual = updateTransaction.update(transaction)
+		val actual = findTransaction.find(transaction.id!!, transaction.userId)
 
 		// then
 		assertEquals(transaction, actual)
 		then(transactionRepository).should().get(transaction.id!!)
-		then(transactionRepository).should().update(transaction)
 	}
 
 	@Test
-	fun testUpdateTransactionNotFound() {
+	fun testFindTransactionNotFound() {
 		// given
 		val transaction = oneTransactionWithId
 		given(transactionRepository.get(transaction.id!!)).willReturn(null)
 
 		// when
-		val exception = assertThrows(TransactionNotFound::class.java) {
-			updateTransaction.update(transaction)
-		}
+		val actual = findTransaction.find(transaction.id!!, transaction.userId)
 
 		// then
-		assertEquals(transaction.id!!, exception.message)
+		assertNull(actual)
 		then(transactionRepository).should().get(transaction.id!!)
-		then(transactionRepository).shouldHaveNoMoreInteractions()
 	}
 
 	@Test
-	fun testUpdateTransactionUserDoNotMatch() {
+	fun testFindTransactionWrongUser() {
 		// given
 		val transaction = oneTransactionWithId
 		val transactionReturned = oneTransactionWithId2
@@ -68,12 +64,25 @@ class UpdateTransactionTest {
 
 		// when
 		val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
-			updateTransaction.update(transaction)
+			findTransaction.find(transaction.id!!, transaction.userId)
 		}
 
 		// then
 		assertEquals(expected, exception.message)
 		then(transactionRepository).should().get(transaction.id!!)
-		then(transactionRepository).shouldHaveNoMoreInteractions()
+	}
+
+	@Test
+	fun testFindAllTransaction() {
+		// given
+		val transactions = twoTransactions
+		given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(transactions)
+
+		// when
+		val actual = findTransaction.findAllForUser(transactions[0].userId)
+
+		// then
+		assertEquals(transactions, actual)
+		then(transactionRepository).should().getAllForUser(transactions[0].userId)
 	}
 }

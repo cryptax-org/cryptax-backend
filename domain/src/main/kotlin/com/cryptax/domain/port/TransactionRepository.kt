@@ -9,5 +9,7 @@ interface TransactionRepository {
 
 	fun get(id: String): Transaction?
 
+	fun getAllForUser(userId: String): List<Transaction>
+
 	fun update(transaction: Transaction): Transaction
 }
