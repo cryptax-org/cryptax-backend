@@ -17,7 +17,7 @@ Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10+46, mixed mode)
 
 ### Run
 
-`java -jar application/build/libs/application-1.0.0-fat.jar`
+`build/cryptax-backend-x.x.x.jar`
 
 ### Run in debug mod
 

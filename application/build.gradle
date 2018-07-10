@@ -32,81 +32,19 @@ shadowJar {
 	manifest {
 		attributes 'Description': 'Cryptax backend fat jar'
 	}
-	//outputs = "$rootProject/build"
 }
 
-task copyJarToBin {
+task copyJarToRoot {
 	doLast {
-		copy {
-			def jarName = projectName + "-" + version + ".jar"
-			def jar = file("${buildDir}/lib/$jarName")
-			def output = "${rootDir}/build/"
-			println(jar)
-			println(output)
-			from file(jar)
-			into file(output)
-			println("Copy $jarName to " + output)
-		}
-	}
-}
-
-/*task copyJar(type: Copy) {
-
-	def jarName = projectName + "-" + version + ".jar"
-	def jar = file("${buildDir}/lib/$jarName")
-	def output = "${rootDir}/build/"
-	println(jar)
-	println(output)
-
-	from file(jar)
-	into file(output)
-	println("Copy $jarName to " + output)
-}*/
-
-/*task finalize << {
-	copyJar(null)
-	println('Copy final jar to ')
-}*/
-
-//build.finalizedBy(copyJarToRoot)
-
-/*task copyJar {
-	//doLast {
 		def jarName = projectName + "-" + version + ".jar"
-		def jar = file("${buildDir}/libs/$jarName")
-		def output = "${rootDir}/build/"
+		def outputDirectory = "${rootDir}/build/"
 
-		//from jar
-		//into output
-		println("Copy $jarName to " + output)
-	//}
-}*/
+		def currentJar = file("${buildDir}/libs/$jarName")
+		def outputJar = "$outputDirectory/$jarName"
 
-task hello  {
-	println "configuring task hello"
-	def jarName = projectName + "-" + version + ".jar"
-	def jar = file("${buildDir}/libs/$jarName")
-	def output = "${rootDir}/build/"
-
-	doLast {
-		derp()
-		println "hello there"
+		currentJar.renameTo(outputJar)
+		println("Move $jarName to $outputDirectory")
 	}
 }
 
-task derp {
-	println "configuring copyJarToBin"
-	doLast {
-		copy {
-			def jarName = projectName + "-" + version + ".jar"
-			def jar = file("${buildDir}/libs/$jarName")
-			def output = "${rootDir}/build/"
-
-			from jar
-			into output
-			println "running copyJarToBin"
-		}
-	}
-}
-
-build.finalizedBy(hello)
+build.finalizedBy(copyJarToRoot)
