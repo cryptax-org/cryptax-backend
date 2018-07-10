@@ -57,11 +57,13 @@ object Routes {
 			.failureHandler(failureHandler)
 
 		// Get token with user credentials
-		router.get("/token")
+		router.post("/token")
+			.handler(jsonContentTypeValidation)
+			.handler(bodyHandler)
 			.handler(loginValidation)
 			.handler { routingContext ->
-				val email = routingContext.request().getParam("email")
-				val password = routingContext.request().getParam("password").toCharArray()
+				val email = routingContext.bodyAsJson.getString("email")
+				val password = routingContext.bodyAsJson.getString("password").toCharArray()
 				val userWeb = userController.login(email, password)
 				val result = JsonObject().put("id", userWeb.id)
 				val token = jwtProvider.generateToken(result, jwtOptions)

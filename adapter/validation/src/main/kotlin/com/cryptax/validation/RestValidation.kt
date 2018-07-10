@@ -21,8 +21,7 @@ object RestValidation {
 
 	val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
-		.addQueryParam("email", ParameterType.EMAIL, true)
-		.addQueryParam("password", ParameterType.GENERIC_STRING, true)
+		.addCustomValidatorFunction(loginBodyValidation)
 
 	val getUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
@@ -44,6 +43,11 @@ private val userIdPathParamValidation = CustomValidator { routingContext ->
 	if (routingContext.user().principal().getString("id") != userId) {
 		throw ValidationException("User [$userId] can't be accessed with the given token", ValidationException.ErrorType.NO_MATCH)
 	}
+}
+
+private val loginBodyValidation = CustomValidator { routingContext ->
+	if (!routingContext.bodyAsJson.containsKey("email")) throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [email] missing")
+	if (!routingContext.bodyAsJson.containsKey("password")) throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [password] missing")
 }
 
 private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHandlerCustom(listOf("email", "password", "lastName", "firstName")) {
