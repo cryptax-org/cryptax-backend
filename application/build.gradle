@@ -27,5 +27,86 @@ dependencies {
 mainClassName = 'com.cryptax.app.RestApplication'
 
 shadowJar {
-	classifier = 'fat'
+	baseName = rootProject.name
+	classifier = null
+	manifest {
+		attributes 'Description': 'Cryptax backend fat jar'
+	}
+	//outputs = "$rootProject/build"
 }
+
+task copyJarToBin {
+	doLast {
+		copy {
+			def jarName = projectName + "-" + version + ".jar"
+			def jar = file("${buildDir}/lib/$jarName")
+			def output = "${rootDir}/build/"
+			println(jar)
+			println(output)
+			from file(jar)
+			into file(output)
+			println("Copy $jarName to " + output)
+		}
+	}
+}
+
+/*task copyJar(type: Copy) {
+
+	def jarName = projectName + "-" + version + ".jar"
+	def jar = file("${buildDir}/lib/$jarName")
+	def output = "${rootDir}/build/"
+	println(jar)
+	println(output)
+
+	from file(jar)
+	into file(output)
+	println("Copy $jarName to " + output)
+}*/
+
+/*task finalize << {
+	copyJar(null)
+	println('Copy final jar to ')
+}*/
+
+//build.finalizedBy(copyJarToRoot)
+
+/*task copyJar {
+	//doLast {
+		def jarName = projectName + "-" + version + ".jar"
+		def jar = file("${buildDir}/libs/$jarName")
+		def output = "${rootDir}/build/"
+
+		//from jar
+		//into output
+		println("Copy $jarName to " + output)
+	//}
+}*/
+
+task hello  {
+	println "configuring task hello"
+	def jarName = projectName + "-" + version + ".jar"
+	def jar = file("${buildDir}/libs/$jarName")
+	def output = "${rootDir}/build/"
+
+	doLast {
+		derp()
+		println "hello there"
+	}
+}
+
+task derp {
+	println "configuring copyJarToBin"
+	doLast {
+		copy {
+			def jarName = projectName + "-" + version + ".jar"
+			def jar = file("${buildDir}/libs/$jarName")
+			def output = "${rootDir}/build/"
+
+			from jar
+			into output
+			println "running copyJarToBin"
+		}
+	}
+}
+
+build.finalizedBy(hello)

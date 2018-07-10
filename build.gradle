@@ -60,6 +60,11 @@ subprojects {
 		testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
 	}
 
+	ext {
+		projectName = rootProject.name
+	}
+
+
 	test {
 		useJUnitPlatform()
 
@@ -105,6 +110,10 @@ apply plugin: 'jacoco'
 
 repositories {
 	jcenter()
+}
+
+ext {
+	projectName = rootProject.name
 }
 
 jar.enabled = false
