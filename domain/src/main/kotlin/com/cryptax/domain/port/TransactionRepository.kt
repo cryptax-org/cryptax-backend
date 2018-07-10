@@ -6,4 +6,8 @@ interface TransactionRepository {
 	fun add(transaction: Transaction): Transaction
 
 	fun add(transactions: List<Transaction>): List<Transaction>
+
+	fun get(id: String): Transaction?
+
+	fun update(transaction: Transaction): Transaction
 }

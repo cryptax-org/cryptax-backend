@@ -9,3 +9,7 @@ class UserAlreadyExistsException(email: String) : RuntimeException(email)
 class UserValidationException(message: String) : RuntimeException(message)
 
 class TransactionValidationException(message: String) : RuntimeException(message)
+
+class TransactionNotFound(message: String) : RuntimeException(message)
+
+class UserDoNotMatch(message: String) : RuntimeException(message)

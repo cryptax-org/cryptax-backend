@@ -27,3 +27,6 @@ fun validateAddTransactions(transactions: List<Transaction>) {
 	}
 }
 
+fun validateUpdateTransaction(transaction: Transaction) {
+	if (transaction.id == null) throw TransactionValidationException("Id can't be null")
+}

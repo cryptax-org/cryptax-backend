@@ -14,7 +14,7 @@ import java.time.format.DateTimeParseException
 object RestValidation {
 
 	val createUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerCreateUser()
-	val addTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerAddTransaction()
+	val transactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerTransaction()
 		.addCustomValidatorFunction(userIdPathParamValidation)
 
 	val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
@@ -25,7 +25,7 @@ object RestValidation {
 	val getUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
 		.create()
 		.addPathParam("userId", ParameterType.GENERIC_STRING)
-		.addCustomValidatorFunction { userIdPathParamValidation }
+		.addCustomValidatorFunction(userIdPathParamValidation)
 
 	val jsonContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
 		.addHeaderParamWithCustomTypeValidator("Content-Type", { value ->
@@ -54,7 +54,7 @@ private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHand
 	}
 }
 
-private class HTTPRequestValidationHandlerAddTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "amount", "currency1", "currency2")) {
+private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "amount", "currency1", "currency2")) {
 
 	override fun checkBodyFieldsValueType(body: JsonObject) {
 		val source = body.getValue("source")

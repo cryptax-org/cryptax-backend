@@ -3,9 +3,7 @@ package com.cryptax.usecase.validator
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
-import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.TransactionValidationException
-import com.cryptax.domain.exception.UserValidationException
 import com.cryptax.usecase.Utils.twoTransactions
 import com.cryptax.usecase.objectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -18,33 +16,8 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.time.ZonedDateTime
 import java.util.stream.Stream
 
-@DisplayName("Data validation")
-class ValidatorTest {
-
-	@Test
-	fun testValidateCreateUser() {
-		//given
-		val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee")
-
-		//when
-		validateCreateUser(user)
-
-		//then
-		// no failure
-	}
-
-
-	@ParameterizedTest
-	@MethodSource("userProvider")
-	fun testValidateCreateUserFail(user: User, errorMessage: String) {
-		//when
-		val exception = assertThrows(UserValidationException::class.java) {
-			validateCreateUser(user)
-		}
-
-		//then
-		assertEquals(errorMessage, exception.message)
-	}
+@DisplayName("Transaction data validation")
+class TransactionValidatorTest {
 
 	@Test
 	fun testValidateTransaction() {
@@ -101,18 +74,6 @@ class ValidatorTest {
 	}
 
 	companion object {
-
-		@JvmStatic
-		fun userProvider(): Stream<Arguments> {
-			return Stream.of(
-				Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee"), "Email should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", ""), "First name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe"), "Last name should not be blank")
-			)
-		}
 
 		@JvmStatic
 		fun transactionProvider(): Stream<Arguments> {

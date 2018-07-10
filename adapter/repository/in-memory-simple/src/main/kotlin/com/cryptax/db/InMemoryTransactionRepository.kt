@@ -18,4 +18,13 @@ class InMemoryTransactionRepository : TransactionRepository {
 		}
 		return transactions
 	}
+
+	override fun get(id: String): Transaction? {
+		return inMemoryDb[id]
+	}
+
+	override fun update(transaction: Transaction): Transaction {
+		inMemoryDb[transaction.id!!] = transaction
+		return transaction
+	}
 }

@@ -7,6 +7,7 @@ import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.transaction.AddTransaction
+import com.cryptax.usecase.transaction.UpdateTransaction
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
@@ -19,7 +20,7 @@ import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 import java.time.ZoneId
-import java.util.*
+import java.util.TimeZone
 
 object Config {
 
@@ -32,9 +33,10 @@ object Config {
 	private val findUser = FindUser(userRepository)
 	private val loginUser = LoginUser(userRepository, securePassword)
 	private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
+	private val updateTransaction = UpdateTransaction(transactionRepository)
 
 	val userController = UserController(createUser, findUser, loginUser)
-	val transactionController = TransactionController(addTransaction)
+	val transactionController = TransactionController(addTransaction, updateTransaction)
 
 	val objectMapper: ObjectMapper = ObjectMapper()
 		.registerModule(KotlinModule())

@@ -58,6 +58,20 @@ class TransactionWeb(
 		)
 	}
 
+	fun toTransaction(transactionId: String, userId: String): Transaction {
+		return Transaction(
+			id = transactionId,
+			userId = userId,
+			source = source,
+			date = date,
+			type = type,
+			price = price,
+			amount = amount,
+			currency1 = currency1,
+			currency2 = currency2
+		)
+	}
+
 	companion object {
 
 		fun toTransactionWeb(transaction: Transaction): TransactionWeb {
