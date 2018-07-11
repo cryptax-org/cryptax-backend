@@ -10,4 +10,8 @@ dependencies {
 		project(':domain'),
 		[group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: javaUuidGeneratorVersion],
 	)
+	testImplementation(
+		[group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+		[group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+	)
 }
