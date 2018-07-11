@@ -23,6 +23,10 @@ Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10+46, mixed mode)
 
 `java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar application/build/libs/application-1.0.0-fat.jar`
 
+### Run with Docker
+
+`docker-compose build && docker-compose up`
+
 ### Reports
 
 `./gradlew testReport jacocoRootReport`

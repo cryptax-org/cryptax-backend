@@ -8,3 +8,7 @@ max_line_length = 200
 charset = utf-8
 indent_style = tab
 indent_size = 4
+
+[{*.yml,Dockerfile}]
+indent_style = space
+indent_size = 2
