@@ -77,6 +77,10 @@ subprojects {
 		reports {
 			html.enabled = true
 		}
+
+		jacoco {
+			excludes += ["**/com.cryptax.app/**"]
+		}
 	}
 
 	compileKotlin {
@@ -94,14 +98,9 @@ subprojects {
 
 	jacocoTestReport {
 		reports {
-			xml.setEnabled(false)
+			xml.setEnabled(true)
 			csv.setEnabled(false)
-		}
-
-		afterEvaluate {
-			classDirectories = files(classDirectories.files.collect {
-				fileTree(dir: it, exclude: [])
-			})
+			html.setEnabled(true)
 		}
 	}
 }
@@ -127,9 +126,9 @@ task jacocoRootReport(type: JacocoReport) {
 	classDirectories = files(subprojects.sourceSets.main.output)
 	executionData = files(subprojects.jacocoTestReport.executionData)
 	reports {
-		html.enabled = true
 		xml.enabled = true
 		csv.enabled = false
+		html.enabled = true
 	}
 	onlyIf = {
 		true
@@ -137,6 +136,11 @@ task jacocoRootReport(type: JacocoReport) {
 	doFirst {
 		executionData = files(executionData.findAll {
 			it.exists()
+		})
+	}
+	afterEvaluate {
+		classDirectories = files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: ['**/com/cryptax/app/**','**/com/cryptax/config/**'])
 		})
 	}
 }
