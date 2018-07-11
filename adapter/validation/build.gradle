@@ -13,4 +13,7 @@ dependencies {
 		[group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
 		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
 	)
+	testImplementation(
+		[group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+	)
 }
