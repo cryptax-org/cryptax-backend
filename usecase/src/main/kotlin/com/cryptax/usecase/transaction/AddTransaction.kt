@@ -31,7 +31,7 @@ class AddTransaction(
 		return transactionRepository.add(transactionToSave)
 	}
 
-	fun add(transactions: List<Transaction>): List<Transaction> {
+	fun addMultiple(transactions: List<Transaction>): List<Transaction> {
 		validateAddTransactions(transactions)
 		userRepository.findById(transactions[0].userId) ?: throw UserNotFoundException(transactions[0].userId)
 

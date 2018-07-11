@@ -1,9 +1,6 @@
 apply plugin: 'java-library'
 
-ext {
-	moduleName = 'cryptax.usecase'
-	mockitoKotlinVersion = '2.0.0-RC1'
-}
+ext.moduleName = 'cryptax.usecase'
 
 dependencies {
 	implementation(

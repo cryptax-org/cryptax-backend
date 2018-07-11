@@ -5,8 +5,9 @@ import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
 import java.time.ZonedDateTime
+import java.util.Arrays
 
-class UserWeb(
+data class UserWeb(
 	val id: String? = null,
 	val email: String,
 	private val password: CharArray? = null,
@@ -22,6 +23,30 @@ class UserWeb(
 			firstName = firstName)
 	}
 
+	override fun equals(other: Any?): Boolean {
+		if (this === other) return true
+		if (javaClass != other?.javaClass) return false
+
+		other as UserWeb
+
+		if (id != other.id) return false
+		if (email != other.email) return false
+		if (!Arrays.equals(password, other.password)) return false
+		if (lastName != other.lastName) return false
+		if (firstName != other.firstName) return false
+
+		return true
+	}
+
+	override fun hashCode(): Int {
+		var result = id?.hashCode() ?: 0
+		result = 31 * result + email.hashCode()
+		result = 31 * result + (password?.let { Arrays.hashCode(it) } ?: 0)
+		result = 31 * result + lastName.hashCode()
+		result = 31 * result + firstName.hashCode()
+		return result
+	}
+
 	companion object {
 
 		fun toUserWeb(user: User): UserWeb {
@@ -33,7 +58,7 @@ class UserWeb(
 	}
 }
 
-class TransactionWeb(
+data class TransactionWeb(
 	val id: String? = null,
 	val source: Source,
 	val date: ZonedDateTime,

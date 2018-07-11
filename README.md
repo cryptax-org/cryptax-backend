@@ -17,11 +17,11 @@ Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10+46, mixed mode)
 
 ### Run
 
-`java -jar build/cryptax-backend-x.x.x.jar`
+`java -jar build/cryptax-backend-1.0.0.jar`
 
 ### Run in debug mod
 
-`java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar application/build/libs/application-1.0.0-fat.jar`
+`java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
 
 ### Run with Docker
 

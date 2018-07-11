@@ -86,7 +86,7 @@ class AddTransactionTest {
 		given(transactionRepository.add(any<List<Transaction>>())).willReturn(transactions)
 
 		// when
-		val actual = addTransaction.add(transactions)
+		val actual = addTransaction.addMultiple(transactions)
 
 		// then
 		assert(actual.size == 2)
@@ -102,7 +102,7 @@ class AddTransactionTest {
 
 		// when
 		val exception = assertThrows(UserNotFoundException::class.java) {
-			addTransaction.add(transactions)
+			addTransaction.addMultiple(transactions)
 		}
 
 		// then
