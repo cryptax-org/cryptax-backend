@@ -61,10 +61,9 @@ object Config {
 		issuer = config.jwt.issuer,
 		expiresInMinutes = config.jwt.expiresInMinutes)
 
-	private fun getProfile(): String {
+	fun getProfile(): String {
 		// TODO find a better way to handle profiles
 		val profile = System.getenv("PROFILE")
-		println("Profile from env: $profile")
 		return profile ?: return "dev"
 	}
 }

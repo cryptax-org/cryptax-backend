@@ -1,5 +1,6 @@
 package com.cryptax.app
 
+import com.cryptax.app.routes.Routes
 import com.cryptax.config.Config
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Launcher
@@ -28,7 +29,7 @@ class RestApplication : AbstractVerticle() {
 			if (it.failed()) {
 				log.error("Fail to start the server")
 			} else {
-				log.info("Server started on port $port")
+				log.info("Server started on port $port with profile ${Config.getProfile()}")
 			}
 		}
 	}
