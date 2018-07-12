@@ -32,8 +32,8 @@ object Routes {
 
 	private val log = LoggerFactory.getLogger(Routes::class.java)
 
-	private val userController = Config.userController
-	private val transactionController = Config.transactionController
+	private val userController = Config.ServiceConfig.userController
+	private val transactionController = Config.ServiceConfig.transactionController
 	private val jwtAuthOptions = Config.jwtAuthOptions
 	private val jwtOptions = Config.jwtOptions
 
