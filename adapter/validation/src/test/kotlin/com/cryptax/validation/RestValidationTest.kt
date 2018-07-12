@@ -1,7 +1,9 @@
 package com.cryptax.validation
 
 import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
+import com.cryptax.validation.RestValidation.loginValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
@@ -17,6 +19,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+/**
+ * ☢☢ Those are not very reliable tests. This should be updated to assert the right failure
+ */
 @DisplayName("Request validation validation")
 @ExtendWith(VertxExtension::class)
 class RestValidationTest {
@@ -24,7 +29,7 @@ class RestValidationTest {
 	private val host = "localhost"
 	private val port = 8282
 
-	@DisplayName("Check create user validation")
+	@DisplayName("😀 Check create user validation")
 	@Test
 	fun testCreateUserValidation(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -56,7 +61,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check create user validation, body null")
+	@DisplayName("☹ Check create user validation, body null")
 	@Test
 	fun testCreateUserValidationBodyNull(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -82,7 +87,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check create user validation, empty body")
+	@DisplayName("☹ Check create user validation, empty body")
 	@Test
 	fun testCreateUserValidationBodyEmpty(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -114,7 +119,7 @@ class RestValidationTest {
 
 	}
 
-	@DisplayName("Check create user validation, empty json body")
+	@DisplayName("☹ Check create user validation, empty json body")
 	@Test
 	fun testCreateUserValidationBodyEmptyJson(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -145,7 +150,7 @@ class RestValidationTest {
 
 	}
 
-	@DisplayName("Check create user validation, missing password")
+	@DisplayName("☹ Check create user validation, missing password")
 	@Test
 	fun testCreateUserValidationMissingPassword(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -176,7 +181,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check create user validation, wrong password type")
+	@DisplayName("☹ Check create user validation, wrong password type")
 	@Test
 	fun testCreateUserValidationWrongPasswordType(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -207,7 +212,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check mandatory application/json")
+	@DisplayName("😀 Check mandatory application/json")
 	@Test
 	fun testContentType(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -237,7 +242,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check mandatory application/json wrong type")
+	@DisplayName("☹ Check mandatory application/json wrong type")
 	@Test
 	fun testContentTypeFail(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -267,7 +272,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check transaction body validation")
+	@DisplayName("😀 Check transaction body validation")
 	@Test
 	fun testTransactionBodyValidation(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -308,7 +313,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check transaction body validation wrong source")
+	@DisplayName("☹ Check transaction body validation wrong source")
 	@Test
 	fun testTransactionBodyValidationWrongSource(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -349,7 +354,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check transaction body validation wrong date format")
+	@DisplayName("☹ Check transaction body validation wrong date format")
 	@Test
 	fun testTransactionBodyValidationWrongDateFormat(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -390,7 +395,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check transaction body validation wrong type")
+	@DisplayName("☹ Check transaction body validation wrong type")
 	@Test
 	fun testTransactionBodyValidationWrongType(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -431,7 +436,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check transaction body validation wrong type 2")
+	@DisplayName("☹ Check transaction body validation wrong type 2")
 	@Test
 	fun testTransactionBodyValidationWrongType2(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -460,6 +465,169 @@ class RestValidationTest {
 					// when
 					val client = vertx.createHttpClient()
 					client.getNow(port, host, "/users/$userId/transactions") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("😀 Check login validation")
+	@Test
+	fun testUserLoginValidation(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val loginUser = JsonObject()
+			.put("email", "email@email.com")
+			.put("password", "eqweqe")
+		val router = Router.router(vertx)
+		router.get("/")
+			.handler {
+				it.body = loginUser.toBuffer()
+				it.next()
+			}
+			.handler(loginValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/") { resp ->
+						// then
+						testContext.verify {
+							assertNotEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("☹ Check login validation email missing")
+	@Test
+	fun testUserLoginValidationEmailMissing(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val loginUser = JsonObject()
+			.put("password", "eqweqe")
+		val router = Router.router(vertx)
+		router.get("/")
+			.handler {
+				it.body = loginUser.toBuffer()
+				it.next()
+			}
+			.handler(loginValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("☹ Check login validation password missing")
+	@Test
+	fun testUserLoginValidationPasswordMissing(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val loginUser = JsonObject().put("email", "email@email.com")
+		val router = Router.router(vertx)
+		router.get("/")
+			.handler {
+				it.body = loginUser.toBuffer()
+				it.next()
+			}
+			.handler(loginValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("😀 Get user validation")
+	@Test
+	fun testGetUserValidation(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val router = Router.router(vertx)
+		router.get("/user/:userId")
+			.handler {
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(getUserValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/user/$userId") { resp ->
+						// then
+						testContext.verify {
+							assertNotEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("☹ Get user validation")
+	@Test
+	fun testGetUserValidationWrongUser(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val router = Router.router(vertx)
+		router.get("/user/:userId")
+			.handler {
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(getUserValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/user/otherUser") { resp ->
 						// then
 						testContext.verify {
 							assertEquals(500, resp.statusCode())
