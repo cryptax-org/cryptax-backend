@@ -30,7 +30,7 @@ object RestValidation {
 
 	val jsonContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
 		.addHeaderParamWithCustomTypeValidator("Content-Type", { value ->
-			if (value == null || value != "application/json") {
+			if (value != "application/json") {
 				throw ValidationException.ValidationExceptionFactory.generateWrongContentTypeExpected(value, "application/json")
 			}
 			RequestParameterImpl("Content-Type", value)
@@ -63,8 +63,8 @@ private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHand
 private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "amount", "currency1", "currency2")) {
 
 	override fun checkBodyFieldsValueType(body: JsonObject) {
-		val source = body.getValue("source")
-		if (source !is String || source != "MANUAL") {
+		val source = body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
+		if (source != "MANUAL") {
 			throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be 'MANUAL'")
 		}
 		try {
@@ -74,8 +74,8 @@ private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidati
 			throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [date] has a wrong format. It should be similar to 2011-12-03T10:15:30+01:00[Europe/Paris]")
 		}
 
-		val type = body.getValue("type")
-		if (type !is String && (type != "SELL" || type != "BUY")) {
+		val type = body.getValue("type") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be a String")
+		if (type != "SELL" && type != "BUY") {
 			throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be 'SELL' or 'BUY'")
 		}
 	}

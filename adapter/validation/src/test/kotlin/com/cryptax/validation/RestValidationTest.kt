@@ -2,9 +2,11 @@ package com.cryptax.validation
 
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
+import com.cryptax.validation.RestValidation.transactionBodyValidation
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
+import io.vertx.ext.auth.jwt.impl.JWTUser
 import io.vertx.ext.web.Router
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
@@ -14,7 +16,6 @@ import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-
 
 @DisplayName("Request validation validation")
 @ExtendWith(VertxExtension::class)
@@ -236,7 +237,7 @@ class RestValidationTest {
 			}
 	}
 
-	@DisplayName("Check mandatory application/json fail")
+	@DisplayName("Check mandatory application/json wrong type")
 	@Test
 	fun testContentTypeFail(vertx: Vertx, testContext: VertxTestContext) {
 		// given
@@ -254,6 +255,211 @@ class RestValidationTest {
 				if (res.succeeded()) {
 					// when
 					vertx.createHttpClient().getNow(port, host, "/") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("Check transaction body validation")
+	@Test
+	fun testTransactionBodyValidation(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val transaction = JsonObject()
+			.put("source", "MANUAL")
+			.put("date", "2011-12-03T10:15:30Z")
+			.put("type", "BUY")
+			.put("price", 10.0)
+			.put("amount", 5.0)
+			.put("currency1", "BTC")
+			.put("currency2", "ETH")
+		val router = Router.router(vertx)
+		router.get("/users/:userId/transactions")
+			.handler {
+				it.body = transaction.toBuffer()
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(transactionBodyValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/users/$userId/transactions") { resp ->
+						// then
+						testContext.verify {
+							assertNotEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("Check transaction body validation wrong source")
+	@Test
+	fun testTransactionBodyValidationWrongSource(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val transaction = JsonObject()
+			.put("source", "MANUAL2")
+			.put("date", "2011-12-03T10:15:30Z")
+			.put("type", "BUY")
+			.put("price", 10.0)
+			.put("amount", 5.0)
+			.put("currency1", "BTC")
+			.put("currency2", "ETH")
+		val router = Router.router(vertx)
+		router.get("/users/:userId/transactions")
+			.handler {
+				it.body = transaction.toBuffer()
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(transactionBodyValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/users/$userId/transactions") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("Check transaction body validation wrong date format")
+	@Test
+	fun testTransactionBodyValidationWrongDateFormat(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val transaction = JsonObject()
+			.put("source", "MANUAL")
+			.put("date", "2011-12-03")
+			.put("type", "BUY")
+			.put("price", 10.0)
+			.put("amount", 5.0)
+			.put("currency1", "BTC")
+			.put("currency2", "ETH")
+		val router = Router.router(vertx)
+		router.get("/users/:userId/transactions")
+			.handler {
+				it.body = transaction.toBuffer()
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(transactionBodyValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/users/$userId/transactions") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("Check transaction body validation wrong type")
+	@Test
+	fun testTransactionBodyValidationWrongType(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val transaction = JsonObject()
+			.put("source", "MANUAL")
+			.put("date", "2011-12-03T10:15:30Z")
+			.put("type", "BUYe")
+			.put("price", 10.0)
+			.put("amount", 5.0)
+			.put("currency1", "BTC")
+			.put("currency2", "ETH")
+		val router = Router.router(vertx)
+		router.get("/users/:userId/transactions")
+			.handler {
+				it.body = transaction.toBuffer()
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(transactionBodyValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/users/$userId/transactions") { resp ->
+						// then
+						testContext.verify {
+							assertEquals(500, resp.statusCode())
+							testContext.completeNow()
+						}
+					}
+				} else {
+					fail("The server did not start")
+				}
+			}
+	}
+
+	@DisplayName("Check transaction body validation wrong type 2")
+	@Test
+	fun testTransactionBodyValidationWrongType2(vertx: Vertx, testContext: VertxTestContext) {
+		// given
+		val userId = "randomId"
+		val transaction = JsonObject()
+			.put("source", "MANUAL")
+			.put("date", "2011-12-03T10:15:30Z")
+			.put("type", 2)
+			.put("price", 10.0)
+			.put("amount", 5.0)
+			.put("currency1", "BTC")
+			.put("currency2", "ETH")
+		val router = Router.router(vertx)
+		router.get("/users/:userId/transactions")
+			.handler {
+				it.body = transaction.toBuffer()
+				it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+				it.next()
+			}
+			.handler(transactionBodyValidation)
+
+		vertx.createHttpServer()
+			.requestHandler { router.accept(it) }
+			.listen(port) { res ->
+				if (res.succeeded()) {
+					// when
+					val client = vertx.createHttpClient()
+					client.getNow(port, host, "/users/$userId/transactions") { resp ->
 						// then
 						testContext.verify {
 							assertEquals(500, resp.statusCode())

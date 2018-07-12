@@ -3,6 +3,7 @@ package com.cryptax.usecase.validator
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserValidationException
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -34,7 +35,7 @@ class UserValidatorTest {
 		}
 
 		//then
-		Assertions.assertEquals(errorMessage, exception.message)
+		assertEquals(errorMessage, exception.message)
 	}
 
 	companion object {
