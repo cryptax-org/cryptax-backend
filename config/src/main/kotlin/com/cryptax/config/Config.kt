@@ -51,17 +51,22 @@ object Config {
 		.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
 		.setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
-	val config: ConfigDto by lazy {
-		ObjectMapper(YAMLFactory())
-			.registerModule(KotlinModule())
-			.readValue(this.javaClass.classLoader.getResourceAsStream("config-dev.yml"), ConfigDto::class.java)
-	}
+	val config: ConfigDto = ObjectMapper(YAMLFactory())
+		.registerModule(KotlinModule())
+		.readValue(this.javaClass.classLoader.getResourceAsStream("config-" + getProfile() + ".yml"), ConfigDto::class.java)
 
 	val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = config.jwt.keyStorePath, password = config.jwt.password))
 	val jwtOptions = JWTOptions(
 		algorithm = config.jwt.algorithm,
 		issuer = config.jwt.issuer,
 		expiresInMinutes = config.jwt.expiresInMinutes)
+
+	private fun getProfile(): String {
+		// TODO find a better way to handle profiles
+		val profile = System.getenv("PROFILE")
+		println("Profile from env: $profile")
+		return profile ?: return "dev"
+	}
 }
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)
