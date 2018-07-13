@@ -147,7 +147,3 @@ task jacocoRootReport(type: JacocoReport) {
         })
     }
 }
-
-codeCoverageReport.dependsOn {
-    subprojects*.test
-}
