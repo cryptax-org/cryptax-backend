@@ -61,7 +61,7 @@ class TokenRoutesTest {
                             testContext.completeNow()
                         }
                     } else {
-                        testContext.failNow(asyncResult.cause())
+                        testContext.failNow(ar1.cause())
                     }
                 }
             } else {
@@ -94,7 +94,7 @@ class TokenRoutesTest {
                             testContext.completeNow()
                         }
                     } else {
-                        testContext.failNow(asyncResult.cause())
+                        testContext.failNow(ar1.cause())
                     }
                 }
             } else {
