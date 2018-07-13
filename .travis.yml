@@ -29,3 +29,5 @@ script:
   - ./gradlew jacocoRootReport
 after_success:
   - bash <(curl -s https://codecov.io/bash) -t 61fe5130-3634-42c9-9e76-db79a3617daf
+after_failure:
+  - bash <(curl -s https://codecov.io/bash) -t 61fe5130-3634-42c9-9e76-db79a3617daf
