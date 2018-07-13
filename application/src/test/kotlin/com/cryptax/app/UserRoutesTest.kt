@@ -23,7 +23,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 @DisplayName("user routes integration tests")
 class UserRoutesTest {
 
-    private val port = 8080
+    private val port = 8282
     private val domain = "localhost"
     private lateinit var vertx: Vertx
 

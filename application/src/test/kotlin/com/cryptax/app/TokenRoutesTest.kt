@@ -20,7 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 @DisplayName("Token routes integration tests")
 class TokenRoutesTest {
 
-    private val port = 8080
+    private val port = 8282
     private val domain = "localhost"
     private lateinit var vertx: Vertx
 
