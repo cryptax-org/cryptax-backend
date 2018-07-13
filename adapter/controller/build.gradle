@@ -3,13 +3,13 @@ apply plugin: 'java-library'
 ext.moduleName = 'cryptax.controller'
 
 dependencies {
-	implementation(
-		project(':usecase'),
-		project(':domain'),
-	)
-	testImplementation(
-		[group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
-		[group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
-		[group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
-	)
+    implementation(
+        project(':usecase'),
+        project(':domain'),
+    )
+    testImplementation(
+        [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+        [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+        [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
+    )
 }

@@ -7,10 +7,10 @@ import com.cryptax.domain.port.UserRepository
 
 class LoginUser(private val userRepository: UserRepository, private val securePassword: SecurePassword) {
 
-	fun login(email: String, password: CharArray): User {
-		val user = userRepository.findByEmail(email) ?: throw LoginException(email, "User not found")
-		if (!securePassword.matchPassword(password, user.password))
-			throw LoginException(email, "Password do not match")
-		return user
-	}
+    fun login(email: String, password: CharArray): User {
+        val user = userRepository.findByEmail(email) ?: throw LoginException(email, "User not found")
+        if (!securePassword.matchPassword(password, user.password))
+            throw LoginException(email, "Password do not match")
+        return user
+    }
 }

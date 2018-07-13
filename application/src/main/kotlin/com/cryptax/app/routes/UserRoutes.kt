@@ -15,52 +15,52 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 
 fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
-	val userController = config.userController()
+    val userController = config.userController()
 
-	// Create user
-	router.post("/users")
-		.handler(jsonContentTypeValidation)
-		.handler(bodyHandler)
-		.handler(createUserValidation)
-		.handler { routingContext ->
-			val userWeb = routingContext.body.toJsonObject().mapTo(UserWeb::class.java)
-			val result = JsonObject.mapFrom(userController.createUser(userWeb))
-			sendSuccess(result, routingContext.response())
-		}
-		.failureHandler(failureHandler)
+    // Create user
+    router.post("/users")
+        .handler(jsonContentTypeValidation)
+        .handler(bodyHandler)
+        .handler(createUserValidation)
+        .handler { routingContext ->
+            val userWeb = routingContext.body.toJsonObject().mapTo(UserWeb::class.java)
+            val result = JsonObject.mapFrom(userController.createUser(userWeb))
+            sendSuccess(result, routingContext.response())
+        }
+        .failureHandler(failureHandler)
 
-	// Get user with user id and JWT token
-	router.get("/users/:userId")
-		.handler(jwtAuthHandler)
-		.handler(getUserValidation)
-		.handler { routingContext ->
-			val userId = routingContext.request().getParam("userId")
-			val userWeb = userController.findUser(userId)
-			if (userWeb != null) {
-				val result = JsonObject.mapFrom(userWeb)
-				sendSuccess(result, routingContext.response())
-			} else {
-				sendError(404, routingContext.response())
-			}
-		}
-		.failureHandler(failureHandler)
+    // Get user with user id and JWT token
+    router.get("/users/:userId")
+        .handler(jwtAuthHandler)
+        .handler(getUserValidation)
+        .handler { routingContext ->
+            val userId = routingContext.request().getParam("userId")
+            val userWeb = userController.findUser(userId)
+            if (userWeb != null) {
+                val result = JsonObject.mapFrom(userWeb)
+                sendSuccess(result, routingContext.response())
+            } else {
+                sendError(404, routingContext.response())
+            }
+        }
+        .failureHandler(failureHandler)
 
-	// Get all users with JWT token
-	router.get("/users")
-		.handler(jwtAuthHandler)
-		.handler { routingContext ->
-			val result = userController.findAllUsers()
-				.map { JsonObject.mapFrom(it) }
-				.fold(mutableListOf<JsonObject>()) { accumulator, item ->
-					accumulator.add(item)
-					accumulator
-				}
-				.fold(JsonArray()) { accumulator, item ->
-					accumulator.add(item)
-					accumulator
-				}
-			sendSuccess(result, routingContext.response())
-		}
-		.failureHandler(failureHandler)
+    // Get all users with JWT token
+    router.get("/users")
+        .handler(jwtAuthHandler)
+        .handler { routingContext ->
+            val result = userController.findAllUsers()
+                .map { JsonObject.mapFrom(it) }
+                .fold(mutableListOf<JsonObject>()) { accumulator, item ->
+                    accumulator.add(item)
+                    accumulator
+                }
+                .fold(JsonArray()) { accumulator, item ->
+                    accumulator.add(item)
+                    accumulator
+                }
+            sendSuccess(result, routingContext.response())
+        }
+        .failureHandler(failureHandler)
 }
 

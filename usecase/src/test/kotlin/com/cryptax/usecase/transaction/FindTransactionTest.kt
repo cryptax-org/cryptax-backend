@@ -21,68 +21,68 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class FindTransactionTest {
 
-	@Mock
-	lateinit var transactionRepository: TransactionRepository
-	@InjectMocks
-	lateinit var findTransaction: FindTransaction
+    @Mock
+    lateinit var transactionRepository: TransactionRepository
+    @InjectMocks
+    lateinit var findTransaction: FindTransaction
 
-	@Test
-	fun testFindTransaction() {
-		// given
-		val transaction = oneTransactionWithId
-		given(transactionRepository.get(transaction.id!!)).willReturn(transaction)
+    @Test
+    fun testFindTransaction() {
+        // given
+        val transaction = oneTransactionWithId
+        given(transactionRepository.get(transaction.id!!)).willReturn(transaction)
 
-		// when
-		val actual = findTransaction.find(transaction.id!!, transaction.userId)
+        // when
+        val actual = findTransaction.find(transaction.id!!, transaction.userId)
 
-		// then
-		assertEquals(transaction, actual)
-		then(transactionRepository).should().get(transaction.id!!)
-	}
+        // then
+        assertEquals(transaction, actual)
+        then(transactionRepository).should().get(transaction.id!!)
+    }
 
-	@Test
-	fun testFindTransactionNotFound() {
-		// given
-		val transaction = oneTransactionWithId
-		given(transactionRepository.get(transaction.id!!)).willReturn(null)
+    @Test
+    fun testFindTransactionNotFound() {
+        // given
+        val transaction = oneTransactionWithId
+        given(transactionRepository.get(transaction.id!!)).willReturn(null)
 
-		// when
-		val actual = findTransaction.find(transaction.id!!, transaction.userId)
+        // when
+        val actual = findTransaction.find(transaction.id!!, transaction.userId)
 
-		// then
-		assertNull(actual)
-		then(transactionRepository).should().get(transaction.id!!)
-	}
+        // then
+        assertNull(actual)
+        then(transactionRepository).should().get(transaction.id!!)
+    }
 
-	@Test
-	fun testFindTransactionWrongUser() {
-		// given
-		val transaction = oneTransactionWithId
-		val transactionReturned = oneTransactionWithId2
-		val expected = "User [${transaction.userId}] tried to update [${transaction.id}], but that transaction is owned by [${transactionReturned.userId}]"
-		given(transactionRepository.get(transaction.id!!)).willReturn(transactionReturned)
+    @Test
+    fun testFindTransactionWrongUser() {
+        // given
+        val transaction = oneTransactionWithId
+        val transactionReturned = oneTransactionWithId2
+        val expected = "User [${transaction.userId}] tried to update [${transaction.id}], but that transaction is owned by [${transactionReturned.userId}]"
+        given(transactionRepository.get(transaction.id!!)).willReturn(transactionReturned)
 
-		// when
-		val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
-			findTransaction.find(transaction.id!!, transaction.userId)
-		}
+        // when
+        val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
+            findTransaction.find(transaction.id!!, transaction.userId)
+        }
 
-		// then
-		assertEquals(expected, exception.message)
-		then(transactionRepository).should().get(transaction.id!!)
-	}
+        // then
+        assertEquals(expected, exception.message)
+        then(transactionRepository).should().get(transaction.id!!)
+    }
 
-	@Test
-	fun testFindAllTransaction() {
-		// given
-		val transactions = twoTransactions
-		given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(transactions)
+    @Test
+    fun testFindAllTransaction() {
+        // given
+        val transactions = twoTransactions
+        given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(transactions)
 
-		// when
-		val actual = findTransaction.findAllForUser(transactions[0].userId)
+        // when
+        val actual = findTransaction.findAllForUser(transactions[0].userId)
 
-		// then
-		assertEquals(transactions, actual)
-		then(transactionRepository).should().getAllForUser(transactions[0].userId)
-	}
+        // then
+        assertEquals(transactions, actual)
+        then(transactionRepository).should().getAllForUser(transactions[0].userId)
+    }
 }

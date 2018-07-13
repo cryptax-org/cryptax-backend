@@ -1,13 +1,13 @@
 apply plugin: 'java-library'
 
 ext {
-	moduleName = 'cryptax.security'
-	commonsCodecVersion = '1.11'
+    moduleName = 'cryptax.security'
+    commonsCodecVersion = '1.11'
 }
 
 dependencies {
-	implementation(
-		project(':domain'),
-		[group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion],
-	)
+    implementation(
+        project(':domain'),
+        [group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion],
+    )
 }

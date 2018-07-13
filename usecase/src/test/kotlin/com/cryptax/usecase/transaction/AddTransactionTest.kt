@@ -28,88 +28,88 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class AddTransactionTest {
 
-	@Mock
-	lateinit var userRepository: UserRepository
-	@Mock
-	lateinit var transactionRepository: TransactionRepository
-	@Mock
-	lateinit var idGenerator: IdGenerator
-	@InjectMocks
-	lateinit var addTransaction: AddTransaction
+    @Mock
+    lateinit var userRepository: UserRepository
+    @Mock
+    lateinit var transactionRepository: TransactionRepository
+    @Mock
+    lateinit var idGenerator: IdGenerator
+    @InjectMocks
+    lateinit var addTransaction: AddTransaction
 
-	private val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John")
-	private val transaction = oneTransaction
-	private val expected = oneTransactionExpected
-	private val transactions = twoTransactions
-	private val transactionsExcepted = twoTransactionExpected
+    private val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John")
+    private val transaction = oneTransaction
+    private val expected = oneTransactionExpected
+    private val transactions = twoTransactions
+    private val transactionsExcepted = twoTransactionExpected
 
-	@Test
-	fun testAdd() {
-		// given
-		given(idGenerator.generate()).willReturn(id)
-		given(userRepository.findById(transaction.userId)).willReturn(user)
-		given(transactionRepository.add(any<Transaction>())).willReturn(expected)
+    @Test
+    fun testAdd() {
+        // given
+        given(idGenerator.generate()).willReturn(id)
+        given(userRepository.findById(transaction.userId)).willReturn(user)
+        given(transactionRepository.add(any<Transaction>())).willReturn(expected)
 
-		// when
-		val actual = addTransaction.add(transaction)
+        // when
+        val actual = addTransaction.add(transaction)
 
-		// then
-		assertEquals(expected, actual)
-		then(userRepository).should().findById(transaction.userId)
-		then(idGenerator).should().generate()
-		then(transactionRepository).should().add(expected)
-	}
+        // then
+        assertEquals(expected, actual)
+        then(userRepository).should().findById(transaction.userId)
+        then(idGenerator).should().generate()
+        then(transactionRepository).should().add(expected)
+    }
 
-	@Test
-	fun testAddUserNotFound() {
-		// given
-		given(userRepository.findById(transaction.userId)).willReturn(null)
+    @Test
+    fun testAddUserNotFound() {
+        // given
+        given(userRepository.findById(transaction.userId)).willReturn(null)
 
-		// when
-		val exception = assertThrows(UserNotFoundException::class.java) {
-			addTransaction.add(transaction)
-		}
+        // when
+        val exception = assertThrows(UserNotFoundException::class.java) {
+            addTransaction.add(transaction)
+        }
 
-		// then
-		assertEquals(transaction.userId, exception.message)
-		then(userRepository).should().findById(transaction.userId)
-		then(userRepository).shouldHaveNoMoreInteractions()
-		then(idGenerator).shouldHaveZeroInteractions()
-		then(transactionRepository).shouldHaveZeroInteractions()
-	}
+        // then
+        assertEquals(transaction.userId, exception.message)
+        then(userRepository).should().findById(transaction.userId)
+        then(userRepository).shouldHaveNoMoreInteractions()
+        then(idGenerator).shouldHaveZeroInteractions()
+        then(transactionRepository).shouldHaveZeroInteractions()
+    }
 
-	@Test
-	fun testAddSeveral() {
-		// given
-		given(idGenerator.generate()).willReturn(id)
-		given(userRepository.findById(transaction.userId)).willReturn(user)
-		given(transactionRepository.add(any<List<Transaction>>())).willReturn(transactions)
+    @Test
+    fun testAddSeveral() {
+        // given
+        given(idGenerator.generate()).willReturn(id)
+        given(userRepository.findById(transaction.userId)).willReturn(user)
+        given(transactionRepository.add(any<List<Transaction>>())).willReturn(transactions)
 
-		// when
-		val actual = addTransaction.addMultiple(transactions)
+        // when
+        val actual = addTransaction.addMultiple(transactions)
 
-		// then
-		assert(actual.size == 2)
-		then(userRepository).should().findById(transaction.userId)
-		then(idGenerator).should(times(transactions.size)).generate()
-		then(transactionRepository).should().add(transactionsExcepted)
-	}
+        // then
+        assert(actual.size == 2)
+        then(userRepository).should().findById(transaction.userId)
+        then(idGenerator).should(times(transactions.size)).generate()
+        then(transactionRepository).should().add(transactionsExcepted)
+    }
 
-	@Test
-	fun testAddSeveralUserNotFound() {
-		// given
-		given(userRepository.findById(transaction.userId)).willReturn(null)
+    @Test
+    fun testAddSeveralUserNotFound() {
+        // given
+        given(userRepository.findById(transaction.userId)).willReturn(null)
 
-		// when
-		val exception = assertThrows(UserNotFoundException::class.java) {
-			addTransaction.addMultiple(transactions)
-		}
+        // when
+        val exception = assertThrows(UserNotFoundException::class.java) {
+            addTransaction.addMultiple(transactions)
+        }
 
-		// then
-		assertEquals(transactions[0].userId, exception.message)
-		then(userRepository).should().findById(transaction.userId)
-		then(userRepository).shouldHaveNoMoreInteractions()
-		then(idGenerator).shouldHaveZeroInteractions()
-		then(transactionRepository).shouldHaveZeroInteractions()
-	}
+        // then
+        assertEquals(transactions[0].userId, exception.message)
+        then(userRepository).should().findById(transaction.userId)
+        then(userRepository).shouldHaveNoMoreInteractions()
+        then(idGenerator).shouldHaveZeroInteractions()
+        then(transactionRepository).shouldHaveZeroInteractions()
+    }
 }

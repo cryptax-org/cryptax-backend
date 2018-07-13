@@ -3,18 +3,18 @@ apply plugin: 'java-library'
 ext.moduleName = 'cryptax.config'
 
 dependencies {
-	implementation(
-		project(':usecase'),
-		project(':domain'),
-		project(':in-memory-db-simple'),
-		project(':id-generator'),
-		project(':security'),
-		project(':controller'),
-		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion]
-	)
+    implementation(
+        project(':usecase'),
+        project(':domain'),
+        project(':in-memory-db-simple'),
+        project(':id-generator'),
+        project(':security'),
+        project(':controller'),
+        [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion]
+    )
 }

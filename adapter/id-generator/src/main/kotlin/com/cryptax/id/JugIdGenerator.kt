@@ -7,11 +7,11 @@ import com.fasterxml.uuid.NoArgGenerator
 
 class JugIdGenerator : IdGenerator {
 
-	override fun generate(): String {
-		return generator().generate().toString().replace("-".toRegex(), "")
-	}
+    override fun generate(): String {
+        return generator().generate().toString().replace("-".toRegex(), "")
+    }
 
-	private fun generator(): NoArgGenerator {
-		return Generators.timeBasedGenerator(EthernetAddress.fromInterface())
-	}
+    private fun generator(): NoArgGenerator {
+        return Generators.timeBasedGenerator(EthernetAddress.fromInterface())
+    }
 }

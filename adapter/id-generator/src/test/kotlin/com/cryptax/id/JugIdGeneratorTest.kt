@@ -11,19 +11,19 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class JugIdGeneratorTest {
 
-	private val jugIdGenerator = JugIdGenerator()
+    private val jugIdGenerator = JugIdGenerator()
 
-	@TestFactory
-	fun testGenerateId(): List<DynamicTest> {
-		return IntRange(0, 50).map {
-			DynamicTest.dynamicTest("Test generate uuid") {
-				// when
-				val actual = jugIdGenerator.generate()
+    @TestFactory
+    fun testGenerateId(): List<DynamicTest> {
+        return IntRange(0, 50).map {
+            DynamicTest.dynamicTest("Test generate uuid") {
+                // when
+                val actual = jugIdGenerator.generate()
 
-				// then
-				assertNotNull(actual)
-				assert(!actual.contains("-"))
-			}
-		}
-	}
+                // then
+                assertNotNull(actual)
+                assert(!actual.contains("-"))
+            }
+        }
+    }
 }

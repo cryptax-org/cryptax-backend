@@ -13,49 +13,47 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.LoggerHandler
 
 val bodyHandler: BodyHandler = BodyHandler.create()
-/*val userController = config.userController
-val jwtOptions = Config.jwtOptions*/
 
 object Routes {
 
-	private val log = LoggerFactory.getLogger(Routes::class.java)
+    private val log = LoggerFactory.getLogger(Routes::class.java)
 
-	fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
-		val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
-		val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
+    fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
+        val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
+        val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
 
-		router.route().handler(LoggerHandler.create())
-		handleUserRoutes(config, router, jwtAuthHandler)
-		handleTokenRoutes(config, router, jwtProvider)
-		handleTransactionRoutes(config, router, jwtAuthHandler)
+        router.route().handler(LoggerHandler.create())
+        handleUserRoutes(config, router, jwtAuthHandler)
+        handleTokenRoutes(config, router, jwtProvider)
+        handleTransactionRoutes(config, router, jwtAuthHandler)
 
-		// Exception handler
-		router.exceptionHandler { throwable ->
-			log.error("Unrecoverable exception while processing a request", throwable)
-		}
-	}
+        // Exception handler
+        router.exceptionHandler { throwable ->
+            log.error("Unrecoverable exception while processing a request", throwable)
+        }
+    }
 
-	fun sendSuccess(body: JsonObject, response: HttpServerResponse) {
-		response
-			.addContentTypeJson()
-			.end(body.encodePrettily())
-	}
+    fun sendSuccess(body: JsonObject, response: HttpServerResponse) {
+        response
+            .addContentTypeJson()
+            .end(body.encodePrettily())
+    }
 
-	fun sendSuccess(body: JsonArray, response: HttpServerResponse) {
-		response
-			.addContentTypeJson()
-			.end(body.encodePrettily())
-	}
+    fun sendSuccess(body: JsonArray, response: HttpServerResponse) {
+        response
+            .addContentTypeJson()
+            .end(body.encodePrettily())
+    }
 
-	fun sendError(statusCode: Int, response: HttpServerResponse) {
-		response
-			.addContentTypeJson()
-			.setStatusCode(statusCode)
-			.end()
-	}
+    fun sendError(statusCode: Int, response: HttpServerResponse) {
+        response
+            .addContentTypeJson()
+            .setStatusCode(statusCode)
+            .end()
+    }
 
-	fun HttpServerResponse.addContentTypeJson(): HttpServerResponse {
-		this.putHeader("content-type", "application/json")
-		return this
-	}
+    fun HttpServerResponse.addContentTypeJson(): HttpServerResponse {
+        this.putHeader("content-type", "application/json")
+        return this
+    }
 }

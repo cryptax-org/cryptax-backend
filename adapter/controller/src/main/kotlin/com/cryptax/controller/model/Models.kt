@@ -8,109 +8,109 @@ import java.time.ZonedDateTime
 import java.util.Arrays
 
 data class UserWeb(
-	val id: String? = null,
-	val email: String,
-	private val password: CharArray? = null,
-	val lastName: String,
-	val firstName: String) {
+    val id: String? = null,
+    val email: String,
+    private val password: CharArray? = null,
+    val lastName: String,
+    val firstName: String) {
 
-	fun toUser(): User {
-		return User(
-			id = id,
-			email = email,
-			password = password!!,
-			lastName = lastName,
-			firstName = firstName)
-	}
+    fun toUser(): User {
+        return User(
+            id = id,
+            email = email,
+            password = password!!,
+            lastName = lastName,
+            firstName = firstName)
+    }
 
-	override fun equals(other: Any?): Boolean {
-		if (this === other) return true
-		if (javaClass != other?.javaClass) return false
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-		other as UserWeb
+        other as UserWeb
 
-		if (id != other.id) return false
-		if (email != other.email) return false
-		if (!Arrays.equals(password, other.password)) return false
-		if (lastName != other.lastName) return false
-		if (firstName != other.firstName) return false
+        if (id != other.id) return false
+        if (email != other.email) return false
+        if (!Arrays.equals(password, other.password)) return false
+        if (lastName != other.lastName) return false
+        if (firstName != other.firstName) return false
 
-		return true
-	}
+        return true
+    }
 
-	override fun hashCode(): Int {
-		var result = id?.hashCode() ?: 0
-		result = 31 * result + email.hashCode()
-		result = 31 * result + (password?.let { Arrays.hashCode(it) } ?: 0)
-		result = 31 * result + lastName.hashCode()
-		result = 31 * result + firstName.hashCode()
-		return result
-	}
+    override fun hashCode(): Int {
+        var result = id?.hashCode() ?: 0
+        result = 31 * result + email.hashCode()
+        result = 31 * result + (password?.let { Arrays.hashCode(it) } ?: 0)
+        result = 31 * result + lastName.hashCode()
+        result = 31 * result + firstName.hashCode()
+        return result
+    }
 
-	companion object {
+    companion object {
 
-		fun toUserWeb(user: User): UserWeb {
-			return UserWeb(id = user.id,
-				email = user.email,
-				lastName = user.lastName,
-				firstName = user.firstName)
-		}
-	}
+        fun toUserWeb(user: User): UserWeb {
+            return UserWeb(id = user.id,
+                email = user.email,
+                lastName = user.lastName,
+                firstName = user.firstName)
+        }
+    }
 }
 
 data class TransactionWeb(
-	val id: String? = null,
-	val source: Source,
-	val date: ZonedDateTime,
-	val type: Transaction.Type,
-	val price: Double,
-	val amount: Double,
-	val currency1: Currency,
-	val currency2: Currency
+    val id: String? = null,
+    val source: Source,
+    val date: ZonedDateTime,
+    val type: Transaction.Type,
+    val price: Double,
+    val amount: Double,
+    val currency1: Currency,
+    val currency2: Currency
 ) {
 
-	fun toTransaction(userId: String): Transaction {
-		return Transaction(
-			id = id,
-			userId = userId,
-			source = source,
-			date = date,
-			type = type,
-			price = price,
-			amount = amount,
-			currency1 = currency1,
-			currency2 = currency2
-		)
-	}
+    fun toTransaction(userId: String): Transaction {
+        return Transaction(
+            id = id,
+            userId = userId,
+            source = source,
+            date = date,
+            type = type,
+            price = price,
+            amount = amount,
+            currency1 = currency1,
+            currency2 = currency2
+        )
+    }
 
-	fun toTransaction(transactionId: String, userId: String): Transaction {
-		return Transaction(
-			id = transactionId,
-			userId = userId,
-			source = source,
-			date = date,
-			type = type,
-			price = price,
-			amount = amount,
-			currency1 = currency1,
-			currency2 = currency2
-		)
-	}
+    fun toTransaction(transactionId: String, userId: String): Transaction {
+        return Transaction(
+            id = transactionId,
+            userId = userId,
+            source = source,
+            date = date,
+            type = type,
+            price = price,
+            amount = amount,
+            currency1 = currency1,
+            currency2 = currency2
+        )
+    }
 
-	companion object {
+    companion object {
 
-		fun toTransactionWeb(transaction: Transaction): TransactionWeb {
-			return TransactionWeb(
-				id = transaction.id,
-				source = transaction.source,
-				date = transaction.date,
-				type = transaction.type,
-				price = transaction.price,
-				amount = transaction.amount,
-				currency1 = transaction.currency1,
-				currency2 = transaction.currency2
-			)
-		}
-	}
+        fun toTransactionWeb(transaction: Transaction): TransactionWeb {
+            return TransactionWeb(
+                id = transaction.id,
+                source = transaction.source,
+                date = transaction.date,
+                type = transaction.type,
+                price = transaction.price,
+                amount = transaction.amount,
+                currency1 = transaction.currency1,
+                currency2 = transaction.currency2
+            )
+        }
+    }
 }
 

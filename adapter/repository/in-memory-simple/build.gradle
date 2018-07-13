@@ -3,13 +3,13 @@ apply plugin: 'java-library'
 ext.moduleName = 'cryptax.db.simple'
 
 dependencies {
-	implementation(
-		project(':domain')
-	)
+    implementation(
+        project(':domain')
+    )
 
-	testImplementation(
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
-	)
+    testImplementation(
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
+    )
 }

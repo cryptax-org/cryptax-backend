@@ -15,107 +15,107 @@ import org.junit.jupiter.api.TestInstance
 @DisplayName("In memory user repository test")
 class InMemoryUserRepositoryTest {
 
-	private lateinit var userRepository: UserRepository
-	private lateinit var user: User
+    private lateinit var userRepository: UserRepository
+    private lateinit var user: User
 
-	@BeforeEach
-	fun setUp() {
-		userRepository = InMemoryUserRepository()
-	}
+    @BeforeEach
+    fun setUp() {
+        userRepository = InMemoryUserRepository()
+    }
 
-	@BeforeAll
-	internal fun beforeAll() {
-		user = objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-	}
+    @BeforeAll
+    internal fun beforeAll() {
+        user = objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+    }
 
-	@DisplayName("Create user")
-	@Test
-	fun testCreate() {
-		// when
-		val actual = userRepository.create(user)
+    @DisplayName("Create user")
+    @Test
+    fun testCreate() {
+        // when
+        val actual = userRepository.create(user)
 
-		// then
-		assertEquals(user, actual)
-	}
+        // then
+        assertEquals(user, actual)
+    }
 
-	@DisplayName("Create user with null user id")
-	@Test
-	fun testCreateNullUserId() {
-		// given
-		val user = objectMapper.readValue(this::class.java.getResourceAsStream("/User2.json"), User::class.java)
+    @DisplayName("Create user with null user id")
+    @Test
+    fun testCreateNullUserId() {
+        // given
+        val user = objectMapper.readValue(this::class.java.getResourceAsStream("/User2.json"), User::class.java)
 
-		// when
-		assertThrows(NullPointerException::class.java) {
-			userRepository.create(user)
-		}
+        // when
+        assertThrows(NullPointerException::class.java) {
+            userRepository.create(user)
+        }
 
-		// then
-		// exception
-	}
+        // then
+        // exception
+    }
 
-	@DisplayName("Find by id")
-	@Test
-	fun testFindById() {
-		// given
-		userRepository.create(user)
+    @DisplayName("Find by id")
+    @Test
+    fun testFindById() {
+        // given
+        userRepository.create(user)
 
-		// when
-		val actual = userRepository.findById(user.id!!)
+        // when
+        val actual = userRepository.findById(user.id!!)
 
-		// then
-		assertEquals(user, actual)
-	}
+        // then
+        assertEquals(user, actual)
+    }
 
-	@DisplayName("Find by id not found")
-	@Test
-	fun testFindByIdNotFound() {
-		// given
-		val userId = ""
+    @DisplayName("Find by id not found")
+    @Test
+    fun testFindByIdNotFound() {
+        // given
+        val userId = ""
 
-		// when
-		val actual = userRepository.findById(userId)
+        // when
+        val actual = userRepository.findById(userId)
 
-		// then
-		assertNull(actual)
-	}
+        // then
+        assertNull(actual)
+    }
 
-	@DisplayName("Find by email")
-	@Test
-	fun testFindByEmail() {
-		// given
-		userRepository.create(user)
+    @DisplayName("Find by email")
+    @Test
+    fun testFindByEmail() {
+        // given
+        userRepository.create(user)
 
-		// when
-		val actual = userRepository.findByEmail(user.email)
+        // when
+        val actual = userRepository.findByEmail(user.email)
 
-		// then
-		assertEquals(user, actual)
-	}
+        // then
+        assertEquals(user, actual)
+    }
 
-	@DisplayName("Find by email not found")
-	@Test
-	fun testFindByEmailNotFound() {
-		// given
-		val email = ""
+    @DisplayName("Find by email not found")
+    @Test
+    fun testFindByEmailNotFound() {
+        // given
+        val email = ""
 
-		// when
-		val actual = userRepository.findByEmail(email)
+        // when
+        val actual = userRepository.findByEmail(email)
 
-		// then
-		assertNull(actual)
-	}
+        // then
+        assertNull(actual)
+    }
 
-	@DisplayName("Find all users")
-	@Test
-	fun testFindAllUsers() {
-		// given
-		userRepository.create(user)
+    @DisplayName("Find all users")
+    @Test
+    fun testFindAllUsers() {
+        // given
+        userRepository.create(user)
 
-		// when
-		val actual = userRepository.findAllUsers()
+        // when
+        val actual = userRepository.findAllUsers()
 
-		// then
-		assert(actual.size == 1)
-		assertEquals(user, actual[0])
-	}
+        // then
+        assert(actual.size == 1)
+        assertEquals(user, actual[0])
+    }
 }

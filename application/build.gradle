@@ -1,55 +1,55 @@
 plugins {
-	id 'java-library'
-	id 'application'
-	id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'java-library'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 ext.moduleName = 'cryptax.app'
 
 // needed for new jigsaw module
 configurations.all {
-	exclude module: 'swagger-parser-v2-converter'
+    exclude module: 'swagger-parser-v2-converter'
 }
 
 dependencies {
-	implementation(
-		project(':config'),
-		project(':domain'),
-		project(':controller'),
-		project(':validation'),
-		[group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
-		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
-		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
-	)
+    implementation(
+        project(':config'),
+        project(':domain'),
+        project(':controller'),
+        project(':validation'),
+        [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
+    )
 
-	testImplementation(
-		[group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
-		[group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
-	)
+    testImplementation(
+        [group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+    )
 }
 
 mainClassName = 'com.cryptax.app.RestApplication'
 
 shadowJar {
-	baseName = rootProject.name
-	classifier = null
-	manifest {
-		attributes 'Description': 'Cryptax backend fat jar'
-	}
+    baseName = rootProject.name
+    classifier = null
+    manifest {
+        attributes 'Description': 'Cryptax backend fat jar'
+    }
 }
 
 task copyJarToRoot {
-	doLast {
-		def jarName = projectName + "-" + version + ".jar"
-		def outputDirectory = "${rootDir}/build/"
+    doLast {
+        def jarName = projectName + "-" + version + ".jar"
+        def outputDirectory = "${rootDir}/build/"
 
-		def currentJar = file("${buildDir}/libs/$jarName")
-		def outputJar = "$outputDirectory/$jarName"
+        def currentJar = file("${buildDir}/libs/$jarName")
+        def outputJar = "$outputDirectory/$jarName"
 
-		currentJar.renameTo(outputJar)
-		println("Move $jarName to $outputDirectory")
-	}
+        currentJar.renameTo(outputJar)
+        println("Move $jarName to $outputDirectory")
+    }
 }
 
 build.finalizedBy(copyJarToRoot)

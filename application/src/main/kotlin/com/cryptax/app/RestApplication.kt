@@ -13,39 +13,39 @@ import io.vertx.ext.web.Router
 
 class RestApplication(val config: Config = DefaultConfig()) : AbstractVerticle() {
 
-	override fun start() {
-		Json.mapper = Config.objectMapper
+    override fun start() {
+        Json.mapper = Config.objectMapper
 
-		// Create router
-		val router = Router.router(vertx)
-		Routes.setupRoutes(config, vertx, router)
+        // Create router
+        val router = Router.router(vertx)
+        Routes.setupRoutes(config, vertx, router)
 
-		// Server options
-		val options = HttpServerOptions()
-		options.logActivity = true
+        // Server options
+        val options = HttpServerOptions()
+        options.logActivity = true
 
-		val port = Config.config.server.port
-		// Create server
-		vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, Config.config.server.domain) {
-			if (it.failed()) {
-				log.error("Fail to start the server", it.cause())
-			} else {
-				log.info("Server started on port $port with profile ${Config.getProfile()}")
-			}
-		}
-	}
+        val port = Config.config.server.port
+        // Create server
+        vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, Config.config.server.domain) {
+            if (it.failed()) {
+                log.error("Fail to start the server", it.cause())
+            } else {
+                log.info("Server started on port $port with profile ${Config.getProfile()}")
+            }
+        }
+    }
 
-	companion object {
+    companion object {
 
-		init {
-			System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-		}
+        init {
+            System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
+        }
 
-		private val log: Logger = LoggerFactory.getLogger(RestApplication::class.java)
+        private val log: Logger = LoggerFactory.getLogger(RestApplication::class.java)
 
-		@JvmStatic
-		fun main(args: Array<String>) {
-			Launcher.executeCommand("run", RestApplication::class.java.name)
-		}
-	}
+        @JvmStatic
+        fun main(args: Array<String>) {
+            Launcher.executeCommand("run", RestApplication::class.java.name)
+        }
+    }
 }

@@ -1,147 +1,147 @@
 buildscript {
-	ext {
-		projectName = rootProject.name
+    ext {
+        projectName = rootProject.name
 
-		junitVersion = '5.2.0'
-		jacksonVersion = '2.9.6'
-		kotlinVersion = '1.2.51'
-		log4j2Version = '2.11.0'
-		mockitoVersion = '2.19.0'
-		mockitoKotlinVersion = '2.0.0-RC1'
-		slf4jVersion = '1.8.0-beta2'
-		vertxVersion = '3.5.2'
-	}
+        junitVersion = '5.2.0'
+        jacksonVersion = '2.9.6'
+        kotlinVersion = '1.2.51'
+        log4j2Version = '2.11.0'
+        mockitoVersion = '2.19.0'
+        mockitoKotlinVersion = '2.0.0-RC1'
+        slf4jVersion = '1.8.0-beta2'
+        vertxVersion = '3.5.2'
+    }
 
-	repositories {
-		mavenCentral()
-	}
+    repositories {
+        mavenCentral()
+    }
 
-	dependencies {
-		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-	}
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
 }
 
 subprojects {
-	apply plugin: 'kotlin'
-	apply plugin: 'jacoco'
+    apply plugin: 'kotlin'
+    apply plugin: 'jacoco'
 
-	group = 'com.cryptax'
-	version = '1.0.0'
+    group = 'com.cryptax'
+    version = '1.0.0'
 
-	sourceCompatibility = JavaVersion.VERSION_1_10
-	targetCompatibility = JavaVersion.VERSION_1_10
+    sourceCompatibility = JavaVersion.VERSION_1_10
+    targetCompatibility = JavaVersion.VERSION_1_10
 
-	repositories {
-		jcenter()
-	}
+    repositories {
+        jcenter()
+    }
 
-	compileJava {
-		doFirst {
-			options.compilerArgs = [
-				'--module-path', classpath.asPath,
-			]
-			classpath = files()
-		}
-	}
+    compileJava {
+        doFirst {
+            options.compilerArgs = [
+                '--module-path', classpath.asPath,
+            ]
+            classpath = files()
+        }
+    }
 
-	sourceSets {
-		main {
-			java {
-				srcDirs = ['src/main/kotlin']
-			}
-		}
-	}
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['src/main/kotlin']
+            }
+        }
+    }
 
-	dependencies {
-		implementation(
-			[group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8'],
-			[group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
-			[group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
-			[group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
-			[group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4j2Version],
-		)
+    dependencies {
+        implementation(
+            [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8'],
+            [group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
+            [group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
+            [group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
+            [group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4j2Version],
+        )
 
-		testImplementation(
-			[group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion],
-			[group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion],
-			[group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitVersion],
-		)
-	}
+        testImplementation(
+            [group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion],
+            [group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion],
+            [group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitVersion],
+        )
+    }
 
-	test {
-		useJUnitPlatform()
+    test {
+        useJUnitPlatform()
 
-		testLogging {
-			events 'PASSED', 'FAILED', 'SKIPPED'
-		}
+        testLogging {
+            events 'PASSED', 'FAILED', 'SKIPPED'
+        }
 
-		reports {
-			html.enabled = true
-		}
+        reports {
+            html.enabled = true
+        }
 
-		jacoco {
-			excludes += ["**/com.cryptax.app/**"]
-		}
-	}
+        jacoco {
+            excludes += ["**/com.cryptax.app/**"]
+        }
+    }
 
-	compileKotlin {
-		kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
-		destinationDir = compileJava.destinationDir
-	}
+    compileKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+        destinationDir = compileJava.destinationDir
+    }
 
-	compileTestKotlin {
-		kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
-	}
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+    }
 
-	clean.doFirst {
-		delete 'out'
-	}
+    clean.doFirst {
+        delete 'out'
+    }
 
-	jacocoTestReport {
-		reports {
-			xml.setEnabled(true)
-			csv.setEnabled(false)
-			html.setEnabled(true)
-		}
-	}
+    jacocoTestReport {
+        reports {
+            xml.setEnabled(true)
+            csv.setEnabled(false)
+            html.setEnabled(true)
+        }
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
 
 repositories {
-	jcenter()
+    jcenter()
 }
 
 jar.enabled = false
 
 task testReport(type: TestReport) {
-	destinationDir = file("$buildDir/reports/allTests")
-	reportOn subprojects*.test
+    destinationDir = file("$buildDir/reports/allTests")
+    reportOn subprojects*.test
 }
 
 task jacocoRootReport(type: JacocoReport) {
-	dependsOn = subprojects.test
-	additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-	sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-	classDirectories = files(subprojects.sourceSets.main.output)
-	executionData = files(subprojects.jacocoTestReport.executionData)
-	reports {
-		xml.enabled = true
-		csv.enabled = false
-		html.enabled = true
-	}
-	onlyIf = {
-		true
-	}
-	doFirst {
-		executionData = files(executionData.findAll {
-			it.exists()
-		})
-	}
-	afterEvaluate {
-		classDirectories = files(classDirectories.files.collect {
-			fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/entity/**', '**/model/**'])
-		})
-	}
+    dependsOn = subprojects.test
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(subprojects.sourceSets.main.output)
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        xml.enabled = true
+        csv.enabled = false
+        html.enabled = true
+    }
+    onlyIf = {
+        true
+    }
+    doFirst {
+        executionData = files(executionData.findAll {
+            it.exists()
+        })
+    }
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/entity/**', '**/model/**'])
+        })
+    }
 }

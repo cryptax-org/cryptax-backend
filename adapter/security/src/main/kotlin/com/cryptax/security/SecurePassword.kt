@@ -9,29 +9,29 @@ import java.util.Base64
 
 class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePassword {
 
-	private val secureRandom = SecureRandom()
+    private val secureRandom = SecureRandom()
 
-	override fun securePassword(password: CharArray): String {
-		val hashedPassword = encoder.encode(password.str())
-		val hashedSalt = generateSalt()
-		return hashedSalt + DELIMITER + encoder.encode("$hashedPassword$hashedSalt")
-	}
+    override fun securePassword(password: CharArray): String {
+        val hashedPassword = encoder.encode(password.str())
+        val hashedSalt = generateSalt()
+        return hashedSalt + DELIMITER + encoder.encode("$hashedPassword$hashedSalt")
+    }
 
-	override fun matchPassword(challengingPassword: CharArray, hashedSaltPassword: CharArray): Boolean {
-		val hashedChallengingPassword = encoder.encode(challengingPassword.str())
-		val hashedSalt = hashedSaltPassword.str().substringBefore(DELIMITER)
-		val hashedPassword = hashedSaltPassword.str().substringAfter(DELIMITER)
-		val hashToCompare = encoder.encode(hashedChallengingPassword + hashedSalt)
-		return hashToCompare == hashedPassword
-	}
+    override fun matchPassword(challengingPassword: CharArray, hashedSaltPassword: CharArray): Boolean {
+        val hashedChallengingPassword = encoder.encode(challengingPassword.str())
+        val hashedSalt = hashedSaltPassword.str().substringBefore(DELIMITER)
+        val hashedPassword = hashedSaltPassword.str().substringAfter(DELIMITER)
+        val hashToCompare = encoder.encode(hashedChallengingPassword + hashedSalt)
+        return hashToCompare == hashedPassword
+    }
 
-	private fun generateSalt(): String {
-		val bytes = ByteArray(20)
-		secureRandom.nextBytes(bytes)
-		return Base64.getEncoder().encodeToString(bytes)
-	}
+    private fun generateSalt(): String {
+        val bytes = ByteArray(20)
+        secureRandom.nextBytes(bytes)
+        return Base64.getEncoder().encodeToString(bytes)
+    }
 
-	companion object {
-		private const val DELIMITER = "_"
-	}
+    companion object {
+        private const val DELIMITER = "_"
+    }
 }

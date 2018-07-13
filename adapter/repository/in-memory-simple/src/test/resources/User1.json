@@ -1,7 +1,7 @@
 {
-	"id": "randomId",
-	"email": "john@doe.com",
-	"password": "password",
-	"firstName": "John",
-	"lastName": "Dos"
+    "id": "randomId",
+    "email": "john@doe.com",
+    "password": "password",
+    "firstName": "John",
+    "lastName": "Dos"
 }

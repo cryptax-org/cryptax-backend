@@ -14,42 +14,42 @@ import java.util.stream.Stream
 @DisplayName("User data validation")
 class UserValidatorTest {
 
-	@Test
-	fun testValidateCreateUser() {
-		//given
-		val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee")
+    @Test
+    fun testValidateCreateUser() {
+        //given
+        val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee")
 
-		//when
-		validateCreateUser(user)
+        //when
+        validateCreateUser(user)
 
-		//then
-		// no failure
-	}
+        //then
+        // no failure
+    }
 
-	@ParameterizedTest
-	@MethodSource("userProvider")
-	fun testValidateCreateUserFail(user: User, errorMessage: String) {
-		//when
-		val exception = Assertions.assertThrows(UserValidationException::class.java) {
-			validateCreateUser(user)
-		}
+    @ParameterizedTest
+    @MethodSource("userProvider")
+    fun testValidateCreateUserFail(user: User, errorMessage: String) {
+        //when
+        val exception = Assertions.assertThrows(UserValidationException::class.java) {
+            validateCreateUser(user)
+        }
 
-		//then
-		assertEquals(errorMessage, exception.message)
-	}
+        //then
+        assertEquals(errorMessage, exception.message)
+    }
 
-	companion object {
+    companion object {
 
-		@JvmStatic
-		fun userProvider(): Stream<Arguments> {
-			return Stream.of(
-				Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee"), "Email should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", ""), "First name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe"), "Last name should not be blank"),
-				Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe"), "Last name should not be blank")
-			)
-		}
-	}
+        @JvmStatic
+        fun userProvider(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee"), "Email should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", ""), "First name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe"), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe"), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe"), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe"), "Last name should not be blank")
+            )
+        }
+    }
 }

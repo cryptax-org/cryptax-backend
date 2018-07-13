@@ -10,20 +10,20 @@ import java.util.Arrays
 
 class CreateUser(private val repository: UserRepository, private val securePassword: SecurePassword, private val idGenerator: IdGenerator) {
 
-	fun create(user: User): User {
-		validateCreateUser(user)
-		repository.findByEmail(user.email)?.run {
-			throw UserAlreadyExistsException(user.email)
-		}
+    fun create(user: User): User {
+        validateCreateUser(user)
+        repository.findByEmail(user.email)?.run {
+            throw UserAlreadyExistsException(user.email)
+        }
 
-		val userToSave = User(
-			id = idGenerator.generate(),
-			email = user.email,
-			password = securePassword.securePassword(user.password).toCharArray(),
-			lastName = user.lastName,
-			firstName = user.firstName
-		)
-		Arrays.fill(user.password, '\u0000')
-		return repository.create(userToSave)
-	}
+        val userToSave = User(
+            id = idGenerator.generate(),
+            email = user.email,
+            password = securePassword.securePassword(user.password).toCharArray(),
+            lastName = user.lastName,
+            firstName = user.firstName
+        )
+        Arrays.fill(user.password, '\u0000')
+        return repository.create(userToSave)
+    }
 }

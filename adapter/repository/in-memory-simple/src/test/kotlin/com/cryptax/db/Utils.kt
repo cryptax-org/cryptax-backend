@@ -9,8 +9,8 @@ import java.time.ZoneId
 import java.util.TimeZone
 
 val objectMapper: ObjectMapper = ObjectMapper()
-	.registerModule(KotlinModule())
-	.registerModule(JavaTimeModule())
-	.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-	.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
-	.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    .registerModule(KotlinModule())
+    .registerModule(JavaTimeModule())
+    .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+    .setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
+    .setSerializationInclusion(JsonInclude.Include.NON_NULL)

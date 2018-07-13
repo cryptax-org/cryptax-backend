@@ -19,68 +19,68 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class LoginUserTest {
 
-	@Mock
-	lateinit var userRepository: UserRepository
-	@Mock
-	lateinit var securePassword: SecurePassword
-	@InjectMocks
-	lateinit var loginUser: LoginUser
+    @Mock
+    lateinit var userRepository: UserRepository
+    @Mock
+    lateinit var securePassword: SecurePassword
+    @InjectMocks
+    lateinit var loginUser: LoginUser
 
-	private val id = "1"
-	private val email = "john.doe@proton.com"
-	private val password = "mypassword".toCharArray()
-	private val hashedPassword = "hashedPassword"
-	private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John")
+    private val id = "1"
+    private val email = "john.doe@proton.com"
+    private val password = "mypassword".toCharArray()
+    private val hashedPassword = "hashedPassword"
+    private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John")
 
-	@Test
-	@DisplayName("Login a user")
-	fun testLogin() {
-		//given
-		given(userRepository.findByEmail(email)).willReturn(user)
-		given(securePassword.matchPassword(password, user.password)).willReturn(true)
+    @Test
+    @DisplayName("Login a user")
+    fun testLogin() {
+        //given
+        given(userRepository.findByEmail(email)).willReturn(user)
+        given(securePassword.matchPassword(password, user.password)).willReturn(true)
 
-		//when
-		val actual = loginUser.login(email, password)
+        //when
+        val actual = loginUser.login(email, password)
 
-		//then
-		assertEquals(user, actual)
-		then(userRepository).should().findByEmail(email)
-		then(securePassword).should().matchPassword(password, user.password)
-	}
+        //then
+        assertEquals(user, actual)
+        then(userRepository).should().findByEmail(email)
+        then(securePassword).should().matchPassword(password, user.password)
+    }
 
-	@Test
-	@DisplayName("Login a user not found")
-	fun testLoginUserNotFound() {
-		//given
-		given(userRepository.findByEmail(email)).willReturn(null)
+    @Test
+    @DisplayName("Login a user not found")
+    fun testLoginUserNotFound() {
+        //given
+        given(userRepository.findByEmail(email)).willReturn(null)
 
-		//when
-		val exception = assertThrows(LoginException::class.java) {
-			loginUser.login(email, password)
-		}
+        //when
+        val exception = assertThrows(LoginException::class.java) {
+            loginUser.login(email, password)
+        }
 
-		//then
-		assertEquals(email, exception.email)
-		assertEquals("User not found", exception.description)
-		then(userRepository).should().findByEmail(email)
-	}
+        //then
+        assertEquals(email, exception.email)
+        assertEquals("User not found", exception.description)
+        then(userRepository).should().findByEmail(email)
+    }
 
-	@Test
-	@DisplayName("Login a user wrong password")
-	fun testLoginWrongPassword() {
-		//given
-		given(userRepository.findByEmail(email)).willReturn(user)
-		given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
+    @Test
+    @DisplayName("Login a user wrong password")
+    fun testLoginWrongPassword() {
+        //given
+        given(userRepository.findByEmail(email)).willReturn(user)
+        given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
 
-		//when
-		val exception = assertThrows(LoginException::class.java) {
-			loginUser.login(email, "wrong password".toCharArray())
-		}
+        //when
+        val exception = assertThrows(LoginException::class.java) {
+            loginUser.login(email, "wrong password".toCharArray())
+        }
 
-		//then
-		assertEquals(email, exception.email)
-		assertEquals("Password do not match", exception.description)
-		then(userRepository).should().findByEmail(email)
-		then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
-	}
+        //then
+        assertEquals(email, exception.email)
+        assertEquals("Password do not match", exception.description)
+        then(userRepository).should().findByEmail(email)
+        then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
+    }
 }

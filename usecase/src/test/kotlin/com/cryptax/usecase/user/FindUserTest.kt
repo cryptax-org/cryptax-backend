@@ -17,39 +17,39 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class FindUserTest {
 
-	@Mock
-	lateinit var userRepository: UserRepository
-	@InjectMocks
-	lateinit var findUser: FindUser
+    @Mock
+    lateinit var userRepository: UserRepository
+    @InjectMocks
+    lateinit var findUser: FindUser
 
-	private val id = "1"
-	private val user = User(id, "john.doe@proton.com", "mypassword".toCharArray(), "Doe", "John")
+    private val id = "1"
+    private val user = User(id, "john.doe@proton.com", "mypassword".toCharArray(), "Doe", "John")
 
-	@Test
-	@DisplayName("Find a user by id")
-	fun testFindById() {
-		//given
-		given(userRepository.findById(id)).willReturn(user)
+    @Test
+    @DisplayName("Find a user by id")
+    fun testFindById() {
+        //given
+        given(userRepository.findById(id)).willReturn(user)
 
-		//when
-		val actual = findUser.findById(id)
+        //when
+        val actual = findUser.findById(id)
 
-		//then
-		assertEquals(user, actual)
-		then(userRepository).should().findById(id)
-	}
+        //then
+        assertEquals(user, actual)
+        then(userRepository).should().findById(id)
+    }
 
-	@Test
-	@DisplayName("Find a user by id not found")
-	fun testFindByIdNotFound() {
-		//given
-		given(userRepository.findById(id)).willReturn(null)
+    @Test
+    @DisplayName("Find a user by id not found")
+    fun testFindByIdNotFound() {
+        //given
+        given(userRepository.findById(id)).willReturn(null)
 
-		//when
-		val actual = findUser.findById(id)
+        //when
+        val actual = findUser.findById(id)
 
-		//then
-		assertNull(actual)
-		then(userRepository).should().findById(id)
-	}
+        //then
+        assertNull(actual)
+        then(userRepository).should().findById(id)
+    }
 }

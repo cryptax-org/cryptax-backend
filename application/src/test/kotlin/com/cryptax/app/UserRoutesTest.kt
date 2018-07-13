@@ -22,44 +22,44 @@ import org.junit.jupiter.api.extension.ExtendWith
 @DisplayName("Integration tests on basic flow")
 class UserRoutesTest {
 
-	lateinit var vertx: Vertx
+    lateinit var vertx: Vertx
 
-	@BeforeEach
-	fun beforeEach() {
-		vertx = Vertx.vertx(VertxOptions()
-			.setMaxEventLoopExecuteTime(1000)
-			.setPreferNativeTransport(true)
-			.setFileResolverCachingEnabled(true))
-	}
+    @BeforeEach
+    fun beforeEach() {
+        vertx = Vertx.vertx(VertxOptions()
+            .setMaxEventLoopExecuteTime(1000)
+            .setPreferNativeTransport(true)
+            .setFileResolverCachingEnabled(true))
+    }
 
-	@AfterEach
-	fun afterEach() {
-		vertx.close()
-	}
+    @AfterEach
+    fun afterEach() {
+        vertx.close()
+    }
 
-	@Test
-	@DisplayName("Create a user")
-	fun createUser(testContext: VertxTestContext) {
-		// given
-		val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-		val client = WebClient.create(vertx)
+    @Test
+    @DisplayName("Create a user")
+    fun createUser(testContext: VertxTestContext) {
+        // given
+        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+        val client = WebClient.create(vertx)
 
-		// when
-		vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ ->
-			client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar ->
-				// then
-				testContext.verify {
-					assert(ar.succeeded()) { "Something went wrong while handling the request" }
-					assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
-					val body = ar.result().bodyAsJsonObject()
-					assertNotNull(body.getString("id")) { "id is null" }
-					assertEquals(user.email, body.getString("email")) { "email do not match" }
-					assertNull(body.getString("password")) { "password do not match" }
-					assertEquals(user.lastName, body.getString("lastName")) { "lastName do not match" }
-					assertEquals(user.firstName, body.getString("firstName")) { "firstName do not match" }
-				}
-				testContext.completeNow()
-			}
-		})
-	}
+        // when
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ ->
+            client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar ->
+                // then
+                testContext.verify {
+                    assert(ar.succeeded()) { "Something went wrong while handling the request" }
+                    assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
+                    val body = ar.result().bodyAsJsonObject()
+                    assertNotNull(body.getString("id")) { "id is null" }
+                    assertEquals(user.email, body.getString("email")) { "email do not match" }
+                    assertNull(body.getString("password")) { "password do not match" }
+                    assertEquals(user.lastName, body.getString("lastName")) { "lastName do not match" }
+                    assertEquals(user.firstName, body.getString("firstName")) { "firstName do not match" }
+                }
+                testContext.completeNow()
+            }
+        })
+    }
 }

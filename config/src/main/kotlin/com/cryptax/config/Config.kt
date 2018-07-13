@@ -27,64 +27,64 @@ import java.util.TimeZone
 
 abstract class Config {
 
-	abstract fun userController(): UserController
+    abstract fun userController(): UserController
 
-	abstract fun transactionController(): TransactionController
+    abstract fun transactionController(): TransactionController
 
-	companion object {
-		val objectMapper: ObjectMapper = ObjectMapper()
-			.registerModule(KotlinModule())
-			.registerModule(JavaTimeModule())
-			.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-			.setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
-			.setSerializationInclusion(JsonInclude.Include.NON_NULL)
+    companion object {
+        val objectMapper: ObjectMapper = ObjectMapper()
+            .registerModule(KotlinModule())
+            .registerModule(JavaTimeModule())
+            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+            .setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
 
-		val config: ConfigDto = ObjectMapper(YAMLFactory())
-			.registerModule(KotlinModule())
-			.readValue(Config::class.java.classLoader.getResourceAsStream("config-" + getProfile() + ".yml"), ConfigDto::class.java)
+        val config: ConfigDto = ObjectMapper(YAMLFactory())
+            .registerModule(KotlinModule())
+            .readValue(Config::class.java.classLoader.getResourceAsStream("config-" + getProfile() + ".yml"), ConfigDto::class.java)
 
-		val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = config.jwt.keyStorePath, password = config.jwt.password))
-		val jwtOptions = JWTOptions(
-			algorithm = config.jwt.algorithm,
-			issuer = config.jwt.issuer,
-			expiresInMinutes = config.jwt.expiresInMinutes)
+        val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = config.jwt.keyStorePath, password = config.jwt.password))
+        val jwtOptions = JWTOptions(
+            algorithm = config.jwt.algorithm,
+            issuer = config.jwt.issuer,
+            expiresInMinutes = config.jwt.expiresInMinutes)
 
-		fun getProfile(): String {
-			// TODO find a better way to handle profiles
-			val profile = System.getenv("PROFILE")
-			return profile ?: return "dev"
-		}
-	}
+        fun getProfile(): String {
+            // TODO find a better way to handle profiles
+            val profile = System.getenv("PROFILE")
+            return profile ?: return "dev"
+        }
+    }
 }
 
 class DefaultConfig : Config() {
 
-	private val userRepository: UserRepository = InMemoryUserRepository()
-	private val transactionRepository = InMemoryTransactionRepository()
-	private val idGenerator = JugIdGenerator()
-	private val securePassword = SecurePassword()
-	private val createUser = CreateUser(userRepository, securePassword, idGenerator)
-	private val findUser = FindUser(userRepository)
-	private val loginUser = LoginUser(userRepository, securePassword)
-	private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
-	private val updateTransaction = UpdateTransaction(transactionRepository)
-	private val findTransaction = FindTransaction(transactionRepository)
+    private val userRepository: UserRepository = InMemoryUserRepository()
+    private val transactionRepository = InMemoryTransactionRepository()
+    private val idGenerator = JugIdGenerator()
+    private val securePassword = SecurePassword()
+    private val createUser = CreateUser(userRepository, securePassword, idGenerator)
+    private val findUser = FindUser(userRepository)
+    private val loginUser = LoginUser(userRepository, securePassword)
+    private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
+    private val updateTransaction = UpdateTransaction(transactionRepository)
+    private val findTransaction = FindTransaction(transactionRepository)
 
-	override fun userController(): UserController {
-		return userControllerInternal
-	}
+    override fun userController(): UserController {
+        return userControllerInternal
+    }
 
-	override fun transactionController(): TransactionController {
-		return transactionControllerInternal
-	}
+    override fun transactionController(): TransactionController {
+        return transactionControllerInternal
+    }
 
-	private val userControllerInternal: UserController by lazy {
-		UserController(createUser, findUser, loginUser)
-	}
+    private val userControllerInternal: UserController by lazy {
+        UserController(createUser, findUser, loginUser)
+    }
 
-	private val transactionControllerInternal: TransactionController by lazy {
-		TransactionController(addTransaction, updateTransaction, findTransaction)
-	}
+    private val transactionControllerInternal: TransactionController by lazy {
+        TransactionController(addTransaction, updateTransaction, findTransaction)
+    }
 }
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)

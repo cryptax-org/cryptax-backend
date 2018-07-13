@@ -4,17 +4,17 @@ ext.moduleName = 'cryptax.validation'
 
 // needed for new jigsaw module
 configurations.all {
-	exclude module: 'swagger-parser-v2-converter'
+    exclude module: 'swagger-parser-v2-converter'
 }
 
 dependencies {
-	implementation(
-		project(':domain'),
-		[group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
-		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
-	)
-	testImplementation(
-		[group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
-		[group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
-	)
+    implementation(
+        project(':domain'),
+        [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
+    )
+    testImplementation(
+        [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+    )
 }

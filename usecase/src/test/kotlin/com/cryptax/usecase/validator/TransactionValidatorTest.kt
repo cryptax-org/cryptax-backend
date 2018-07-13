@@ -19,82 +19,82 @@ import java.util.stream.Stream
 @DisplayName("Transaction data validation")
 class TransactionValidatorTest {
 
-	@Test
-	fun testValidateTransaction() {
-		//given
-		val transaction = Transaction(
-			userId = "userId",
-			source = Source.MANUAL,
-			date = ZonedDateTime.now(),
-			type = Transaction.Type.BUY,
-			price = 10.0,
-			amount = 5.0,
-			currency1 = Currency.ETH,
-			currency2 = Currency.BTC)
-		//when
-		validateAddTransaction(transaction)
+    @Test
+    fun testValidateTransaction() {
+        //given
+        val transaction = Transaction(
+            userId = "userId",
+            source = Source.MANUAL,
+            date = ZonedDateTime.now(),
+            type = Transaction.Type.BUY,
+            price = 10.0,
+            amount = 5.0,
+            currency1 = Currency.ETH,
+            currency2 = Currency.BTC)
+        //when
+        validateAddTransaction(transaction)
 
-		//then
-		// no failure
-	}
+        //then
+        // no failure
+    }
 
-	@ParameterizedTest
-	@MethodSource("transactionProvider")
-	fun testValidateTransactionFail(transaction: Transaction, errorMessage: String) {
-		//when
-		val exception = assertThrows(TransactionValidationException::class.java) {
-			validateAddTransaction(transaction)
-		}
+    @ParameterizedTest
+    @MethodSource("transactionProvider")
+    fun testValidateTransactionFail(transaction: Transaction, errorMessage: String) {
+        //when
+        val exception = assertThrows(TransactionValidationException::class.java) {
+            validateAddTransaction(transaction)
+        }
 
-		//then
-		assertEquals(errorMessage, exception.message)
-	}
+        //then
+        assertEquals(errorMessage, exception.message)
+    }
 
-	@Test
-	fun testValidateTransactions() {
-		//given
-		val transaction = twoTransactions
-		//when
-		validateAddTransactions(transaction)
+    @Test
+    fun testValidateTransactions() {
+        //given
+        val transaction = twoTransactions
+        //when
+        validateAddTransactions(transaction)
 
-		//then
-		// no failure
-	}
+        //then
+        // no failure
+    }
 
-	@ParameterizedTest
-	@MethodSource("transactionsProvider")
-	fun testValidateTransactionsFail(transactions: List<Transaction>, errorMessage: String) {
-		//when
-		val exception = assertThrows(TransactionValidationException::class.java) {
-			validateAddTransactions(transactions)
-		}
+    @ParameterizedTest
+    @MethodSource("transactionsProvider")
+    fun testValidateTransactionsFail(transactions: List<Transaction>, errorMessage: String) {
+        //when
+        val exception = assertThrows(TransactionValidationException::class.java) {
+            validateAddTransactions(transactions)
+        }
 
-		//then
-		assertEquals(errorMessage, exception.message)
-	}
+        //then
+        assertEquals(errorMessage, exception.message)
+    }
 
-	companion object {
+    companion object {
 
-		@JvmStatic
-		fun transactionProvider(): Stream<Arguments> {
-			return Stream.of(
-				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, -10.0, 4.0, Currency.ETH, Currency.BTC), "Price can't be negative"),
-				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, -4.0, Currency.ETH, Currency.BTC), "Amount can't be negative"),
-				Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, 4.0, Currency.ETH, Currency.ETH), "Currency1 and Currency2 can't be the same")
-			)
-		}
+        @JvmStatic
+        fun transactionProvider(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, -10.0, 4.0, Currency.ETH, Currency.BTC), "Price can't be negative"),
+                Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, -4.0, Currency.ETH, Currency.BTC), "Amount can't be negative"),
+                Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, 4.0, Currency.ETH, Currency.ETH), "Currency1 and Currency2 can't be the same")
+            )
+        }
 
-		@JvmStatic
-		fun transactionsProvider(): Stream<Arguments> {
-			return Stream.of(
-				Arguments.of(listOf<Transaction>(), "No transactions provided"),
-				Arguments.of(
-					objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test1.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
-					this::class.java.getResourceAsStream("/transaction/batch/Test1-output").bufferedReader().use { it.readLine() }),
-				Arguments.of(
-					objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test2.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
-					this::class.java.getResourceAsStream("/transaction/batch/Test2-output").bufferedReader().use { it.readLine() })
-			)
-		}
-	}
+        @JvmStatic
+        fun transactionsProvider(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(listOf<Transaction>(), "No transactions provided"),
+                Arguments.of(
+                    objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test1.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
+                    this::class.java.getResourceAsStream("/transaction/batch/Test1-output").bufferedReader().use { it.readLine() }),
+                Arguments.of(
+                    objectMapper.readValue(this::class.java.getResourceAsStream("/transaction/batch/Test2.json"), objectMapper.typeFactory.constructCollectionType(List::class.java, Transaction::class.java)),
+                    this::class.java.getResourceAsStream("/transaction/batch/Test2-output").bufferedReader().use { it.readLine() })
+            )
+        }
+    }
 }

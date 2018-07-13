@@ -3,15 +3,15 @@ apply plugin: 'java-library'
 ext.moduleName = 'cryptax.usecase'
 
 dependencies {
-	implementation(
-		project(':domain'),
-	)
-	testImplementation(
-		[group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
-		[group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
-		[group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
-		[group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
-		[group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
-	)
+    implementation(
+        project(':domain'),
+    )
+    testImplementation(
+        [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+        [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+        [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
+        [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
+    )
 }
