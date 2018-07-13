@@ -34,6 +34,7 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtR
         }
         .failureHandler(failureHandler)
 
+    // Obtain a new token from a refresh token
     router.get("/refresh")
         .handler(jwtRefreshAuthHandler)
         .handler { routingContext ->
@@ -48,7 +49,6 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtR
             sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
-
 }
 
 private fun tokenPayLoad(id: String, isRefresh: Boolean): JsonObject {
