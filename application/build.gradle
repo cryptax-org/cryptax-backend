@@ -41,6 +41,10 @@ shadowJar {
     }
 }
 
+test {
+    testLogging.showStandardStreams = true
+}
+
 task copyJarToRoot {
     doLast {
         def jarName = projectName + "-" + version + ".jar"
