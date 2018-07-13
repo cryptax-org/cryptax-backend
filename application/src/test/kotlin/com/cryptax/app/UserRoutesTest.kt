@@ -126,29 +126,33 @@ class UserRoutesTest {
             if (asyncResult.succeeded()) {
                 // Create a user
                 client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user)) { ar ->
-                    testContext.verify {
-                        assert(ar.succeeded()) { "Something went wrong while handling the request" }
-                        assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
-                    }
-                    val userId = ar.result().bodyAsJsonObject().getString("id", "idNotFound")
-                    // Get its token
-                    client.post(port, domain, "/token").sendJson(token) { ar2 ->
+                    if (ar.succeeded()) {
                         testContext.verify {
-                            assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                            assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
+                            assert(ar.succeeded()) { "Something went wrong while handling the request" }
+                            assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
                         }
-                        val tokenValue = ar2.result().bodyAsJsonObject().getString("token", "tokenNotFound")
-                        client.get(port, domain, "/users").putHeader("Authorization", "Bearer $tokenValue").send { ar3 ->
-                            // then
+                        val userId = ar.result().bodyAsJsonObject().getString("id", "idNotFound")
+                        // Get its token
+                        client.post(port, domain, "/token").sendJson(token) { ar2 ->
                             testContext.verify {
-                                assert(ar3.succeeded()) { "Something went wrong while handling the request" }
-                                assertEquals(200, ar3.result().statusCode()) { "Wrong status in the response" }
-                                val body = ar3.result().bodyAsJsonArray()
-                                assertThat(body).hasSize(1)
-                                assertThat(body.getJsonObject(0).getString("id")).isEqualTo(userId)
-                                testContext.completeNow()
+                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
+                                assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
+                            }
+                            val tokenValue = ar2.result().bodyAsJsonObject().getString("token", "tokenNotFound")
+                            client.get(port, domain, "/users").putHeader("Authorization", "Bearer $tokenValue").send { ar3 ->
+                                // then
+                                testContext.verify {
+                                    assert(ar3.succeeded()) { "Something went wrong while handling the request" }
+                                    assertEquals(200, ar3.result().statusCode()) { "Wrong status in the response" }
+                                    val body = ar3.result().bodyAsJsonArray()
+                                    assertThat(body).hasSize(1)
+                                    assertThat(body.getJsonObject(0).getString("id")).isEqualTo(userId)
+                                    testContext.completeNow()
+                                }
                             }
                         }
+                    } else {
+                        testContext.failNow(asyncResult.cause())
                     }
                 }
             } else {

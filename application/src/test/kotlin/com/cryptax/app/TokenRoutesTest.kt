@@ -45,21 +45,29 @@ class TokenRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ ->
-            client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { _ ->
-                client.post(8080, "localhost", "/token").sendJson(token) { ar ->
-                    // then
-                    testContext.verify {
-                        assert(ar.succeeded()) { "Something went wrong while handling the request" }
-                        assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
-                        val body = ar.result().bodyAsJsonObject()
-                        assertNotNull(body.getString("id")) { "id is null" }
-                        assertNotNull(body.getString("token")) { "token is null" }
+        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
+            if (asyncResult.succeeded()) {
+                client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar1 ->
+                    if (ar1.succeeded()) {
+                        client.post(8080, "localhost", "/token").sendJson(token) { ar2 ->
+                            // then
+                            testContext.verify {
+                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
+                                assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
+                                val body = ar2.result().bodyAsJsonObject()
+                                assertNotNull(body.getString("id")) { "id is null" }
+                                assertNotNull(body.getString("token")) { "token is null" }
+                            }
+                            testContext.completeNow()
+                        }
+                    } else {
+                        testContext.failNow(asyncResult.cause())
                     }
-                    testContext.completeNow()
                 }
+            } else {
+                testContext.failNow(asyncResult.cause())
             }
-        })
+        }
     }
 
     @Test
@@ -71,19 +79,27 @@ class TokenRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ ->
-            client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { _ ->
-                client.post(8080, "localhost", "/token").sendJson(token) { ar ->
-                    // then
-                    testContext.verify {
-                        assert(ar.succeeded()) { "Something went wrong while handling the request" }
-                        assertEquals(401, ar.result().statusCode()) { "Wrong status in the response" }
-                        val body = ar.result().bodyAsJsonObject()
-                        assertNotNull(body.getString("error")) { "id is null" }
+        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
+            if (asyncResult.succeeded()) {
+                client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar1 ->
+                    if (ar1.succeeded()) {
+                        client.post(8080, "localhost", "/token").sendJson(token) { ar2 ->
+                            // then
+                            testContext.verify {
+                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
+                                assertEquals(401, ar2.result().statusCode()) { "Wrong status in the response" }
+                                val body = ar2.result().bodyAsJsonObject()
+                                assertNotNull(body.getString("error")) { "id is null" }
+                            }
+                            testContext.completeNow()
+                        }
+                    } else {
+                        testContext.failNow(asyncResult.cause())
                     }
-                    testContext.completeNow()
                 }
+            } else {
+                testContext.failNow(asyncResult.cause())
             }
-        })
+        }
     }
 }
