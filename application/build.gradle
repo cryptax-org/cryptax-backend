@@ -22,6 +22,11 @@ dependencies {
 		[group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
 		[group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
 	)
+
+	testImplementation(
+		[group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
+		[group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+	)
 }
 
 mainClassName = 'com.cryptax.app.RestApplication'

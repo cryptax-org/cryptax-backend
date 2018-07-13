@@ -13,21 +13,21 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.LoggerHandler
 
 val bodyHandler: BodyHandler = BodyHandler.create()
-val userController = Config.ServiceConfig.userController
-val jwtOptions = Config.jwtOptions
+/*val userController = config.userController
+val jwtOptions = Config.jwtOptions*/
 
 object Routes {
 
 	private val log = LoggerFactory.getLogger(Routes::class.java)
 
-	fun setupRoutes(vertx: Vertx, router: Router) {
+	fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
 		val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
 		val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
 
 		router.route().handler(LoggerHandler.create())
-		handleUserRoutes(router, jwtAuthHandler)
-		handleTokenRoutes(router, jwtProvider)
-		handleTransactionRoutes(router, jwtAuthHandler)
+		handleUserRoutes(config, router, jwtAuthHandler)
+		handleTokenRoutes(config, router, jwtProvider)
+		handleTransactionRoutes(config, router, jwtAuthHandler)
 
 		// Exception handler
 		router.exceptionHandler { throwable ->

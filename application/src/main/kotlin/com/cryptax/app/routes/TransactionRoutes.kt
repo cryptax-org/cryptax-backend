@@ -12,9 +12,9 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.JWTAuthHandler
 
-private val transactionController = Config.ServiceConfig.transactionController
+fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
-fun handleTransactionRoutes(router: Router, jwtAuthHandler: JWTAuthHandler) {
+	val transactionController = config.transactionController()
 
 	// Add transaction to user with JWT token
 	router.post("/users/:userId/transactions")

@@ -2,6 +2,7 @@ package com.cryptax.app
 
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.Config
+import com.cryptax.config.DefaultConfig
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Launcher
 import io.vertx.core.http.HttpServerOptions
@@ -10,14 +11,14 @@ import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
 
-class RestApplication : AbstractVerticle() {
+class RestApplication(val config: Config = DefaultConfig()) : AbstractVerticle() {
 
 	override fun start() {
 		Json.mapper = Config.objectMapper
 
 		// Create router
 		val router = Router.router(vertx)
-		Routes.setupRoutes(vertx, router)
+		Routes.setupRoutes(config, vertx, router)
 
 		// Server options
 		val options = HttpServerOptions()
@@ -27,7 +28,7 @@ class RestApplication : AbstractVerticle() {
 		// Create server
 		vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, Config.config.server.domain) {
 			if (it.failed()) {
-				log.error("Fail to start the server")
+				log.error("Fail to start the server", it.cause())
 			} else {
 				log.info("Server started on port $port with profile ${Config.getProfile()}")
 			}
