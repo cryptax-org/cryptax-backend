@@ -1,5 +1,7 @@
 # cryptax-backend
 
+[![Build Status](https://travis-ci.org/cryptax-org/cryptax-backend.svg?branch=master)](https://travis-ci.org/cryptax-org/cryptax-backend)
+
 ### Pre-requisite
 
 Java 10
