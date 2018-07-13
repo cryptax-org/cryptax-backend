@@ -20,10 +20,11 @@ object Routes {
     fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
         val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
         val jwtAuthHandler = JWTAuthHandlerCustom(jwtProvider)
+        val jwtRefreshAuthHandler = JWTRefreshAuthHandlerCustom(jwtProvider)
 
         router.route().handler(LoggerHandler.create())
         handleUserRoutes(config, router, jwtAuthHandler)
-        handleTokenRoutes(config, router, jwtProvider)
+        handleTokenRoutes(config, router, jwtProvider, jwtRefreshAuthHandler)
         handleTransactionRoutes(config, router, jwtAuthHandler)
 
         // Exception handler

@@ -3,14 +3,13 @@ package com.cryptax.app.routes
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
-import com.cryptax.validation.RestValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 
-fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth) {
+fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom) {
 
     val userController = config.userController()
 
@@ -34,6 +33,22 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth) {
             sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
+
+    router.get("/refresh")
+        .handler(jwtRefreshAuthHandler)
+        .handler { routingContext ->
+            val userId = routingContext.user().principal().getString("id")
+
+            val token = jwtProvider.generateToken(tokenPayLoad(userId, false), Config.jwtOptions)
+            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userId, true), Config.jwtRefreshOptions)
+            val result = JsonObject()
+                .put("id", userId)
+                .put("token", token)
+                .put("refreshToken", refreshToken)
+            sendSuccess(result, routingContext.response())
+        }
+        .failureHandler(failureHandler)
+
 }
 
 private fun tokenPayLoad(id: String, isRefresh: Boolean): JsonObject {
