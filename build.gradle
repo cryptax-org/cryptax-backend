@@ -74,6 +74,7 @@ subprojects {
 
         testLogging {
             events 'PASSED', 'FAILED', 'SKIPPED'
+            exceptionFormat "full"
         }
 
         reports {
@@ -145,4 +146,8 @@ task jacocoRootReport(type: JacocoReport) {
             fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/entity/**', '**/model/**'])
         })
     }
+}
+
+codeCoverageReport.dependsOn {
+    subprojects*.test
 }
