@@ -10,7 +10,6 @@ import io.vertx.ext.web.client.WebClient
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -18,10 +17,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(VertxExtension::class)
-@DisplayName("Integration tests on basic flow")
+@DisplayName("Token routes integration tests")
 class TokenRoutesTest {
 
-    lateinit var vertx: Vertx
+    private val port = 8080
+    private val domain = "localhost"
+    private lateinit var vertx: Vertx
 
     @BeforeEach
     fun beforeEach() {
@@ -45,29 +46,20 @@ class TokenRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
-            if (asyncResult.succeeded()) {
-                client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar1 ->
-                    if (ar1.succeeded()) {
-                        client.post(8080, "localhost", "/token").sendJson(token) { ar2 ->
-                            // then
-                            testContext.verify {
-                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                                assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
-                                val body = ar2.result().bodyAsJsonObject()
-                                assertNotNull(body.getString("id")) { "id is null" }
-                                assertNotNull(body.getString("token")) { "token is null" }
-                            }
-                            testContext.completeNow()
-                        }
-                    } else {
-                        testContext.failNow(ar1.cause())
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding {
+            client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user), testContext.succeeding {
+                client.post(port, domain, "/token").sendJson(token, testContext.succeeding { response ->
+                    // then
+                    testContext.verify {
+                        val body = response.bodyAsJsonObject()
+                        assertNotNull(body.getString("id")) { "id is null" }
+                        assertNotNull(body.getString("token")) { "token is null" }
+                        assertNotNull(body.getString("refreshToken")) { "token is null" }
                     }
-                }
-            } else {
-                testContext.failNow(asyncResult.cause())
-            }
-        }
+                    testContext.completeNow()
+                })
+            })
+        })
     }
 
     @Test
@@ -79,27 +71,17 @@ class TokenRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
-            if (asyncResult.succeeded()) {
-                client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { ar1 ->
-                    if (ar1.succeeded()) {
-                        client.post(8080, "localhost", "/token").sendJson(token) { ar2 ->
-                            // then
-                            testContext.verify {
-                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                                assertEquals(401, ar2.result().statusCode()) { "Wrong status in the response" }
-                                val body = ar2.result().bodyAsJsonObject()
-                                assertNotNull(body.getString("error")) { "id is null" }
-                            }
-                            testContext.completeNow()
-                        }
-                    } else {
-                        testContext.failNow(ar1.cause())
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding {
+            client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user), testContext.succeeding {
+                client.post(port, domain, "/token").sendJson(token, testContext.succeeding { response ->
+                    // then
+                    testContext.verify {
+                        val body = response.bodyAsJsonObject()
+                        assertNotNull(body.getString("error")) { "id is null" }
                     }
-                }
-            } else {
-                testContext.failNow(asyncResult.cause())
-            }
-        }
+                    testContext.completeNow()
+                })
+            })
+        })
     }
 }

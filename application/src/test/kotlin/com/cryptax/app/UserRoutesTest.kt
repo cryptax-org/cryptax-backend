@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(VertxExtension::class)
-@DisplayName("Integration tests on basic flow")
+@DisplayName("user routes integration tests")
 class UserRoutesTest {
 
     private val port = 8080
@@ -43,31 +43,6 @@ class UserRoutesTest {
     @Test
     @DisplayName("Create a user")
     fun createUser(testContext: VertxTestContext) {
-        /*// given
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val client = WebClient.create(vertx)
-
-        // when
-        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
-            if (asyncResult.succeeded()) {
-                client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user)) { ar2 ->
-                    // then
-                    testContext.verify {
-                        assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                        assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
-                        val body = ar2.result().bodyAsJsonObject()
-                        assertNotNull(body.getString("id")) { "id is null" }
-                        assertEquals(user.email, body.getString("email")) { "email do not match" }
-                        assertNull(body.getString("password")) { "password do not match" }
-                        assertEquals(user.lastName, body.getString("lastName")) { "lastName do not match" }
-                        assertEquals(user.firstName, body.getString("firstName")) { "firstName do not match" }
-                    }
-                    testContext.completeNow()
-                }
-            } else {
-                testContext.failNow(asyncResult.cause())
-            }
-        }*/
         // given
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val client = WebClient.create(vertx)
@@ -97,41 +72,25 @@ class UserRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
-            if (asyncResult.succeeded()) {
-                // Create a user
-                client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user)) { ar ->
-                    if (ar.succeeded()) {
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding {
+            // Create a user
+            client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user), testContext.succeeding { response ->
+                val userId = response.bodyAsJsonObject().getString("id", "idNotFound")
+                // Get its token
+                client.post(port, domain, "/token").sendJson(token, testContext.succeeding { response2 ->
+                    val tokenValue = response2.bodyAsJsonObject().getString("token", "tokenNotFound")
+                    client.get(port, domain, "/users/$userId").putHeader("Authorization", "Bearer $tokenValue").send(testContext.succeeding { response3 ->
+                        // then
                         testContext.verify {
-                            assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
+                            assertEquals(200, response3.statusCode()) { "Wrong status in the response" }
+                            val body = response3.bodyAsJsonObject()
+                            assertThat(body.getString("id")).isEqualTo(userId)
+                            testContext.completeNow()
                         }
-                        val userId = ar.result().bodyAsJsonObject().getString("id", "idNotFound")
-                        // Get its token
-                        client.post(port, domain, "/token").sendJson(token) { ar2 ->
-                            testContext.verify {
-                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                                assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
-                            }
-                            val tokenValue = ar2.result().bodyAsJsonObject().getString("token", "tokenNotFound")
-                            client.get(port, domain, "/users/$userId").putHeader("Authorization", "Bearer $tokenValue").send { ar3 ->
-                                // then
-                                testContext.verify {
-                                    assert(ar3.succeeded()) { "Something went wrong while handling the request" }
-                                    assertEquals(200, ar3.result().statusCode()) { "Wrong status in the response" }
-                                    val body = ar3.result().bodyAsJsonObject()
-                                    assertThat(body.getString("id")).isEqualTo(userId)
-                                    testContext.completeNow()
-                                }
-                            }
-                        }
-                    } else {
-                        testContext.failNow(ar.cause())
-                    }
-                }
-            } else {
-                testContext.failNow(asyncResult.cause())
-            }
-        }
+                    })
+                })
+            })
+        })
     }
 
     @Test
@@ -143,42 +102,25 @@ class UserRoutesTest {
         val client = WebClient.create(vertx)
 
         // when
-        vertx.deployVerticle(RestApplication(DefaultConfig())) { asyncResult ->
-            if (asyncResult.succeeded()) {
-                // Create a user
-                client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user)) { ar ->
-                    if (ar.succeeded()) {
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding {
+            // Create a user
+            client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user), testContext.succeeding { response ->
+                val userId = response.bodyAsJsonObject().getString("id", "idNotFound")
+                // Get its token
+                client.post(port, domain, "/token").sendJson(token, testContext.succeeding { response2 ->
+                    val tokenValue = response2.bodyAsJsonObject().getString("token", "tokenNotFound")
+                    client.get(port, domain, "/users").putHeader("Authorization", "Bearer $tokenValue").send(testContext.succeeding { response3 ->
+                        // then
                         testContext.verify {
-                            assert(ar.succeeded()) { "Something went wrong while handling the request" }
-                            assertEquals(200, ar.result().statusCode()) { "Wrong status in the response" }
+                            assertEquals(200, response3.statusCode()) { "Wrong status in the response" }
+                            val body = response3.bodyAsJsonArray()
+                            assertThat(body).hasSize(1)
+                            assertThat(body.getJsonObject(0).getString("id")).isEqualTo(userId)
+                            testContext.completeNow()
                         }
-                        val userId = ar.result().bodyAsJsonObject().getString("id", "idNotFound")
-                        // Get its token
-                        client.post(port, domain, "/token").sendJson(token) { ar2 ->
-                            testContext.verify {
-                                assert(ar2.succeeded()) { "Something went wrong while handling the request" }
-                                assertEquals(200, ar2.result().statusCode()) { "Wrong status in the response" }
-                            }
-                            val tokenValue = ar2.result().bodyAsJsonObject().getString("token", "tokenNotFound")
-                            client.get(port, domain, "/users").putHeader("Authorization", "Bearer $tokenValue").send { ar3 ->
-                                // then
-                                testContext.verify {
-                                    assert(ar3.succeeded()) { "Something went wrong while handling the request" }
-                                    assertEquals(200, ar3.result().statusCode()) { "Wrong status in the response" }
-                                    val body = ar3.result().bodyAsJsonArray()
-                                    assertThat(body).hasSize(1)
-                                    assertThat(body.getJsonObject(0).getString("id")).isEqualTo(userId)
-                                    testContext.completeNow()
-                                }
-                            }
-                        }
-                    } else {
-                        testContext.failNow(ar.cause())
-                    }
-                }
-            } else {
-                testContext.failNow(asyncResult.cause())
-            }
-        }
+                    })
+                })
+            })
+        })
     }
 }
