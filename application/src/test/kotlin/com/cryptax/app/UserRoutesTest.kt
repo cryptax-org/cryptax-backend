@@ -43,7 +43,7 @@ class UserRoutesTest {
     @Test
     @DisplayName("Create a user")
     fun createUser(testContext: VertxTestContext) {
-        // given
+        /*// given
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val client = WebClient.create(vertx)
 
@@ -67,7 +67,25 @@ class UserRoutesTest {
             } else {
                 testContext.failNow(asyncResult.cause())
             }
-        }
+        }*/
+        // given
+        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+        val client = WebClient.create(vertx)
+
+        // when
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding {
+            client.post(port, domain, "/users").sendJson(JsonObject.mapFrom(user), testContext.succeeding { response ->
+                testContext.verify {
+                    val body = response.bodyAsJsonObject()
+                    assertNotNull(body.getString("id")) { "id is null" }
+                    assertEquals(user.email, body.getString("email")) { "email do not match" }
+                    assertNull(body.getString("password")) { "password do not match" }
+                    assertEquals(user.lastName, body.getString("lastName")) { "lastName do not match" }
+                    assertEquals(user.firstName, body.getString("firstName")) { "firstName do not match" }
+                    testContext.completeNow()
+                }
+            })
+        })
     }
 
     @Test
