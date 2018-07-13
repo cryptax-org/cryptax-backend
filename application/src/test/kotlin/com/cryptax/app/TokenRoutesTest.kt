@@ -61,4 +61,29 @@ class TokenRoutesTest {
             }
         })
     }
+
+    @Test
+    @DisplayName("Get a token with wrong password")
+    fun getTokenWrongPassword(testContext: VertxTestContext) {
+        // given
+        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+        val token = JsonObject().put("email", user.email).put("password", "wrong password")
+        val client = WebClient.create(vertx)
+
+        // when
+        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ ->
+            client.post(8080, "localhost", "/users").sendJson(JsonObject.mapFrom(user)) { _ ->
+                client.post(8080, "localhost", "/token").sendJson(token) { ar ->
+                    // then
+                    testContext.verify {
+                        assert(ar.succeeded()) { "Something went wrong while handling the request" }
+                        assertEquals(401, ar.result().statusCode()) { "Wrong status in the response" }
+                        val body = ar.result().bodyAsJsonObject()
+                        assertNotNull(body.getString("error")) { "id is null" }
+                    }
+                    testContext.completeNow()
+                }
+            }
+        })
+    }
 }

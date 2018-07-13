@@ -2,6 +2,7 @@ buildscript {
     ext {
         projectName = rootProject.name
 
+        assertJVersion = '3.10.0'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
         kotlinVersion = '1.2.51'
