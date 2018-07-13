@@ -17,5 +17,3 @@ data class Transaction(
         BUY, SELL
     }
 }
-
-
