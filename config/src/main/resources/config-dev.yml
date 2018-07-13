@@ -7,3 +7,4 @@ jwt:
   algorithm: ES512
   issuer: Cryptax
   expiresInMinutes: 30
+  refreshExpiresInDays: 10

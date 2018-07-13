@@ -9,7 +9,6 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
-import io.vertx.ext.web.handler.JWTAuthHandler
 import io.vertx.ext.web.handler.LoggerHandler
 
 val bodyHandler: BodyHandler = BodyHandler.create()
@@ -20,7 +19,7 @@ object Routes {
 
     fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
         val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
-        val jwtAuthHandler = JWTAuthHandler.create(jwtProvider)
+        val jwtAuthHandler = JWTAuthHandlerCustom(jwtProvider)
 
         router.route().handler(LoggerHandler.create())
         handleUserRoutes(config, router, jwtAuthHandler)

@@ -45,6 +45,14 @@ private val userIdPathParamValidation = CustomValidator { routingContext ->
     }
 }
 
+// PLAN B:
+/*private val refreshTolenValidation = CustomValidator { routingContext ->
+    val userId = routingContext.request().getParam("userId")
+    if (routingContext.user().principal().getString("id") != userId) {
+        throw ValidationException("User [$userId] can't be accessed with the given token", ValidationException.ErrorType.NO_MATCH)
+    }
+}*/
+
 private val loginBodyValidation = CustomValidator { routingContext ->
     if (!routingContext.bodyAsJson.containsKey("email")) throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [email] missing")
     if (!routingContext.bodyAsJson.containsKey("password")) throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [password] missing")

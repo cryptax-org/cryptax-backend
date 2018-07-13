@@ -4,6 +4,7 @@ import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
 import com.cryptax.validation.RestValidation
+import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
@@ -15,7 +16,7 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth) {
 
     // Get token with user credentials
     router.post("/token")
-        .handler(RestValidation.jsonContentTypeValidation)
+        .handler(jsonContentTypeValidation)
         .handler(bodyHandler)
         .handler(loginValidation)
         .handler { routingContext ->
@@ -23,10 +24,18 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth) {
                 email = routingContext.bodyAsJson.getString("email"),
                 password = routingContext.bodyAsJson.getString("password").toCharArray())
 
-            val result = JsonObject().put("id", userWeb.id)
-            val token = jwtProvider.generateToken(result, Config.jwtOptions)
-            result.put("token", token)
+            val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), Config.jwtOptions)
+            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), Config.jwtRefreshOptions)
+
+            val result = JsonObject()
+                .put("id", userWeb.id!!)
+                .put("token", token)
+                .put("refreshToken", refreshToken)
             sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
+}
+
+private fun tokenPayLoad(id: String, isRefresh: Boolean): JsonObject {
+    return JsonObject().put("id", id).put("isRefresh", isRefresh)
 }

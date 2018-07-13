@@ -48,6 +48,10 @@ abstract class Config {
             algorithm = config.jwt.algorithm,
             issuer = config.jwt.issuer,
             expiresInMinutes = config.jwt.expiresInMinutes)
+        val jwtRefreshOptions = JWTOptions(
+            algorithm = config.jwt.algorithm,
+            issuer = config.jwt.issuer,
+            expiresInMinutes = config.jwt.refreshExpiresInDays)
 
         fun getProfile(): String {
             // TODO find a better way to handle profiles
@@ -89,4 +93,4 @@ class DefaultConfig : Config() {
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)
 data class ServerDto(val domain: String, val port: Int)
-data class JwtDto(val keyStorePath: String, val password: String, val algorithm: String, val issuer: String, val expiresInMinutes: Int)
+data class JwtDto(val keyStorePath: String, val password: String, val algorithm: String, val issuer: String, val expiresInMinutes: Int, val refreshExpiresInDays: Int)
