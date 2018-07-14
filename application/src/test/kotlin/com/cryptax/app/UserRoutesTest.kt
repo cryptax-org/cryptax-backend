@@ -7,6 +7,7 @@ import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
+import io.restassured.path.json.JsonPath
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
@@ -48,22 +49,7 @@ class UserRoutesTest {
     @DisplayName("Create a user")
     fun createUser(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", Matchers.notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-        // @formatter:on
-
+        createUser(user)
         testContext.completeNow()
     }
 
@@ -73,35 +59,10 @@ class UserRoutesTest {
         // given
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
 
         // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
-        val result =
-        given().
-            log().all().
-            body(credentials).
-            contentType(ContentType.JSON).
-        post("/token").
-        then().
-            log().all().
-            assertThat().body("token", notNullValue()).
-            assertThat().body("refreshToken", notNullValue()).
-            assertThat().statusCode(200).
-        extract().
-            body().jsonPath()
+        val result = getToken(credentials)
 
          given().
             log().all().
@@ -126,36 +87,10 @@ class UserRoutesTest {
     fun getAllUsers(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
+        val result = getToken(credentials)
 
         // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
-        val result =
-        given().
-            log().all().
-            body(credentials).
-            contentType(ContentType.JSON).
-        post("/token").
-        then().
-            log().all().
-            assertThat().body("token", notNullValue()).
-            assertThat().body("refreshToken", notNullValue()).
-            assertThat().statusCode(200).
-        extract().
-            body().jsonPath()
-
         given().
            log().all().
            contentType(ContentType.JSON).
@@ -180,36 +115,10 @@ class UserRoutesTest {
         // given
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
+        val result = getToken(credentials)
 
         // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
-        val result =
-        given().
-            log().all().
-            body(credentials).
-            contentType(ContentType.JSON).
-        post("/token").
-        then().
-            log().all().
-            assertThat().body("token", notNullValue()).
-            assertThat().body("refreshToken", notNullValue()).
-            assertThat().statusCode(200).
-        extract().
-            body().jsonPath()
-
          given().
             log().all().
             contentType(ContentType.JSON).
@@ -222,5 +131,40 @@ class UserRoutesTest {
         // @formatter:on
 
         testContext.completeNow()
+    }
+
+    private fun createUser(user: User) {
+        // @formatter:off
+        given().
+            log().all().
+            body(user).
+            contentType(ContentType.JSON).
+        post("/users").
+        then().
+            log().all().
+            assertThat().body("id", Matchers.notNullValue()).
+            assertThat().body("email", IsEqual(user.email)).
+            assertThat().body("password", IsNull.nullValue()).
+            assertThat().body("lastName", IsEqual(user.lastName)).
+            assertThat().body("firstName", IsEqual(user.firstName)).
+            assertThat().statusCode(200)
+        // @formatter:on
+    }
+
+    private fun getToken(credentials: String): JsonPath {
+        // @formatter:off
+        return given().
+                    log().all().
+                    body(credentials).
+                    contentType(ContentType.JSON).
+                post("/token").
+                then().
+                    log().all().
+                    assertThat().body("token", notNullValue()).
+                    assertThat().body("refreshToken", notNullValue()).
+                    assertThat().statusCode(200).
+                extract().
+                    body().jsonPath()
+        // @formatter:on
     }
 }
