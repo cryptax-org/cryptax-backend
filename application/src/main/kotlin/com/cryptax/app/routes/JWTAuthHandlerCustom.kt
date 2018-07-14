@@ -12,7 +12,7 @@ class JWTAuthHandlerCustom(authProvider: JWTAuth) : JWTAuthHandlerImpl(authProvi
     override fun authorize(user: User, handler: Handler<AsyncResult<Void>>) {
         val isRefresh = user.principal().getBoolean("isRefresh")
         if (isRefresh) {
-            throw HttpStatusException(403)
+            throw HttpStatusException(401)
         }
         super.authorize(user, handler)
     }
@@ -26,7 +26,7 @@ class JWTRefreshAuthHandlerCustom(authProvider: JWTAuth) : JWTAuthHandlerImpl(au
             super.authorize(user, handler)
             return
         }
-        throw HttpStatusException(403)
+        throw HttpStatusException(401)
     }
 }
 

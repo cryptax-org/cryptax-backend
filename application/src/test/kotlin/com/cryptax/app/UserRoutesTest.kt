@@ -105,7 +105,7 @@ class UserRoutesTest {
 
          given().
             log().all().
-            header(Header("Content-Type", "application/json")).
+            contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${result.getString("token")}")).
         get("/users/${result.getString("id")}").
         then().
@@ -173,5 +173,54 @@ class UserRoutesTest {
 
         testContext.completeNow()
     }
-}
 
+    @Test
+    @DisplayName("Get one user with refresh token")
+    fun getOneUserWithRefreshToken(testContext: VertxTestContext) {
+        // given
+        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+
+        // @formatter:off
+        given().
+            log().all().
+            body(user).
+            contentType(ContentType.JSON).
+        post("/users").
+        then().
+            log().all().
+            assertThat().body("id", notNullValue()).
+            assertThat().body("email", IsEqual(user.email)).
+            assertThat().body("password", IsNull.nullValue()).
+            assertThat().body("lastName", IsEqual(user.lastName)).
+            assertThat().body("firstName", IsEqual(user.firstName)).
+            assertThat().statusCode(200)
+
+        val result =
+        given().
+            log().all().
+            body(credentials).
+            contentType(ContentType.JSON).
+        post("/token").
+        then().
+            log().all().
+            assertThat().body("token", notNullValue()).
+            assertThat().body("refreshToken", notNullValue()).
+            assertThat().statusCode(200).
+        extract().
+            body().jsonPath()
+
+         given().
+            log().all().
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${result.getString("refreshToken")}")).
+        get("/users/${result.getString("id")}").
+        then().
+            log().all().
+            assertThat().body("error", IsEqual("Unauthorized")).
+            assertThat().statusCode(401)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+}
