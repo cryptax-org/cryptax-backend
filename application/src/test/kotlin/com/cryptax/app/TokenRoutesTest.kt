@@ -13,7 +13,6 @@ import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
-import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -48,22 +47,9 @@ class TokenRoutesTest {
     fun getToken(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val token = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
 
         // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
         given().
             log().all().
             body(token).
@@ -84,21 +70,9 @@ class TokenRoutesTest {
     fun getTokenWrongPassword(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val token = JsonObject().put("email", user.email).put("password", "wrong password").toString()
+        createUser(user)
 
         // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName))
-
         given().
             log().all().
             body(token).
@@ -117,40 +91,14 @@ class TokenRoutesTest {
     @DisplayName("Get a refresh token")
     fun getTokenRefreshToken(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val token = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
+        val result = getToken(credentials)
 
         // @formatter:off
         given().
             log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
-        val result =
-        given().
-            log().all().
-            body(token).
-            contentType(ContentType.JSON).
-        post("/token").
-        then().
-            log().all().
-            assertThat().body("token", notNullValue()).
-            assertThat().body("refreshToken", notNullValue()).
-            assertThat().statusCode(200).
-        extract().
-            body().jsonPath()
-
-        given().
-            log().all().
-            body(token).
+            body(credentials).
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${result.getString("refreshToken")}")).
         get("/refresh").
@@ -168,40 +116,14 @@ class TokenRoutesTest {
     @DisplayName("Get a refresh token with wrong token")
     fun getTokenRefreshTokenWithWrongToken(testContext: VertxTestContext) {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val token = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+        createUser(user)
+        val result = getToken(credentials)
 
         // @formatter:off
         given().
             log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-
-        val result =
-        given().
-            log().all().
-            body(token).
-            contentType(ContentType.JSON).
-        post("/token").
-        then().
-            log().all().
-            assertThat().body("token", notNullValue()).
-            assertThat().body("refreshToken", notNullValue()).
-            assertThat().statusCode(200).
-        extract().
-            body().jsonPath()
-
-        given().
-            log().all().
-            body(token).
+            body(credentials).
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${result.getString("token")}")).
         get("/refresh").

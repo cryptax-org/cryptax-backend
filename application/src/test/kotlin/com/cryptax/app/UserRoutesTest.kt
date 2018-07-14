@@ -60,10 +60,9 @@ class UserRoutesTest {
         val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
         createUser(user)
-
-        // @formatter:off
         val result = getToken(credentials)
 
+        // @formatter:off
          given().
             log().all().
             contentType(ContentType.JSON).
@@ -131,40 +130,5 @@ class UserRoutesTest {
         // @formatter:on
 
         testContext.completeNow()
-    }
-
-    private fun createUser(user: User) {
-        // @formatter:off
-        given().
-            log().all().
-            body(user).
-            contentType(ContentType.JSON).
-        post("/users").
-        then().
-            log().all().
-            assertThat().body("id", Matchers.notNullValue()).
-            assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-        // @formatter:on
-    }
-
-    private fun getToken(credentials: String): JsonPath {
-        // @formatter:off
-        return given().
-                    log().all().
-                    body(credentials).
-                    contentType(ContentType.JSON).
-                post("/token").
-                then().
-                    log().all().
-                    assertThat().body("token", notNullValue()).
-                    assertThat().body("refreshToken", notNullValue()).
-                    assertThat().statusCode(200).
-                extract().
-                    body().jsonPath()
-        // @formatter:on
     }
 }
