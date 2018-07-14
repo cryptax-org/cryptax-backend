@@ -1,6 +1,7 @@
 # cryptax-backend
 
-[![Build Status](https://travis-ci.org/cryptax-org/cryptax-backend.svg?branch=master)](https://travis-ci.org/cryptax-org/cryptax-backend)
+[![Build Status](https://travis-ci.org/cryptax-org/cryptax-backend.svg?branch=master)](https://travis-ci.org/cryptax-org/cryptax-backend) 
+[![codecov](https://codecov.io/gh/cryptax-org/cryptax-backend/branch/master/graph/badge.svg)](https://codecov.io/gh/cryptax-org/cryptax-backend)
 
 ### Pre-requisite
 
