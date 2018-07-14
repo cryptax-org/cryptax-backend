@@ -1,7 +1,6 @@
 package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
-import com.cryptax.app.routes.Routes.sendError
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
 import com.cryptax.controller.model.UserWeb
@@ -35,13 +34,10 @@ fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHand
         .handler(getUserValidation)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
-            val userWeb = userController.findUser(userId)
-            if (userWeb != null) {
-                val result = JsonObject.mapFrom(userWeb)
-                sendSuccess(result, routingContext.response())
-            } else {
-                sendError(404, routingContext.response())
-            }
+            // Previous validation 'insure' (95%) the user exists
+            val userWeb = userController.findUser(userId)!!
+            val result = JsonObject.mapFrom(userWeb)
+            sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
 

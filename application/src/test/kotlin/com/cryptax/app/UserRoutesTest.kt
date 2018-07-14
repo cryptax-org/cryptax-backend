@@ -106,7 +106,7 @@ class UserRoutesTest {
          given().
             log().all().
             header(Header("Content-Type", "application/json")).
-             header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            header(Header("Authorization", "Bearer ${result.getString("token")}")).
         get("/users/${result.getString("id")}").
         then().
             log().all().

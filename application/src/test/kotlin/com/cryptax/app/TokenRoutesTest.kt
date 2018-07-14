@@ -67,7 +67,7 @@ class TokenRoutesTest {
         given().
             log().all().
             body(token).
-            header(Header("Content-Type", "application/json")).
+            contentType(ContentType.JSON).
         post("/token").
         then().
             log().all().
@@ -108,6 +108,57 @@ class TokenRoutesTest {
             log().all().
             assertThat().body("error", IsEqual("Unauthorized")).
             assertThat().statusCode(401)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Get a refresh token")
+    fun getTokenRefreshToken(testContext: VertxTestContext) {
+        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
+        val token = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+
+        // @formatter:off
+        given().
+            log().all().
+            body(user).
+            contentType(ContentType.JSON).
+        post("/users").
+        then().
+            log().all().
+            assertThat().body("id", notNullValue()).
+            assertThat().body("email", IsEqual(user.email)).
+            assertThat().body("password", nullValue()).
+            assertThat().body("lastName", IsEqual(user.lastName)).
+            assertThat().body("firstName", IsEqual(user.firstName)).
+            assertThat().statusCode(200)
+
+        val result =
+        given().
+            log().all().
+            body(token).
+            contentType(ContentType.JSON).
+        post("/token").
+        then().
+            log().all().
+            assertThat().body("token", notNullValue()).
+            assertThat().body("refreshToken", notNullValue()).
+            assertThat().statusCode(200).
+        extract().
+            body().jsonPath()
+
+        given().
+            log().all().
+            body(token).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${result.getString("refreshToken")}")).
+        get("/refresh").
+        then().
+            log().all().
+            assertThat().body("token", notNullValue()).
+            assertThat().body("refreshToken", notNullValue()).
+            assertThat().statusCode(200)
         // @formatter:on
 
         testContext.completeNow()
