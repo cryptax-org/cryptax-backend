@@ -82,7 +82,7 @@ subprojects {
         }
 
         jacoco {
-            excludes += ["**/com.cryptax.app/**"]
+            excludes += []
         }
     }
 

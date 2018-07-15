@@ -1,7 +1,6 @@
 package com.cryptax.app
 
 import com.cryptax.config.Config
-import com.cryptax.config.DefaultConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
@@ -42,7 +41,7 @@ class TransactionRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestApplication(DefaultConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestApplication(TestConfig()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(5, TimeUnit.SECONDS)
         // Ugly fix to ensure the server is started
         // Even if the call back is called the server seems not ready

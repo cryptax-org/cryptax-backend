@@ -2,7 +2,13 @@ package com.cryptax.app
 
 import com.cryptax.config.Config
 import com.cryptax.controller.model.TransactionWeb
+import com.cryptax.db.InMemoryTransactionRepository
+import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.entity.User
+import com.cryptax.domain.port.IdGenerator
+import com.cryptax.domain.port.TransactionRepository
+import com.cryptax.domain.port.UserRepository
+import com.cryptax.id.JugIdGenerator
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -78,3 +84,8 @@ fun addTransaction(id: String, token: JsonPath): JsonPath {
                 body().jsonPath()
     // @formatter:on
 }
+
+class TestConfig(
+    userRepository: UserRepository = InMemoryUserRepository(),
+    transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
+    idGenerator: IdGenerator = JugIdGenerator()) : Config(userRepository, transactionRepository, idGenerator)

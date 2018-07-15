@@ -25,6 +25,8 @@ dependencies {
     )
 
     testImplementation(
+        project(':in-memory-db-simple'),
+        project(':id-generator'),
         [group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
         [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
