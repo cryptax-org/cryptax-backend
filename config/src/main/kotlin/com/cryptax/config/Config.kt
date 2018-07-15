@@ -4,6 +4,8 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.domain.port.IdGenerator
+import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
@@ -25,11 +27,18 @@ import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 import java.time.ZoneId
 import java.util.TimeZone
 
-abstract class Config {
+abstract class Config(userRepository: UserRepository, transactionRepository: TransactionRepository, idGenerator: IdGenerator) {
 
-    abstract fun userController(): UserController
+    private val securePassword = SecurePassword()
+    private val createUser = CreateUser(userRepository, securePassword, idGenerator)
+    private val findUser = FindUser(userRepository)
+    private val loginUser = LoginUser(userRepository, securePassword)
+    private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
+    private val updateTransaction = UpdateTransaction(transactionRepository)
+    private val findTransaction = FindTransaction(transactionRepository)
 
-    abstract fun transactionController(): TransactionController
+    val userController = UserController(createUser, findUser, loginUser)
+    val transactionController = TransactionController(addTransaction, updateTransaction, findTransaction)
 
     companion object {
         val objectMapper: ObjectMapper = ObjectMapper()
@@ -61,35 +70,10 @@ abstract class Config {
     }
 }
 
-class DefaultConfig : Config() {
-
-    private val userRepository: UserRepository = InMemoryUserRepository()
-    private val transactionRepository = InMemoryTransactionRepository()
-    private val idGenerator = JugIdGenerator()
-    private val securePassword = SecurePassword()
-    private val createUser = CreateUser(userRepository, securePassword, idGenerator)
-    private val findUser = FindUser(userRepository)
-    private val loginUser = LoginUser(userRepository, securePassword)
-    private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
-    private val updateTransaction = UpdateTransaction(transactionRepository)
-    private val findTransaction = FindTransaction(transactionRepository)
-
-    override fun userController(): UserController {
-        return userControllerInternal
-    }
-
-    override fun transactionController(): TransactionController {
-        return transactionControllerInternal
-    }
-
-    private val userControllerInternal: UserController by lazy {
-        UserController(createUser, findUser, loginUser)
-    }
-
-    private val transactionControllerInternal: TransactionController by lazy {
-        TransactionController(addTransaction, updateTransaction, findTransaction)
-    }
-}
+class DefaultConfig(
+    userRepository: UserRepository = InMemoryUserRepository(),
+    transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
+    idGenerator: IdGenerator = JugIdGenerator()) : Config(userRepository, transactionRepository, idGenerator)
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)
 data class ServerDto(val domain: String, val port: Int)

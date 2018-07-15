@@ -13,7 +13,7 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 
 fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
-    val userController = config.userController()
+    val userController = config.userController
 
     // Create user
     router.post("/users")

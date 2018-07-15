@@ -11,7 +11,7 @@ import io.vertx.ext.web.Router
 
 fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom) {
 
-    val userController = config.userController()
+    val userController = config.userController
 
     // Get token with user credentials
     router.post("/token")
