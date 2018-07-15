@@ -2,7 +2,6 @@ package com.cryptax.app
 
 import com.cryptax.config.Config
 import com.cryptax.config.DefaultConfig
-import com.cryptax.domain.entity.User
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -45,14 +44,12 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a token")
     fun getToken(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val token = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
+        createUser()
 
         // @formatter:off
         given().
             log().all().
-            body(token).
+            body(credentials).
             contentType(ContentType.JSON).
         post("/token").
         then().
@@ -68,9 +65,8 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a token with wrong password")
     fun getTokenWrongPassword(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
         val token = JsonObject().put("email", user.email).put("password", "wrong password").toString()
-        createUser(user)
+        createUser()
 
         // @formatter:off
         given().
@@ -90,10 +86,8 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a refresh token")
     fun getTokenRefreshToken(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
-        val result = getToken(credentials)
+        createUser()
+        val result = getToken()
 
         // @formatter:off
         given().
@@ -115,10 +109,8 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a refresh token with wrong token")
     fun getTokenRefreshTokenWithWrongToken(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
-        val result = getToken(credentials)
+        createUser()
+        val result = getToken()
 
         // @formatter:off
         given().

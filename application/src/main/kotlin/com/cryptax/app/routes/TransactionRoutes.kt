@@ -31,21 +31,6 @@ fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTA
         }
         .failureHandler(failureHandler)
 
-    // Add transaction to user with JWT token
-    router.post("/users/:userId/transactions")
-        .handler(jsonContentTypeValidation)
-        .handler(jwtAuthHandler)
-        .handler(bodyHandler)
-        .handler(transactionBodyValidation)
-        .handler { routingContext ->
-            val userId = routingContext.request().getParam("userId")
-            val body = routingContext.body
-            val transactionWeb = body.toJsonObject().mapTo(TransactionWeb::class.java)
-            val result = transactionController.addTransaction(userId, transactionWeb)
-            sendSuccess(JsonObject.mapFrom(result), routingContext.response())
-        }
-        .failureHandler(failureHandler)
-
     // Get all transactions for a user with JWT token
     router.get("/users/:userId/transactions")
         .handler(jsonContentTypeValidation)

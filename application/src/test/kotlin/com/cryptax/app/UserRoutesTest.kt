@@ -16,6 +16,7 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull
+import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -48,8 +49,7 @@ class UserRoutesTest {
     @Test
     @DisplayName("Create a user")
     fun createUser(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        createUser(user)
+        createUser()
         testContext.completeNow()
     }
 
@@ -57,10 +57,8 @@ class UserRoutesTest {
     @DisplayName("Get one user")
     fun getOneUser(testContext: VertxTestContext) {
         // given
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
-        val result = getToken(credentials)
+        createUser()
+        val result = getToken()
 
         // @formatter:off
          given().
@@ -72,7 +70,7 @@ class UserRoutesTest {
             log().all().
             assertThat().body("id", IsEqual(result.getString("id"))).
             assertThat().body("email", IsEqual(user.email)).
-            assertThat().body("password", IsNull.nullValue()).
+            assertThat().body("password", nullValue()).
             assertThat().body("lastName", IsEqual(user.lastName)).
             assertThat().body("firstName", IsEqual(user.firstName)).
             assertThat().statusCode(200)
@@ -84,10 +82,8 @@ class UserRoutesTest {
     @Test
     @DisplayName("Get all users")
     fun getAllUsers(testContext: VertxTestContext) {
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
-        val result = getToken(credentials)
+        createUser()
+        val result = getToken()
 
         // @formatter:off
         given().
@@ -112,10 +108,8 @@ class UserRoutesTest {
     @DisplayName("Get one user with refresh token")
     fun getOneUserWithRefreshToken(testContext: VertxTestContext) {
         // given
-        val user = Config.objectMapper.readValue(this::class.java.getResourceAsStream("/User1.json"), User::class.java)
-        val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
-        createUser(user)
-        val result = getToken(credentials)
+        createUser()
+        val result = getToken()
 
         // @formatter:off
          given().
