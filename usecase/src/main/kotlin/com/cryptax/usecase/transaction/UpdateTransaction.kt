@@ -10,9 +10,10 @@ class UpdateTransaction(private val transactionRepository: TransactionRepository
 
     fun update(transaction: Transaction): Transaction {
         validateUpdateTransaction(transaction)
-        val transactionDb = transactionRepository.get(transaction.id!!) ?: throw TransactionNotFound(transaction.id!!)
+        val transactionId = transaction.id!!
+        val transactionDb = transactionRepository.get(transactionId) ?: throw TransactionNotFound(transactionId)
         if (transactionDb.userId != transaction.userId) {
-            throw TransactionUserDoNotMatch(transaction.userId, transaction.id!!, transactionDb.userId)
+            throw TransactionUserDoNotMatch(transaction.userId, transactionId, transactionDb.userId)
         }
         return transactionRepository.update(transaction)
     }

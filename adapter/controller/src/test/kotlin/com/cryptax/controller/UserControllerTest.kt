@@ -117,21 +117,4 @@ class UserControllerTest {
         assertNull(actual)
         then(findUser).should().findById(userId)
     }
-
-    @Test
-    fun testFindAllUsers() {
-        // given
-        given(findUser.findAllUsers()).willReturn(listOf(user))
-
-        // when
-        val actual = userController.findAllUsers()
-
-        // then
-        assert(actual.size == 1)
-        assertEquals(user.id, actual[0].id)
-        assertEquals(user.email, actual[0].email)
-        assertEquals(user.lastName, actual[0].lastName)
-        assertEquals(user.firstName, actual[0].firstName)
-        then(findUser).should().findAllUsers()
-    }
 }

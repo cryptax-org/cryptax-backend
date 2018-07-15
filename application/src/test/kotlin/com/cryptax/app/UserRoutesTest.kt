@@ -2,20 +2,14 @@ package com.cryptax.app
 
 import com.cryptax.config.Config
 import com.cryptax.config.DefaultConfig
-import com.cryptax.domain.entity.User
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
-import io.restassured.path.json.JsonPath
 import io.vertx.core.Vertx
-import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import org.hamcrest.Matchers
-import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
-import org.hamcrest.core.IsNull
 import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -73,31 +67,6 @@ class UserRoutesTest {
             assertThat().body("password", nullValue()).
             assertThat().body("lastName", IsEqual(user.lastName)).
             assertThat().body("firstName", IsEqual(user.firstName)).
-            assertThat().statusCode(200)
-        // @formatter:on
-
-        testContext.completeNow()
-    }
-
-    @Test
-    @DisplayName("Get all users")
-    fun getAllUsers(testContext: VertxTestContext) {
-        createUser()
-        val result = getToken()
-
-        // @formatter:off
-        given().
-           log().all().
-           contentType(ContentType.JSON).
-           header(Header("Authorization", "Bearer ${result.getString("token")}")).
-        get("/users").
-        then().
-            log().all().
-            assertThat().body("[0].id", IsEqual(result.getString("id"))).
-            assertThat().body("[0].email", IsEqual(user.email)).
-            assertThat().body("[0].password", IsNull.nullValue()).
-            assertThat().body("[0].lastName", IsEqual(user.lastName)).
-            assertThat().body("[0].firstName", IsEqual(user.firstName)).
             assertThat().statusCode(200)
         // @formatter:on
 

@@ -25,9 +25,4 @@ class UserController(private val createUser: CreateUser, private val findUser: F
             null
         }
     }
-
-    fun findAllUsers(): List<UserWeb> {
-        val users = findUser.findAllUsers()
-        return users.map { UserWeb.toUserWeb(it) }
-    }
 }

@@ -104,18 +104,4 @@ class InMemoryUserRepositoryTest {
         // then
         assertNull(actual)
     }
-
-    @DisplayName("Find all users")
-    @Test
-    fun testFindAllUsers() {
-        // given
-        userRepository.create(user)
-
-        // when
-        val actual = userRepository.findAllUsers()
-
-        // then
-        assert(actual.size == 1)
-        assertEquals(user, actual[0])
-    }
 }

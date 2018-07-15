@@ -25,7 +25,8 @@ object Failure {
             response
                 .setStatusCode(401)
                 .end(JsonObject().put("error", "Unauthorized").encodePrettily())
-        } else if (event.failure() != null) {
+        } else {
+            // The framework should guarantee that we have a failure
             val throwable: Throwable = event.failure()
             if (throwable is ValidationException) {
                 log.warn("Validation exception [${throwable.message}]")
@@ -58,11 +59,6 @@ object Failure {
                     .setStatusCode(500)
                     .end(JsonObject().put("error", "Something went wrong").encodePrettily())
             }
-        } else {
-            log.error("Something failed, but we were not able to know why")
-            response
-                .setStatusCode(500)
-                .end(JsonObject().put("error", "Something went wrong").encodePrettily())
         }
     }
 }
