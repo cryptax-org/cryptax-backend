@@ -106,7 +106,7 @@ fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTA
             val result = transactionController.uploadCSVTransactions(
                 inputStream = ByteArrayInputStream(body.bytes),
                 userId = userId,
-                source = Source.valueOf(source),
+                source = Source.valueOf(source.toUpperCase()),
                 delimiter = if (delimiter == null) ',' else delimiter.toCharArray()[0])
                 .map { JsonObject.mapFrom(it) }
                 .fold(mutableListOf<JsonObject>()) { accumulator, item ->

@@ -23,6 +23,7 @@ val user = Config.objectMapper.readValue(Config::class.java.getResourceAsStream(
 val transaction = Config.objectMapper.readValue(Config::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
 val transactionsBinance = Config::class.java.getResource("/Binance-Trade-History.csv").readText()
+val transactionsCoinbase = Config::class.java.getResource("/Coinbase-Trade-History.csv").readText()
 
 fun createUser(): String {
     // @formatter:off
@@ -75,7 +76,7 @@ fun addTransaction(id: String, token: JsonPath): JsonPath {
                 assertThat().body("userId", IsNull.nullValue()).
                 // FIXME check how to validate dates
                 //assertThat().body("date", IsEqual(transaction.date)).
-                assertThat().body("type", Matchers.equalTo(transaction.type.toString())).
+                assertThat().body("type", Matchers.equalTo(transaction.type.toString().toLowerCase())).
                 assertThat().body("price", Matchers.equalTo(10.0f)).
                 assertThat().body("amount", Matchers.equalTo(2.0f)).
                 assertThat().body("currency1", Matchers.equalTo(transaction.currency1.toString())).

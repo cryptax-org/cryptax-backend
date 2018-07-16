@@ -3,28 +3,30 @@ package com.cryptax.parser.model
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
-import com.cryptax.domain.entity.Transaction.Type
+import com.cryptax.parser.utils.extractCurrencies
 import java.time.ZonedDateTime
 
-data class TransactionParser(
-    val source: Source,
+data class BinanceTransaction(
     val date: ZonedDateTime,
-    val type: Type,
+    val market: String,
+    val type: String,
     val price: Double,
     val amount: Double,
-    val currency1: Currency,
-    val currency2: Currency) {
+    val total: Double,
+    val fee: Double,
+    val feeCoin: Currency) {
 
-    fun toTransaction(userId: String): Transaction {
+    fun toTransaction(userId: String, source: Source): Transaction {
+        val market = extractCurrencies(market)
         return Transaction(
             userId = userId,
             source = source,
             date = date,
-            type = type,
+            type = Transaction.Type.valueOf(type),
             price = price,
             amount = amount,
-            currency1 = currency1,
-            currency2 = currency2
+            currency1 = market.first,
+            currency2 = market.second
         )
     }
 }

@@ -1,6 +1,8 @@
 package com.cryptax.validation
 
+import com.cryptax.domain.entity.Source
 import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.csvContentTypeValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
@@ -11,6 +13,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.impl.JWTUser
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -279,9 +282,9 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val transaction = JsonObject()
-            .put("source", "MANUAL")
+            .put("source", "manual")
             .put("date", "2011-12-03T10:15:30Z")
-            .put("type", "BUY")
+            .put("type", "buy")
             .put("price", 10.0)
             .put("amount", 5.0)
             .put("currency1", "BTC")
@@ -335,6 +338,15 @@ class RestValidationTest {
                 it.next()
             }
             .handler(transactionBodyValidation)
+            .failureHandler {
+                //fail(it.failure())
+                //assertEquals(500, resp.statusCode())
+                // HERE
+                assert(it.failure() is ValidationException)
+                assert( (it.failure() as ValidationException).message == "Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [MANUAL2]")
+                testContext.completeNow()
+                //fail("it fucking failed", it.failure())
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -345,8 +357,9 @@ class RestValidationTest {
                     client.getNow(port, host, "/users/$userId/transactions") { resp ->
                         // then
                         testContext.verify {
+                            val de = res
                             assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
+                            //testContext.completeNow()
                         }
                     }
                 } else {
@@ -629,6 +642,38 @@ class RestValidationTest {
                     // when
                     val client = vertx.createHttpClient()
                     client.getNow(port, host, "/users/otherUser") { resp ->
+                        // then
+                        testContext.verify {
+                            assertEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("☹ Upload csv validation")
+    @Test
+    fun testCsvContentTypeValidation(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val router = Router.router(vertx)
+        router.get("/users")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().headers().add("Content-Type", "derp")
+                it.next()
+            }
+            .handler(csvContentTypeValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users") { resp ->
                         // then
                         testContext.verify {
                             assertEquals(500, resp.statusCode())

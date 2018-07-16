@@ -1,6 +1,8 @@
 package com.cryptax.config.jackson
 
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.Source
+import com.cryptax.domain.entity.Transaction
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -20,31 +22,60 @@ object JacksonConfig {
     val objectMapper: ObjectMapper = ObjectMapper()
         .registerModule(KotlinModule())
         .registerModule(JavaTimeModule())
-        .registerModule(CurrencyModule())
+        .registerModule(EnumModule())
         .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         .setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
         .setSerializationInclusion(JsonInclude.Include.NON_NULL)
 }
 
+private class EnumModule : SimpleModule(NAME) {
+    init {
+        addSerializer(Currency::class.java, CurrencySerializer())
+        addSerializer(Source::class.java, SourceSerializer())
+        addSerializer(Transaction.Type::class.java, TransactionTypeSerializer())
+
+        addDeserializer(Currency::class.java, CurrencyDeserializer())
+        addDeserializer(Source::class.java, SourceDeserializer())
+        addDeserializer(Transaction.Type::class.java, TransactionTypeDeserializer())
+    }
+
+    companion object {
+        private const val NAME = "EnumModule"
+    }
+}
+
 private class CurrencySerializer : JsonSerializer<Currency>() {
-    override fun serialize(value: Currency, generator: JsonGenerator, provider: SerializerProvider) {
-        generator.writeString(value.code)
+    override fun serialize(value: Currency, gen: JsonGenerator, provider: SerializerProvider) {
+        gen.writeString(value.code)
     }
 }
 
 private class CurrencyDeserializer : JsonDeserializer<Currency>() {
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): Currency {
-        return Currency.findCurrency(p!!.getValueAsString(""))
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext?): Currency {
+        return Currency.findCurrency(p.getValueAsString("").toUpperCase())
     }
 }
 
-private class CurrencyModule : SimpleModule(NAME) {
-    init {
-        addSerializer(Currency::class.java, CurrencySerializer())
-        addDeserializer(Currency::class.java, CurrencyDeserializer())
+private class SourceSerializer : JsonSerializer<Source>() {
+    override fun serialize(value: Source, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.toString().toLowerCase())
     }
+}
 
-    companion object {
-        private const val NAME = "CurrencyModule"
+private class SourceDeserializer : JsonDeserializer<Source>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext?): Source {
+        return Source.valueOf(p.getValueAsString("").toUpperCase())
+    }
+}
+
+private class TransactionTypeSerializer : JsonSerializer<Transaction.Type>() {
+    override fun serialize(value: Transaction.Type, gen: JsonGenerator, serializers: SerializerProvider) {
+        gen.writeString(value.toString().toLowerCase())
+    }
+}
+
+private class TransactionTypeDeserializer : JsonDeserializer<Transaction.Type>() {
+    override fun deserialize(p: JsonParser, ctxt: DeserializationContext?): Transaction.Type {
+        return Transaction.Type.valueOf(p.getValueAsString("").toUpperCase())
     }
 }

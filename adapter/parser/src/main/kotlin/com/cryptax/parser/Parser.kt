@@ -1,7 +1,7 @@
 package com.cryptax.parser
 
 import com.cryptax.domain.entity.Source
-import com.cryptax.parser.model.TransactionParser
+import com.cryptax.domain.entity.Transaction
 import java.io.InputStream
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -12,5 +12,5 @@ abstract class Parser(
     protected val source: Source,
     protected val delimiter: Char) {
 
-    abstract fun parse(inputStream: InputStream): List<TransactionParser>
+    abstract fun parse(inputStream: InputStream, userId: String): List<Transaction>
 }

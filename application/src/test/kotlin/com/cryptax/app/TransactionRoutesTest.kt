@@ -76,7 +76,7 @@ class TransactionRoutesTest {
             assertThat().body("[0].userId", nullValue()).
             // FIXME check how to validate dates
             //assertThat().body("[0].date", IsEqual(transaction.date)).
-            assertThat().body("[0].type", equalTo(transaction.type.toString())).
+            assertThat().body("[0].type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(10.0f)).
             assertThat().body("[0].amount", equalTo(2.0f)).
             assertThat().body("[0].currency1", equalTo(transaction.currency1.toString())).
@@ -106,7 +106,7 @@ class TransactionRoutesTest {
             assertThat().body("userId", nullValue()).
             // FIXME check how to validate dates
             //assertThat().body("[0].date", IsEqual(transaction.date)).
-            assertThat().body("type", equalTo(transaction.type.toString())).
+            assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(10.0f)).
             assertThat().body("amount", equalTo(2.0f)).
             assertThat().body("currency1", equalTo(transaction.currency1.toString())).
@@ -144,7 +144,7 @@ class TransactionRoutesTest {
             assertThat().body("userId", nullValue()).
             // FIXME check how to validate dates
             //assertThat().body("[0].date", IsEqual(transaction.date)).
-            assertThat().body("type", equalTo(transactionUpdated.type.toString())).
+            assertThat().body("type", equalTo(transactionUpdated.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(20.0f)).
             assertThat().body("amount", equalTo(5.0f)).
             assertThat().body("currency1", equalTo(transactionUpdated.currency1.toString())).
@@ -157,7 +157,7 @@ class TransactionRoutesTest {
 
     @Test
     @DisplayName("Upload a Binance CSV")
-    fun uploadCsv(testContext: VertxTestContext) {
+    fun uploadBinanceCsv(testContext: VertxTestContext) {
         val id = createUser()
         val result = getToken()
 
@@ -166,19 +166,49 @@ class TransactionRoutesTest {
             body(transactionsBinance).
             contentType("text/csv").
             header(Header("Authorization", "Bearer ${result.getString("token")}")).
-            queryParam("source","BINANCE").
+            queryParam("source","binance").
         post("/users/$id/transactions/upload").
         then().
             log().all().
             assertThat().body("[0].id", notNullValue()).
-            assertThat().body("[0].source", equalTo(Source.BINANCE.toString())).
+            assertThat().body("[0].source", equalTo(Source.BINANCE.toString().toLowerCase())).
             // FIXME check how to validate dates
             assertThat().body("[0].date", notNullValue()).
-            assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString())).
+            assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(0.009776f)).
             assertThat().body("[0].amount", equalTo(150.13f)).
             assertThat().body("[0].currency1", equalTo(Currency.ICON.code)).
             assertThat().body("[0].currency2", equalTo(Currency.ETH.code)).
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Upload a Coinbase CSV")
+    fun uploadCoinbaseCsv(testContext: VertxTestContext) {
+        val id = createUser()
+        val result = getToken()
+
+        // @formatter:off
+        given().
+            body(transactionsCoinbase).
+            contentType("text/csv").
+            header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            queryParam("source","coinbase").
+        post("/users/$id/transactions/upload").
+        then().
+            log().all().
+            assertThat().body("[0].id", notNullValue()).
+            assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
+            // FIXME check how to validate dates
+            assertThat().body("[0].date", notNullValue()).
+            assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
+            assertThat().body("[0].price", equalTo(6417.48f)).
+            assertThat().body("[0].amount", equalTo(0.18730723f)).
+            assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
+            assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
             assertThat().statusCode(200)
         // @formatter:on
 

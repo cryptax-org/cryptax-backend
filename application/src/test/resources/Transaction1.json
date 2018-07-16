@@ -1,7 +1,7 @@
 {
-    "source": "MANUAL",
+    "source": "manual",
     "date": "2011-12-03T10:15:30Z",
-    "type": "BUY",
+    "type": "buy",
     "price": 10.0,
     "amount": 2.0,
     "currency1": "ETH",

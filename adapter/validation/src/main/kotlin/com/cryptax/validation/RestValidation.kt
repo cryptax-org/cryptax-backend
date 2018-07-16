@@ -1,6 +1,7 @@
 package com.cryptax.validation
 
 import com.cryptax.domain.entity.Source
+import com.cryptax.domain.entity.Transaction
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.api.impl.RequestParameterImpl
@@ -37,7 +38,7 @@ object RestValidation {
         .addCustomValidatorFunction { routingContext ->
             val source = routingContext.request().getParam("source")
             try {
-                Source.valueOf(source)
+                Source.valueOf(source.toUpperCase())
             } catch (e: Exception) {
                 throw ValidationException("Invalid source [$source]")
             }
@@ -98,8 +99,8 @@ private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidati
 
     override fun checkBodyFieldsValueType(body: JsonObject) {
         val source = body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
-        if (source != "MANUAL") {
-            throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be 'MANUAL'")
+        if (source != Source.MANUAL.toString().toLowerCase()) {
+            throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [$source]")
         }
         try {
             val date = body.getValue("date") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [date] should be a String")
@@ -109,8 +110,8 @@ private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidati
         }
 
         val type = body.getValue("type") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be a String")
-        if (type != "SELL" && type != "BUY") {
-            throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be 'SELL' or 'BUY'")
+        if (type != Transaction.Type.BUY.toString().toLowerCase() && type != Transaction.Type.SELL.toString().toLowerCase()) {
+            throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be '${Transaction.Type.BUY.toString().toLowerCase()}' or '${Transaction.Type.SELL.toString().toLowerCase()}'")
         }
     }
 }
