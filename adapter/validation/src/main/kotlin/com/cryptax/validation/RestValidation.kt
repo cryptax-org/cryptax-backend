@@ -36,6 +36,15 @@ object RestValidation {
             RequestParameterImpl("Content-Type", value)
 
         }, true, false)
+
+    val csvContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
+        .addHeaderParamWithCustomTypeValidator("Content-Type", { value ->
+            if (!value.contains("text/csv")) {
+                throw ValidationException.ValidationExceptionFactory.generateWrongContentTypeExpected(value, "text/csv")
+            }
+            RequestParameterImpl("Content-Type", value)
+
+        }, true, false)
 }
 
 private val userIdPathParamValidation = CustomValidator { routingContext ->

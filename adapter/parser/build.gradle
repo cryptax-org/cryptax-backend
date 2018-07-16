@@ -1,0 +1,14 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.parser'
+
+configurations.all {
+    exclude module: 'swagger-parser-v2-converter'
+}
+
+dependencies {
+    implementation(
+        project(':domain'),
+        [group: 'com.opencsv', name: 'opencsv', version: '4.2']
+    )
+}

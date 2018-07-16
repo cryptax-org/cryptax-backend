@@ -4,13 +4,16 @@ import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
 import com.cryptax.controller.model.TransactionWeb
+import com.cryptax.domain.entity.Source
 import com.cryptax.validation.RestValidation
+import com.cryptax.validation.RestValidation.csvContentTypeValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.JWTAuthHandler
+import java.io.ByteArrayInputStream
 
 fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
@@ -83,6 +86,29 @@ fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTA
             val transactionWeb = routingContext.body.toJsonObject().mapTo(TransactionWeb::class.java)
             val result = transactionController.updateTransaction(transactionId, userId, transactionWeb)
             sendSuccess(JsonObject.mapFrom(result), routingContext.response())
+        }
+        .failureHandler(failureHandler)
+
+    // Upload CSV
+    router.post("/users/:userId/transactions/upload")
+        .handler(csvContentTypeValidation)
+        .handler(jwtAuthHandler)
+        .handler(bodyHandler)
+        .handler { routingContext ->
+            val userId = routingContext.request().getParam("userId")
+            val body = routingContext.body
+
+            val result = transactionController.uploadCSVTransactions(ByteArrayInputStream(body.bytes), userId, Source.BINANCE)
+                .map { JsonObject.mapFrom(it) }
+                .fold(mutableListOf<JsonObject>()) { accumulator, item ->
+                    accumulator.add(item)
+                    accumulator
+                }
+                .fold(JsonArray()) { accumulator, item ->
+                    accumulator.add(item)
+                    accumulator
+                }
+            sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
 }

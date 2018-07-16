@@ -6,6 +6,7 @@ dependencies {
     implementation(
         project(':usecase'),
         project(':domain'),
+        project(':parser'),
     )
     testImplementation(
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],

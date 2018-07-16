@@ -5,4 +5,5 @@ module cryptax.controller {
     requires kotlin.stdlib;
     requires cryptax.usecase;
     requires cryptax.domain;
+    requires cryptax.parser;
 }
