@@ -1,4 +1,4 @@
-package com.cryptax.parser
+package com.cryptax.parser.model
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source

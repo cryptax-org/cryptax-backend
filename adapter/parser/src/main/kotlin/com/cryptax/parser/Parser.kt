@@ -1,6 +1,7 @@
 package com.cryptax.parser
 
 import com.cryptax.domain.entity.Source
+import com.cryptax.parser.model.TransactionParser
 import java.io.InputStream
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

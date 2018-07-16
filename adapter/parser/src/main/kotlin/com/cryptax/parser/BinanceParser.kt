@@ -2,6 +2,7 @@ package com.cryptax.parser
 
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
+import com.cryptax.parser.model.TransactionParser
 import com.cryptax.parser.utils.extractCurrencies
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
