@@ -1,5 +1,6 @@
 package com.cryptax.config
 
+import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
@@ -15,17 +16,13 @@ import com.cryptax.usecase.transaction.UpdateTransaction
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
-import java.time.ZoneId
-import java.util.TimeZone
+
 
 abstract class Config(userRepository: UserRepository, transactionRepository: TransactionRepository, idGenerator: IdGenerator) {
 
@@ -41,12 +38,7 @@ abstract class Config(userRepository: UserRepository, transactionRepository: Tra
     val transactionController = TransactionController(addTransaction, updateTransaction, findTransaction)
 
     companion object {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerModule(KotlinModule())
-            .registerModule(JavaTimeModule())
-            .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-            .setTimeZone(TimeZone.getTimeZone(ZoneId.of("UTC")))
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+        val objectMapper: ObjectMapper = JacksonConfig.objectMapper
 
         val config: ConfigDto = ObjectMapper(YAMLFactory())
             .registerModule(KotlinModule())

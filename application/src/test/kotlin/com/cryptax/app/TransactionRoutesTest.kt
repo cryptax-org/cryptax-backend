@@ -154,4 +154,34 @@ class TransactionRoutesTest {
 
         testContext.completeNow()
     }
+
+    @Test
+    @DisplayName("Upload a Binance CSV")
+    fun uploadCsv(testContext: VertxTestContext) {
+        val id = createUser()
+        val result = getToken()
+
+        // @formatter:off
+        given().
+            body(transactionsBinance).
+            contentType("text/csv").
+            header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            queryParam("source","BINANCE").
+        post("/users/$id/transactions/upload").
+        then().
+            log().all().
+            assertThat().body("[0].id", notNullValue()).
+            assertThat().body("[0].source", equalTo(Source.BINANCE.toString())).
+            // FIXME check how to validate dates
+            assertThat().body("[0].date", notNullValue()).
+            assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString())).
+            assertThat().body("[0].price", equalTo(0.009776f)).
+            assertThat().body("[0].amount", equalTo(150.13f)).
+            assertThat().body("[0].currency1", equalTo(Currency.ICON.code)).
+            assertThat().body("[0].currency2", equalTo(Currency.ETH.code)).
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
 }

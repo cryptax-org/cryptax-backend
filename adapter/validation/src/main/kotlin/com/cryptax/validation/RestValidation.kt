@@ -1,5 +1,6 @@
 package com.cryptax.validation
 
+import com.cryptax.domain.entity.Source
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.RoutingContext
 import io.vertx.ext.web.api.impl.RequestParameterImpl
@@ -27,6 +28,30 @@ object RestValidation {
         .create()
         .addPathParam("userId", ParameterType.GENERIC_STRING)
         .addCustomValidatorFunction(userIdPathParamValidation)
+
+    val uploadCsvValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
+        .create()
+        .addPathParam("userId", ParameterType.GENERIC_STRING)
+        .addQueryParam("source", ParameterType.GENERIC_STRING, true)
+        .addQueryParam("delimiter", ParameterType.GENERIC_STRING, false)
+        .addCustomValidatorFunction { routingContext ->
+            val source = routingContext.request().getParam("source")
+            try {
+                Source.valueOf(source)
+            } catch (e: Exception) {
+                throw ValidationException("Invalid source [$source]")
+            }
+            val delimiterParam = routingContext.request().getParam("delimiter")
+            if (delimiterParam != null) {
+                if (delimiterParam.length != 1) {
+                    throw ValidationException("Invalid delimiter [$delimiterParam]")
+                }
+                val delimiter = delimiterParam.toCharArray()[0]
+                if (delimiter != ',' && delimiter != ';') {
+                    throw ValidationException("Invalid delimiter [$delimiterParam]")
+                }
+            }
+        }
 
     val jsonContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
         .addHeaderParamWithCustomTypeValidator("Content-Type", { value ->

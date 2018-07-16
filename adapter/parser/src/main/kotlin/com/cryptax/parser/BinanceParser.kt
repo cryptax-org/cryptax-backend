@@ -1,12 +1,10 @@
 package com.cryptax.parser
 
-import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
+import com.cryptax.parser.utils.extractCurrencies
 import com.opencsv.CSVParserBuilder
 import com.opencsv.CSVReaderBuilder
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.time.LocalDateTime
@@ -25,7 +23,7 @@ class BinanceParser(delimiter: Char = ',') : Parser(
             .build()
             .readAll()
             .map { line ->
-                val market = parseMarket(line[1])
+                val market = extractCurrencies(line[1])
                 TransactionParser(
                     source = source,
                     date = LocalDateTime.parse(line[0], pattern).atZone(utc),
@@ -36,38 +34,5 @@ class BinanceParser(delimiter: Char = ',') : Parser(
                     currency2 = market.second)
             }
     }
-
-    private fun parseMarket(market: String): Pair<Currency, Currency> {
-        // FIXME to handle more cases
-        if (market.length == 6) {
-            return Pair(Currency.findCurrency(market.substring(0, 3)), Currency.findCurrency(market.substring(3, 6)))
-        } else if (market.length == 7) {
-            var currency1 = Currency.findCurrency(market.substring(0, 3))
-            val currency2: Currency
-            if (currency1 == Currency.UNKNOWN) {
-                currency1 = Currency.findCurrency(market.substring(0, 4))
-                currency2 = Currency.findCurrency(market.substring(4, 7))
-            } else {
-                currency2 = Currency.findCurrency(market.substring(3, 7))
-            }
-            return Pair(currency1, currency2)
-        } else {
-            return Pair(Currency.UNKNOWN, Currency.UNKNOWN)
-        }
-    }
-}
-
-fun main(args: Array<String>) {
-    val initialFile = File("/home/carl/Downloads/Binance-Trade-History.csv")
-    val targetStream = FileInputStream(initialFile)
-    val derp = BinanceParser().parse(targetStream)
-    targetStream.close()
-    println("Res: $derp")
-
-    val initialFile2 = File("/home/carl/Downloads/Binance-Trade-History2.csv")
-    val targetStream2 = FileInputStream(initialFile2)
-    val derp2 = BinanceParser(delimiter = ';').parse(targetStream2)
-    targetStream2.close()
-    println("Res: $derp2")
 }
 

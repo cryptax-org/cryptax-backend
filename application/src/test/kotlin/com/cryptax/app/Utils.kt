@@ -22,6 +22,7 @@ import org.hamcrest.core.IsNull
 val user = Config.objectMapper.readValue(Config::class.java.getResourceAsStream("/User1.json"), User::class.java)
 val transaction = Config.objectMapper.readValue(Config::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password.joinToString("")).toString()
+val transactionsBinance = Config::class.java.getResource("/Binance-Trade-History.csv").readText()
 
 fun createUser(): String {
     // @formatter:off

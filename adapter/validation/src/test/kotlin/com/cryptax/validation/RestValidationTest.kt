@@ -5,6 +5,7 @@ import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
+import com.cryptax.validation.RestValidation.uploadCsvValidation
 import io.vertx.core.Vertx
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.json.JsonObject
@@ -582,7 +583,7 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val router = Router.router(vertx)
-        router.get("/user/:userId")
+        router.get("/users/:userId")
             .handler {
                 it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
@@ -595,7 +596,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/user/$userId") { resp ->
+                    client.getNow(port, host, "/users/$userId") { resp ->
                         // then
                         testContext.verify {
                             assertNotEquals(500, resp.statusCode())
@@ -614,7 +615,7 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val router = Router.router(vertx)
-        router.get("/user/:userId")
+        router.get("/users/:userId")
             .handler {
                 it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
@@ -627,7 +628,194 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/user/otherUser") { resp ->
+                    client.getNow(port, host, "/users/otherUser") { resp ->
+                        // then
+                        testContext.verify {
+                            assertEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("😀 Upload csv validation")
+    @Test
+    fun testUploadCsvValidation(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val userId = "randomId"
+        val source = "BINANCE"
+        val router = Router.router(vertx)
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
+                        // then
+                        testContext.verify {
+                            assertNotEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("😀 Upload csv validation 2")
+    @Test
+    fun testUploadCsvValidation2(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val userId = "randomId"
+        val source = "BINANCE"
+        val delimiter = ","
+        val router = Router.router(vertx)
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.request().params().add("delimiter", delimiter)
+                it.queryParams().add("delimiter", delimiter)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
+                        // then
+                        testContext.verify {
+                            assertNotEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("☹ Upload csv validation source fail")
+    @Test
+    fun testUploadCsvValidationSourceFail(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val userId = "randomId"
+        val source = "BINANCE_FAIL"
+        val delimiter = ","
+        val router = Router.router(vertx)
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.request().params().add("delimiter", delimiter)
+                it.queryParams().add("delimiter", delimiter)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
+                        // then
+                        testContext.verify {
+                            assertEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("☹ Upload csv validation delimiter fail")
+    @Test
+    fun testUploadCsvValidationDelimiterFail(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val userId = "randomId"
+        val source = "BINANCE"
+        val delimiter = "fghkjewlhfjwke"
+        val router = Router.router(vertx)
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.request().params().add("delimiter", delimiter)
+                it.queryParams().add("delimiter", delimiter)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
+                        // then
+                        testContext.verify {
+                            assertEquals(500, resp.statusCode())
+                            testContext.completeNow()
+                        }
+                    }
+                } else {
+                    fail("The server did not start")
+                }
+            }
+    }
+
+    @DisplayName("☹ Upload csv validation delimiter fail 2")
+    @Test
+    fun testUploadCsvValidationDelimiterFail2(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val userId = "randomId"
+        val source = "BINANCE"
+        val delimiter = "&"
+        val router = Router.router(vertx)
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.request().params().add("delimiter", delimiter)
+                it.queryParams().add("delimiter", delimiter)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+
+        vertx.createHttpServer()
+            .requestHandler { router.accept(it) }
+            .listen(port) { res ->
+                if (res.succeeded()) {
+                    // when
+                    val client = vertx.createHttpClient()
+                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
                         // then
                         testContext.verify {
                             assertEquals(500, resp.statusCode())

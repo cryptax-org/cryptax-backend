@@ -15,4 +15,5 @@ module cryptax.config {
     requires com.fasterxml.jackson.dataformat.yaml;
     requires vertx.auth.jwt;
     requires vertx.auth.common;
+    requires com.fasterxml.jackson.core;
 }

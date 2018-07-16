@@ -31,7 +31,12 @@ enum class Currency constructor(val code: String, val fullName: String, val symb
 
     companion object {
         fun findCurrency(code: String): Currency {
-            return values().find { currency -> currency.code == code } ?: UNKNOWN
+            // TODO find a better way to handle code change
+            val str = if (code == "BQX") "ETHOS" else code
+            return values()
+                .find { currency ->
+                    currency.code == str
+                } ?: UNKNOWN
         }
     }
 }

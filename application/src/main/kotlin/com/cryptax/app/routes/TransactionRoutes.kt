@@ -1,6 +1,7 @@
 package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
+import com.cryptax.app.routes.Routes.sendError
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
 import com.cryptax.controller.model.TransactionWeb
@@ -9,6 +10,7 @@ import com.cryptax.validation.RestValidation
 import com.cryptax.validation.RestValidation.csvContentTypeValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
+import com.cryptax.validation.RestValidation.uploadCsvValidation
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -69,7 +71,7 @@ fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTA
                 val result = JsonObject.mapFrom(transactionWeb)
                 sendSuccess(result, routingContext.response())
             } else {
-                Routes.sendError(404, routingContext.response())
+                sendError(404, routingContext.response())
             }
         }
         .failureHandler(failureHandler)
@@ -92,13 +94,20 @@ fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTA
     // Upload CSV
     router.post("/users/:userId/transactions/upload")
         .handler(csvContentTypeValidation)
+        .handler(uploadCsvValidation)
         .handler(jwtAuthHandler)
         .handler(bodyHandler)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
+            val source = routingContext.request().getParam("source")
+            val delimiter = routingContext.request().getParam("delimiter")
             val body = routingContext.body
 
-            val result = transactionController.uploadCSVTransactions(ByteArrayInputStream(body.bytes), userId, Source.BINANCE)
+            val result = transactionController.uploadCSVTransactions(
+                inputStream = ByteArrayInputStream(body.bytes),
+                userId = userId,
+                source = Source.valueOf(source),
+                delimiter = if (delimiter == null) ',' else delimiter.toCharArray()[0])
                 .map { JsonObject.mapFrom(it) }
                 .fold(mutableListOf<JsonObject>()) { accumulator, item ->
                     accumulator.add(item)
