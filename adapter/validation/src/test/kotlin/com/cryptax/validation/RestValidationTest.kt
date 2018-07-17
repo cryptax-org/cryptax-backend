@@ -32,7 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeUnit
 
 /**
- * ☢☢ Those are not very reliable tests. This should be updated to assert the right failure
+ * ☢☢ Those tests are between unit test and integration tests
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Request validation validation")
@@ -299,13 +299,7 @@ class RestValidationTest {
                 it.next()
             }
             .handler(loginValidation)
-            .handler {
-                testContext.verify {
-                    assertEquals(-1, it.statusCode())
-                    assertFalse(it.failed())
-                    testContext.completeNow()
-                }
-            }
+            .handler(verifySuccessHandler(testContext))
 
         vertx.createHttpClient().getNow(port, host, "/", responseHandler(testContext))
     }
@@ -350,13 +344,7 @@ class RestValidationTest {
                 it.next()
             }
             .handler(getUserValidation)
-            .handler {
-                testContext.verify {
-                    assertEquals(-1, it.statusCode())
-                    assertFalse(it.failed())
-                    testContext.completeNow()
-                }
-            }
+            .handler(verifySuccessHandler(testContext))
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId", responseHandler(testContext))
     }
@@ -403,13 +391,7 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
-            .handler {
-                testContext.verify {
-                    assertEquals(-1, it.statusCode())
-                    assertFalse(it.failed())
-                    testContext.completeNow()
-                }
-            }
+            .handler(verifySuccessHandler(testContext))
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
@@ -430,13 +412,7 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
-            .handler {
-                testContext.verify {
-                    assertEquals(-1, it.statusCode())
-                    assertFalse(it.failed())
-                    testContext.completeNow()
-                }
-            }
+            .handler(verifySuccessHandler(testContext))
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
