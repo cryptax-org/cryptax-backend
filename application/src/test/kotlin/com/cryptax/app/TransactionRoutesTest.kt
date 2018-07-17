@@ -51,25 +51,23 @@ class TransactionRoutesTest {
     @Test
     @DisplayName("Add a transaction")
     fun addTransaction(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
-        addTransaction(id, result)
+        initTransaction()
         testContext.completeNow()
     }
 
     @Test
     @DisplayName("Get all transactions for a user")
     fun getAllTransactions(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
-        addTransaction(id, result)
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
 
         // @formatter:off
         given().
             body(transaction).
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
-        get("/users/$id/transactions").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        get("/users/$userId/transactions").
         then().
             log().all().
             assertThat().body("[0].id", notNullValue()).
@@ -90,16 +88,17 @@ class TransactionRoutesTest {
     @Test
     @DisplayName("Get one transaction for a user")
     fun getOneTransaction(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
-        val transactionId = addTransaction(id, result).getString("id")
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+        val transactionId = addTransaction(userId, token).getString("id")
 
         // @formatter:off
         given().
             body(transaction).
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
-        get("/users/$id/transactions/$transactionId").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        get("/users/$userId/transactions/$transactionId").
         then().
             log().all().
             assertThat().body("id", notNullValue()).
@@ -120,9 +119,10 @@ class TransactionRoutesTest {
     @Test
     @DisplayName("Update one transaction for a user")
     fun updateOneTransaction(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
-        val transactionId = addTransaction(id, result).getString("id")
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+        val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
             source = Source.MANUAL,
             date = ZonedDateTime.now(),
@@ -136,8 +136,8 @@ class TransactionRoutesTest {
         given().
             body(transactionUpdated).
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
-        put("/users/$id/transactions/$transactionId").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        put("/users/$userId/transactions/$transactionId").
         then().
             log().all().
             assertThat().body("id", equalTo(transactionId)).
@@ -158,16 +158,17 @@ class TransactionRoutesTest {
     @Test
     @DisplayName("Upload a Binance CSV")
     fun uploadBinanceCsv(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
 
         // @formatter:off
         given().
             body(transactionsBinance).
             contentType("text/csv").
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","binance").
-        post("/users/$id/transactions/upload").
+        post("/users/$userId/transactions/upload").
         then().
             log().all().
             assertThat().body("[0].id", notNullValue()).
@@ -188,16 +189,17 @@ class TransactionRoutesTest {
     @Test
     @DisplayName("Upload a Coinbase CSV")
     fun uploadCoinbaseCsv(testContext: VertxTestContext) {
-        val id = createUser()
-        val result = getToken()
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
 
         // @formatter:off
         given().
             body(transactionsCoinbase).
             contentType("text/csv").
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","coinbase").
-        post("/users/$id/transactions/upload").
+        post("/users/$userId/transactions/upload").
         then().
             log().all().
             assertThat().body("[0].id", notNullValue()).

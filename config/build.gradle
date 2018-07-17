@@ -10,6 +10,7 @@ dependencies {
         project(':id-generator'),
         project(':security'),
         project(':controller'),
+        project(':email'),
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],

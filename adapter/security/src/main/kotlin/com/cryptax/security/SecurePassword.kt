@@ -1,5 +1,6 @@
 package com.cryptax.security
 
+import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.security.encoder.Encoder
 import com.cryptax.security.encoder.Sha3512Encoder
@@ -23,6 +24,10 @@ class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePa
         val hashedPassword = hashedSaltPassword.str().substringAfter(DELIMITER)
         val hashToCompare = encoder.encode(hashedChallengingPassword + hashedSalt)
         return hashToCompare == hashedPassword
+    }
+
+    override fun generateToken(user: User): String {
+        return encoder.encode(user.id + user.email + user.lastName + user.firstName)
     }
 
     private fun generateSalt(): String {

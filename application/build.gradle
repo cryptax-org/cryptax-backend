@@ -27,12 +27,13 @@ dependencies {
     testImplementation(
         project(':in-memory-db-simple'),
         project(':id-generator'),
+        project(':security'),
         [group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
         [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
+        [group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion],
+        [group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion]
     )
-    testCompile 'io.rest-assured:rest-assured:3.1.0'
-    testCompile 'io.rest-assured:json-path:3.1.0'
 }
 
 mainClassName = 'com.cryptax.app.RestApplication'

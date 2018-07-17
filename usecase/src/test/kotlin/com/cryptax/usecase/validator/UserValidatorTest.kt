@@ -17,7 +17,7 @@ class UserValidatorTest {
     @Test
     fun testValidateCreateUser() {
         //given
-        val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee")
+        val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee", true)
 
         //when
         validateCreateUser(user)
@@ -43,13 +43,12 @@ class UserValidatorTest {
         @JvmStatic
         fun userProvider(): Stream<Arguments> {
             return Stream.of(
-                Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee"), "Email should not be blank"),
-                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", ""), "First name should not be blank"),
-                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe"), "Last name should not be blank"),
-                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe"), "Last name should not be blank"),
-                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe"), "Last name should not be blank"),
-                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe"), "Last name should not be blank")
-            )
+                Arguments.of(User("eeqqqw", "", "eeeee".toCharArray(), "ee", "ee", true), "Email should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "ee", "", true), "First name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "", "eqweqwe", true), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "      ", "eqweqwe", true), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), " ", "eqweqwe", true), "Last name should not be blank"),
+                Arguments.of(User("eeqqqw", "dqwdqdq", "eeeee".toCharArray(), "				", "eqweqwe", true), "Last name should not be blank"))
         }
     }
 }

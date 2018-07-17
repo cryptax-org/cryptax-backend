@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExtendWith(VertxExtension::class)
 class FailureTest {
 
+    // FIXME: to refactor
+
     private val host = "localhost"
     private val port = 8282
 

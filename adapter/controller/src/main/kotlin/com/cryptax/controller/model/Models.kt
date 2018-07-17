@@ -10,7 +10,7 @@ import java.util.Arrays
 data class UserWeb(
     val id: String? = null,
     val email: String,
-    private val password: CharArray? = null,
+    val password: CharArray? = null,
     val lastName: String,
     val firstName: String) {
 

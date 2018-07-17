@@ -4,6 +4,7 @@ import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.Config
 import com.cryptax.controller.model.UserWeb
+import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
@@ -39,5 +40,17 @@ fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHand
             sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)
+
+    // Allow user to login after email validation
+    router.get("/users/:userId/allow")
+        .handler(allowUserValidation)
+        .handler { routingContext ->
+            val userId = routingContext.request().getParam("userId")
+            val token = routingContext.request().getParam("token")
+            val isAllowed = userController.allowUser(userId, token)
+            routingContext.response()
+                .setStatusCode(if (isAllowed) 200 else 400)
+                .end()
+        }
 }
 

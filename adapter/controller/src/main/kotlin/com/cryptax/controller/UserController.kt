@@ -4,8 +4,13 @@ import com.cryptax.controller.model.UserWeb
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
+import com.cryptax.usecase.user.ValidateUser
 
-class UserController(private val createUser: CreateUser, private val findUser: FindUser, private val loginUser: LoginUser) {
+class UserController(
+    private val createUser: CreateUser,
+    private val findUser: FindUser,
+    private val loginUser: LoginUser,
+    private val validateUser: ValidateUser) {
 
     fun createUser(userWeb: UserWeb): UserWeb {
         val user = createUser.create(userWeb.toUser())
@@ -24,5 +29,9 @@ class UserController(private val createUser: CreateUser, private val findUser: F
         } else {
             null
         }
+    }
+
+    fun allowUser(userId: String, token: String): Boolean {
+        return validateUser.validate(userId, token)
     }
 }

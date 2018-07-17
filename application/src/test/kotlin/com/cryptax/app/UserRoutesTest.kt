@@ -50,18 +50,17 @@ class UserRoutesTest {
     @DisplayName("Get one user")
     fun getOneUser(testContext: VertxTestContext) {
         // given
-        createUser()
-        val result = getToken()
+        val token = initUserAndGetToken()
 
         // @formatter:off
          given().
             log().all().
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
-        get("/users/${result.getString("id")}").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        get("/users/${token.getString("id")}").
         then().
             log().all().
-            assertThat().body("id", IsEqual(result.getString("id"))).
+            assertThat().body("id", IsEqual(token.getString("id"))).
             assertThat().body("email", IsEqual(user.email)).
             assertThat().body("password", nullValue()).
             assertThat().body("lastName", IsEqual(user.lastName)).
@@ -76,15 +75,14 @@ class UserRoutesTest {
     @DisplayName("Get one user with refresh token")
     fun getOneUserWithRefreshToken(testContext: VertxTestContext) {
         // given
-        createUser()
-        val result = getToken()
+        val token = initUserAndGetToken()
 
         // @formatter:off
          given().
             log().all().
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("refreshToken")}")).
-        get("/users/${result.getString("id")}").
+            header(Header("Authorization", "Bearer ${token.getString("refreshToken")}")).
+        get("/users/${token.getString("id")}").
         then().
             log().all().
             assertThat().body("error", IsEqual("Unauthorized")).

@@ -43,7 +43,7 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a token")
     fun getToken(testContext: VertxTestContext) {
-        createUser()
+        initUser()
 
         // @formatter:off
         given().
@@ -85,15 +85,14 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a refresh token")
     fun getTokenRefreshToken(testContext: VertxTestContext) {
-        createUser()
-        val result = getToken()
+        val token = initUserAndGetToken()
 
         // @formatter:off
         given().
             log().all().
             body(credentials).
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("refreshToken")}")).
+            header(Header("Authorization", "Bearer ${token.getString("refreshToken")}")).
         get("/refresh").
         then().
             log().all().
@@ -108,15 +107,14 @@ class TokenRoutesTest {
     @Test
     @DisplayName("Get a refresh token with wrong token")
     fun getTokenRefreshTokenWithWrongToken(testContext: VertxTestContext) {
-        createUser()
-        val result = getToken()
+        val token = initUserAndGetToken()
 
         // @formatter:off
         given().
             log().all().
             body(credentials).
             contentType(ContentType.JSON).
-            header(Header("Authorization", "Bearer ${result.getString("token")}")).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/refresh").
         then().
             log().all().

@@ -5,11 +5,13 @@ import com.cryptax.domain.entity.User
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
+import com.cryptax.usecase.user.ValidateUser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -36,6 +38,8 @@ class UserControllerTest {
         lastName = user.lastName,
         firstName = user.firstName)
 
+    @Mock
+    lateinit var validateUser: ValidateUser
     @Mock
     lateinit var createUser: CreateUser
     @Mock
@@ -116,5 +120,20 @@ class UserControllerTest {
         // then
         assertNull(actual)
         then(findUser).should().findById(userId)
+    }
+
+    @Test
+    fun testAllowUser() {
+        // given
+        val userId = "userId"
+        val token = "token"
+        given(validateUser.validate(userId, token)).willReturn(true)
+
+        // when
+        val actual = userController.allowUser(userId, token)
+
+        // then
+        assertTrue(actual)
+        then(validateUser).should().validate(userId, token)
     }
 }

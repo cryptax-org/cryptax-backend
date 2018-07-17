@@ -30,6 +30,11 @@ object RestValidation {
         .addPathParam("userId", ParameterType.GENERIC_STRING)
         .addCustomValidatorFunction(userIdPathParamValidation)
 
+    val allowUserValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
+        .create()
+        .addPathParam("userId", ParameterType.GENERIC_STRING)
+        .addQueryParam("token", ParameterType.GENERIC_STRING, true)
+
     val uploadCsvValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
         .create()
         .addPathParam("userId", ParameterType.GENERIC_STRING)

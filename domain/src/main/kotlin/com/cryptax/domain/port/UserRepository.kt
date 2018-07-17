@@ -9,4 +9,6 @@ interface UserRepository {
     fun findById(id: String): User?
 
     fun findByEmail(email: String): User?
+
+    fun updateUser(user: User): User
 }

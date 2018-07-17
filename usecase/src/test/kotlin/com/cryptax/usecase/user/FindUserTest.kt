@@ -23,7 +23,7 @@ class FindUserTest {
     lateinit var findUser: FindUser
 
     private val id = "1"
-    private val user = User(id, "john.doe@proton.com", "mypassword".toCharArray(), "Doe", "John")
+    private val user = User(id, "john.doe@proton.com", "mypassword".toCharArray(), "Doe", "John", true)
 
     @Test
     @DisplayName("Find a user by id")

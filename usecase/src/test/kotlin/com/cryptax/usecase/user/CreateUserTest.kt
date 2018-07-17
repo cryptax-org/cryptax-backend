@@ -2,11 +2,14 @@ package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException
+import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
+import com.nhaarman.mockitokotlin2.eq
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -24,6 +27,8 @@ import org.mockito.junit.jupiter.MockitoExtension
 class CreateUserTest {
 
     @Mock
+    lateinit var emailService: EmailService
+    @Mock
     lateinit var userRepository: UserRepository
     @Mock
     lateinit var securePassword: SecurePassword
@@ -36,7 +41,8 @@ class CreateUserTest {
     private val hashedPassword = "fqfdwfewfwfwef"
     private val email = "john.doe@proton.com"
     private val password = "mypassword".toCharArray()
-    private val user = User("1", email, password, "Doe", "John")
+    private val user = User("1", email, password, "Doe", "John", true)
+    private val token = "randomToken"
 
     @Test
     @DisplayName("Create a user")
@@ -46,6 +52,7 @@ class CreateUserTest {
         given(idGenerator.generate()).willReturn(id)
         given(securePassword.securePassword(password)).willReturn(hashedPassword)
         given(userRepository.create(any())).willReturn(user)
+        given(securePassword.generateToken(user)).willReturn(token)
 
         //when
         val actual = createUser.create(user)
@@ -57,14 +64,23 @@ class CreateUserTest {
         then(idGenerator).should().generate()
         // Have to use any() because we reset the password and mockito return the pointer
         then(securePassword).should().securePassword(any())
-        // TODO see if there a better way to use mockito-kotlin for argument captor
+        argumentCaptor<User>().apply {
+            then(emailService).should().welcomeEmail(capture(), eq(token))
+            assertThat(firstValue.id).isEqualTo(id)
+            assertThat(firstValue.email).isEqualTo(user.email)
+            assertThat(firstValue.password.joinToString(separator = "")).isEqualTo(hashedPassword)
+            assertThat(firstValue.lastName).isEqualTo(user.lastName)
+            assertThat(firstValue.firstName).isEqualTo(user.firstName)
+            assertThat(firstValue.allowed).isFalse()
+        }
         argumentCaptor<User>().apply {
             then(userRepository).should().create(capture())
-            assertEquals(id, firstValue.id)
-            assertEquals(user.email, firstValue.email)
-            assertEquals(hashedPassword, firstValue.password.joinToString(separator = ""))
-            assertEquals(user.lastName, firstValue.lastName)
-            assertEquals(user.firstName, firstValue.firstName)
+            assertThat(firstValue.id).isEqualTo(id)
+            assertThat(firstValue.email).isEqualTo(user.email)
+            assertThat(firstValue.password.joinToString(separator = "")).isEqualTo(hashedPassword)
+            assertThat(firstValue.lastName).isEqualTo(user.lastName)
+            assertThat(firstValue.firstName).isEqualTo(user.firstName)
+            assertThat(firstValue.allowed).isFalse()
         }
     }
 
@@ -84,5 +100,6 @@ class CreateUserTest {
         then(userRepository).shouldHaveNoMoreInteractions()
         then(idGenerator).shouldHaveZeroInteractions()
         then(securePassword).shouldHaveZeroInteractions()
+        then(emailService).shouldHaveZeroInteractions()
     }
 }

@@ -19,4 +19,9 @@ class InMemoryUserRepository : UserRepository {
     override fun findByEmail(email: String): User? {
         return inMemoryDb.values.firstOrNull { user -> user.email == email }
     }
+
+    override fun updateUser(user: User): User {
+        inMemoryDb[user.id!!] = user
+        return user
+    }
 }

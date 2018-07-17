@@ -11,6 +11,9 @@ class LoginUser(private val userRepository: UserRepository, private val securePa
         val user = userRepository.findByEmail(email) ?: throw LoginException(email, "User not found")
         if (!securePassword.matchPassword(password, user.password))
             throw LoginException(email, "Password do not match")
+        if (!user.allowed) {
+            throw LoginException(email, "Not allowed to login")
+        }
         return user
     }
 }

@@ -10,6 +10,7 @@ include ':in-memory-db-simple'
 include ':controller'
 include ':validation'
 include ':parser'
+include ':email'
 
 project(":security").projectDir = file("adapter/security")
 project(":id-generator").projectDir = file("adapter/id-generator")
@@ -17,3 +18,4 @@ project(":in-memory-db-simple").projectDir = file("adapter/repository/in-memory-
 project(":controller").projectDir = file("adapter/controller")
 project(":validation").projectDir = file("adapter/validation")
 project(":parser").projectDir = file("adapter/parser")
+project(":email").projectDir = file("adapter/email")

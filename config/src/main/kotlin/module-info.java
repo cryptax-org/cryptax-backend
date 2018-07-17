@@ -8,6 +8,8 @@ module cryptax.config {
     requires cryptax.db.simple;
     requires cryptax.security;
     requires cryptax.controller;
+    requires cryptax.email;
+    requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.module.kotlin;
     requires com.fasterxml.jackson.annotation;
@@ -15,5 +17,4 @@ module cryptax.config {
     requires com.fasterxml.jackson.dataformat.yaml;
     requires vertx.auth.jwt;
     requires vertx.auth.common;
-    requires com.fasterxml.jackson.core;
 }

@@ -37,7 +37,7 @@ class AddTransactionTest {
     @InjectMocks
     lateinit var addTransaction: AddTransaction
 
-    private val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John")
+    private val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
     private val transaction = oneTransaction
     private val expected = oneTransactionExpected
     private val transactions = twoTransactions
