@@ -12,9 +12,9 @@ class UserController(
     private val loginUser: LoginUser,
     private val validateUser: ValidateUser) {
 
-    fun createUser(userWeb: UserWeb): UserWeb {
+    fun createUser(userWeb: UserWeb): Pair<UserWeb, String> {
         val user = createUser.create(userWeb.toUser())
-        return UserWeb.toUserWeb(user)
+        return Pair(UserWeb.toUserWeb(user.first), user.second)
     }
 
     fun login(email: String, password: CharArray): UserWeb {

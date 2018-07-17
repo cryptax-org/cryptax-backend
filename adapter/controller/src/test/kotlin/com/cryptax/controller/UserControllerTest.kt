@@ -8,6 +8,7 @@ import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -25,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 @ExtendWith(MockitoExtension::class)
 class UserControllerTest {
 
+    private val welcomeToken = "dqdqwdqwd"
     private val password = "mypassword".toCharArray()
     private val user = User(
         id = "randomid",
@@ -52,16 +54,19 @@ class UserControllerTest {
     @Test
     fun testCreateUser() {
         // given
-        given(createUser.create(any())).willReturn(user)
+        given(createUser.create(any())).willReturn(Pair(user, welcomeToken))
 
         // when
         val actual = userController.createUser(userWeb)
 
         // then
-        assertNotNull(actual.id)
-        assertEquals(userWeb.email, actual.email)
-        assertEquals(userWeb.lastName, actual.lastName)
-        assertEquals(userWeb.firstName, actual.firstName)
+        val actualUser = actual.first
+        val actualToken = actual.second
+        assertThat(actualUser.id).isNotNull()
+        assertThat(actualUser.email).isEqualTo(userWeb.email)
+        assertThat(actualUser.lastName).isEqualTo(userWeb.lastName)
+        assertThat(actualUser.firstName).isEqualTo(userWeb.firstName)
+        assertThat(actualToken).isEqualTo(welcomeToken)
         argumentCaptor<User>().apply {
             then(createUser).should().create(capture())
             assertNull(firstValue.id)

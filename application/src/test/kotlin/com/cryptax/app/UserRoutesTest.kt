@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(VertxExtension::class)
-@DisplayName("user routes integration tests")
+@DisplayName("User routes integration tests")
 class UserRoutesTest {
 
     @BeforeAll

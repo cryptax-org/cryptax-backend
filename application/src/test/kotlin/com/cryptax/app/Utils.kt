@@ -10,7 +10,6 @@ import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.id.JugIdGenerator
-import com.cryptax.security.SecurePassword
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -26,11 +25,10 @@ val transaction = Config.objectMapper.readValue(Config::class.java.getResourceAs
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 val transactionsBinance = Config::class.java.getResource("/Binance-Trade-History.csv").readText()
 val transactionsCoinbase = Config::class.java.getResource("/Coinbase-Trade-History.csv").readText()
-val securePassword = SecurePassword()
 
-fun createUser(): User {
+fun createUser(): Pair<User, String> {
     // @formatter:off
-    val userJsonPath =  given().
+    val response =  given().
                             log().all().
                             body(user).
                             contentType(ContentType.JSON).
@@ -44,23 +42,24 @@ fun createUser(): User {
                             assertThat().body("lastName", IsEqual(user.lastName)).
                             assertThat().body("firstName", IsEqual(user.firstName)).
                         extract()
-                            .body().jsonPath()
+                            .response()
     // @formatter:on
-    return User(
-        id = userJsonPath.getString("id"),
-        email = userJsonPath.getString("email"),
+    response.header("welcomeToken")
+    return Pair(User(
+        id = response.body.jsonPath().getString("id"),
+        email = response.body.jsonPath().getString("email"),
         password = CharArray(1),
-        lastName = userJsonPath.getString("lastName"),
-        firstName = userJsonPath.getString("firstName")
-    )
+        lastName = response.body.jsonPath().getString("lastName"),
+        firstName = response.body.jsonPath().getString("firstName")
+    ), response.header("welcomeToken"))
 }
 
-fun validateUser(user: User) {
+fun validateUser(pair: Pair<User, String>) {
     // @formatter:off
     given().
         log().all().
-        queryParam("token", securePassword.generateToken(user)).
-    get("/users/${user.id}/allow").
+        queryParam("token", pair.second).
+    get("/users/${pair.first.id}/allow").
     then().
         log().all().
         assertThat().statusCode(200)
@@ -110,22 +109,22 @@ fun addTransaction(id: String, token: JsonPath): JsonPath {
 }
 
 fun initUser() {
-    val user = createUser()
-    validateUser(user)
+    val pair = createUser()
+    validateUser(pair)
 }
 
 fun initUserAndGetToken(): JsonPath {
-    val user = createUser()
-    validateUser(user)
+    val pair = createUser()
+    validateUser(pair)
     return getToken()
 }
 
 fun initTransaction(): Pair<String, JsonPath> {
-    val user = createUser()
-    validateUser(user)
+    val pair = createUser()
+    validateUser(pair)
     val token = getToken()
-    addTransaction(user.id!!, token)
-    return Pair(user.id!!, token)
+    addTransaction(pair.first.id!!, token)
+    return Pair(pair.first.id!!, token)
 }
 
 class TestConfig(

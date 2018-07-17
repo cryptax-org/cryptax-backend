@@ -27,7 +27,7 @@ class SecurePassword(private val encoder: Encoder = Sha3512Encoder()) : SecurePa
     }
 
     override fun generateToken(user: User): String {
-        return encoder.encode(user.id + user.email + user.lastName + user.firstName)
+        return encoder.encode(user.id + user.email + user.lastName + user.firstName + user.password.str())
     }
 
     private fun generateSalt(): String {

@@ -23,7 +23,9 @@ fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHand
         .handler(createUserValidation)
         .handler { routingContext ->
             val userWeb = routingContext.body.toJsonObject().mapTo(UserWeb::class.java)
-            val result = JsonObject.mapFrom(userController.createUser(userWeb))
+            val pair = userController.createUser(userWeb)
+            val result = JsonObject.mapFrom(pair.first)
+            routingContext.response().putHeader("welcomeToken", pair.second)
             sendSuccess(result, routingContext.response())
         }
         .failureHandler(failureHandler)

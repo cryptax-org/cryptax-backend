@@ -15,7 +15,7 @@ class CreateUser(
     private val idGenerator: IdGenerator,
     private val emailService: EmailService) {
 
-    fun create(user: User): User {
+    fun create(user: User): Pair<User, String> {
         validateCreateUser(user)
         repository.findByEmail(user.email)?.run {
             throw UserAlreadyExistsException(user.email)
@@ -29,9 +29,9 @@ class CreateUser(
             firstName = user.firstName,
             allowed = false
         )
-        val welcomeToken = securePassword.generateToken(user)
+        val welcomeToken = securePassword.generateToken(userToSave)
         Arrays.fill(user.password, '\u0000')
         emailService.welcomeEmail(userToSave, welcomeToken)
-        return repository.create(userToSave)
+        return Pair(repository.create(userToSave), welcomeToken)
     }
 }

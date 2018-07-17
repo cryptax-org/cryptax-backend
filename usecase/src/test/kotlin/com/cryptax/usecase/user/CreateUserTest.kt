@@ -52,7 +52,7 @@ class CreateUserTest {
         given(idGenerator.generate()).willReturn(id)
         given(securePassword.securePassword(password)).willReturn(hashedPassword)
         given(userRepository.create(any())).willReturn(user)
-        given(securePassword.generateToken(user)).willReturn(token)
+        given(securePassword.generateToken(any())).willReturn(token)
 
         //when
         val actual = createUser.create(user)
@@ -64,6 +64,15 @@ class CreateUserTest {
         then(idGenerator).should().generate()
         // Have to use any() because we reset the password and mockito return the pointer
         then(securePassword).should().securePassword(any())
+        argumentCaptor<User>().apply {
+            then(securePassword).should().generateToken(capture())
+            assertThat(firstValue.id).isEqualTo(id)
+            assertThat(firstValue.email).isEqualTo(user.email)
+            assertThat(firstValue.password.joinToString(separator = "")).isEqualTo(hashedPassword)
+            assertThat(firstValue.lastName).isEqualTo(user.lastName)
+            assertThat(firstValue.firstName).isEqualTo(user.firstName)
+            assertThat(firstValue.allowed).isFalse()
+        }
         argumentCaptor<User>().apply {
             then(emailService).should().welcomeEmail(capture(), eq(token))
             assertThat(firstValue.id).isEqualTo(id)
