@@ -4,3 +4,4 @@ gen
 /.gradle/
 build/
 .vertx/
+.env
