@@ -3,7 +3,9 @@ services:
   backend:
     build: .
     container_name: cryptax_backend
+    hostname: cryptax
     ports:
       - '8080:8080'
     environment:
         - PROFILE=dev
+        - JASYPT_PASSWORD=${JASYPT_PASSWORD}

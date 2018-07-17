@@ -6,6 +6,7 @@ import com.cryptax.controller.model.UserWeb
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.entity.User
+import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
@@ -130,4 +131,11 @@ fun initTransaction(): Pair<String, JsonPath> {
 class TestConfig(
     userRepository: UserRepository = InMemoryUserRepository(),
     transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
-    idGenerator: IdGenerator = JugIdGenerator()) : Config(userRepository, transactionRepository, idGenerator)
+    idGenerator: IdGenerator = JugIdGenerator(),
+    emailService: EmailService = EmailServiceStub()) : Config(userRepository, transactionRepository, idGenerator, emailService)
+
+class EmailServiceStub : EmailService {
+
+    override fun welcomeEmail(user: User, token: String) {
+    }
+}

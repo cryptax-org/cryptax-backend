@@ -20,11 +20,25 @@ Java HotSpot(TM) 64-Bit Server VM 18.3 (build 10+46, mixed mode)
 
 ### Run
 
-`java -jar build/cryptax-backend-1.0.0.jar`
+`java -Djasypt.encryptor.password=yourpassword -jar build/cryptax-backend-1.0.0.jar`
 
 ### Run in debug mod
 
 `java -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
+
+### Jasypt
+
+Password are encrypted with Jasypt. To enrypt your password, use that command:
+
+```
+java -cp jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input=YourDBPassword password=yourpassword algorithm=PBEWithMD5AndDES
+```
+
+Then you just have to start the app with:
+
+```
+-Djasypt.encryptor.password=yourpassword
+```
 
 ### Run with Docker
 

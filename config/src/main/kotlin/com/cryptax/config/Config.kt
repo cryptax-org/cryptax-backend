@@ -26,10 +26,9 @@ import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 
-abstract class Config(userRepository: UserRepository, transactionRepository: TransactionRepository, idGenerator: IdGenerator) {
+abstract class Config(userRepository: UserRepository, transactionRepository: TransactionRepository, idGenerator: IdGenerator, emailService: EmailService) {
 
     private val securePassword = SecurePassword()
-    private val emailService: EmailService = VertxEmailClient()
     private val createUser = CreateUser(userRepository, securePassword, idGenerator, emailService)
     private val findUser = FindUser(userRepository)
     private val validateUser = ValidateUser(userRepository, securePassword)
@@ -69,7 +68,8 @@ abstract class Config(userRepository: UserRepository, transactionRepository: Tra
 class DefaultConfig(
     userRepository: UserRepository = InMemoryUserRepository(),
     transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
-    idGenerator: IdGenerator = JugIdGenerator()) : Config(userRepository, transactionRepository, idGenerator)
+    idGenerator: IdGenerator = JugIdGenerator(),
+    emailService: EmailService = VertxEmailClient()) : Config(userRepository, transactionRepository, idGenerator, emailService)
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)
 data class ServerDto(val domain: String, val port: Int)
