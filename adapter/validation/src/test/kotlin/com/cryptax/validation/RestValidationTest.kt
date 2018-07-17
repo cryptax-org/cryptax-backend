@@ -1,6 +1,7 @@
 package com.cryptax.validation
 
 import com.cryptax.domain.entity.Source
+import com.cryptax.domain.entity.Transaction
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.csvContentTypeValidation
 import com.cryptax.validation.RestValidation.getUserValidation
@@ -17,7 +18,7 @@ import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -45,20 +46,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(createUserValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -70,21 +70,21 @@ class RestValidationTest {
     fun testCreateUserValidationBodyNull(vertx: Vertx, testContext: VertxTestContext) {
         // given
         val router = Router.router(vertx)
-        router.route().handler(createUserValidation)
+        router.route()
+            .handler(createUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Body is null or empty")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -102,20 +102,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(createUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Body is null or empty")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -134,19 +133,20 @@ class RestValidationTest {
                 it.next()
             }
             .handler(createUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Body is null or empty")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
                     // when
-                    vertx.createHttpClient().getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -166,19 +166,20 @@ class RestValidationTest {
                 it.next()
             }
             .handler(createUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field not found but required: password")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
                     // when
-                    vertx.createHttpClient().getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -188,7 +189,6 @@ class RestValidationTest {
     @DisplayName("☹ Check create user validation, wrong password type")
     @Test
     fun testCreateUserValidationWrongPasswordType(vertx: Vertx, testContext: VertxTestContext) {
-        // given
         val user = JsonObject().put("email", "email@email.com").put("password", 2).put("lastName", "john").put("firstName", "doe")
         val router = Router.router(vertx)
         router.route()
@@ -197,19 +197,20 @@ class RestValidationTest {
                 it.next()
             }
             .handler(createUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [password] should be a String")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
                     // when
-                    vertx.createHttpClient().getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -227,19 +228,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(jsonContentTypeValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    vertx.createHttpClient().getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -257,19 +258,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(jsonContentTypeValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Wrong Content-Type header. Actual: fail Expected: application/json")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    vertx.createHttpClient().getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -297,20 +298,20 @@ class RestValidationTest {
                 it.next()
             }
             .handler(transactionBodyValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
                     // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -334,34 +335,22 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 it.body = transaction.toBuffer()
-                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
             }
             .handler(transactionBodyValidation)
             .failureHandler {
-                //fail(it.failure())
-                //assertEquals(500, resp.statusCode())
-                // HERE
-                assert(it.failure() is ValidationException)
-                assert( (it.failure() as ValidationException).message == "Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [MANUAL2]")
-                testContext.completeNow()
-                //fail("it fucking failed", it.failure())
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [MANUAL2]")
+                    testContext.completeNow()
+                }
             }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            val de = res
-                            assertEquals(500, resp.statusCode())
-                            //testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -374,7 +363,7 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val transaction = JsonObject()
-            .put("source", "MANUAL")
+            .put("source", "manual")
             .put("date", "2011-12-03")
             .put("type", "BUY")
             .put("price", 10.0)
@@ -385,24 +374,22 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 it.body = transaction.toBuffer()
-                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
             }
             .handler(transactionBodyValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [date] has a wrong format. It should be similar to 2011-12-03T10:15:30+01:00[Europe/Paris]")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -415,7 +402,7 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val transaction = JsonObject()
-            .put("source", "MANUAL")
+            .put("source", "manual")
             .put("date", "2011-12-03T10:15:30Z")
             .put("type", "BUYe")
             .put("price", 10.0)
@@ -426,24 +413,22 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 it.body = transaction.toBuffer()
-                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
             }
             .handler(transactionBodyValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [type] should be '${Transaction.Type.BUY.toString().toLowerCase()}' or '${Transaction.Type.SELL.toString().toLowerCase()}'")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -456,7 +441,7 @@ class RestValidationTest {
         // given
         val userId = "randomId"
         val transaction = JsonObject()
-            .put("source", "MANUAL")
+            .put("source", "manual")
             .put("date", "2011-12-03T10:15:30Z")
             .put("type", 2)
             .put("price", 10.0)
@@ -471,20 +456,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(transactionBodyValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [type] should be a String")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -495,9 +479,7 @@ class RestValidationTest {
     @Test
     fun testUserLoginValidation(vertx: Vertx, testContext: VertxTestContext) {
         // given
-        val loginUser = JsonObject()
-            .put("email", "email@email.com")
-            .put("password", "eqweqe")
+        val loginUser = JsonObject().put("email", "email@email.com").put("password", "eqweqe")
         val router = Router.router(vertx)
         router.get("/")
             .handler {
@@ -505,20 +487,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(loginValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -538,20 +519,20 @@ class RestValidationTest {
                 it.next()
             }
             .handler(loginValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [email] missing")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
                     // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -570,20 +551,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(loginValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Object field [password] missing")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -602,20 +582,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(getUserValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/$userId") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -634,20 +613,19 @@ class RestValidationTest {
                 it.next()
             }
             .handler(getUserValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "User [otherUser] can't be accessed with the given token")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/otherUser") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users/otherUser") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -661,25 +639,23 @@ class RestValidationTest {
         val router = Router.router(vertx)
         router.get("/users")
             .handler {
-                // Not sure we need to add two times the same param
                 it.request().headers().add("Content-Type", "derp")
                 it.next()
             }
             .handler(csvContentTypeValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Wrong Content-Type header. Actual: derp Expected: text/csv")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
             .listen(port) { res ->
                 if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    vertx.createHttpClient().getNow(port, host, "/users") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -691,7 +667,7 @@ class RestValidationTest {
     fun testUploadCsvValidation(vertx: Vertx, testContext: VertxTestContext) {
         // given
         val userId = "randomId"
-        val source = "BINANCE"
+        val source = "binance"
         val router = Router.router(vertx)
         router.get("/users/:userId/transactions")
             .handler {
@@ -701,6 +677,13 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -708,13 +691,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    client.getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -739,6 +716,13 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
+            .handler {
+                testContext.verify {
+                    assertEquals(-1, it.statusCode())
+                    assertFalse(it.failed())
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -746,13 +730,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertNotEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    client.getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -777,6 +755,13 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Invalid source [BINANCE_FAIL]")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -784,13 +769,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    client.getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -815,6 +794,13 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Invalid delimiter [fghkjewlhfjwke]")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -822,13 +808,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    client.getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
@@ -853,6 +833,13 @@ class RestValidationTest {
                 it.next()
             }
             .handler(uploadCsvValidation)
+            .failureHandler {
+                testContext.verify {
+                    assert(it.failure() is ValidationException)
+                    assert((it.failure() as ValidationException).message == "Invalid delimiter [&]")
+                    testContext.completeNow()
+                }
+            }
 
         vertx.createHttpServer()
             .requestHandler { router.accept(it) }
@@ -860,13 +847,7 @@ class RestValidationTest {
                 if (res.succeeded()) {
                     // when
                     val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/users/$userId/transactions") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            testContext.completeNow()
-                        }
-                    }
+                    client.getNow(port, host, "/users/$userId/transactions") { fail() }
                 } else {
                     fail("The server did not start")
                 }
