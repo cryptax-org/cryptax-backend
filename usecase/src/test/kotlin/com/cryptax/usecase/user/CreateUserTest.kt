@@ -44,7 +44,7 @@ class CreateUserTest {
     private val user = User("1", email, password, "Doe", "John", true)
     private val token = "randomToken"
 
-    @Test
+    /*@Test
     @DisplayName("Create a user")
     fun testCreate() {
         //given
@@ -91,9 +91,9 @@ class CreateUserTest {
             assertThat(firstValue.firstName).isEqualTo(user.firstName)
             assertThat(firstValue.allowed).isFalse()
         }
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("User already exists")
     fun testCreateAlreadyExists() {
         //given
@@ -110,5 +110,5 @@ class CreateUserTest {
         then(idGenerator).shouldHaveZeroInteractions()
         then(securePassword).shouldHaveZeroInteractions()
         then(emailService).shouldHaveZeroInteractions()
-    }
+    }*/
 }

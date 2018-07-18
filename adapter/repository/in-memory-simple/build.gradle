@@ -4,7 +4,8 @@ ext.moduleName = 'cryptax.db.simple'
 
 dependencies {
     implementation(
-        project(':domain')
+        project(':domain'),
+        [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
     )
 
     testImplementation(

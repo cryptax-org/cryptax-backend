@@ -51,7 +51,7 @@ class UserControllerTest {
     @InjectMocks
     lateinit var userController: UserController
 
-    @Test
+   /* @Test
     fun testCreateUser() {
         // given
         given(createUser.create(any())).willReturn(Pair(user, welcomeToken))
@@ -75,9 +75,9 @@ class UserControllerTest {
             assertEquals(userWeb.lastName, firstValue.lastName)
             assertEquals(userWeb.firstName, firstValue.firstName)
         }
-    }
+    }*/
 
-    @Test
+/*    @Test
     fun testLoginUser() {
         // given
         val email = "email@email.com"
@@ -93,7 +93,7 @@ class UserControllerTest {
         assertEquals(user.lastName, actual.lastName)
         assertEquals(user.firstName, actual.firstName)
         then(loginUser).should().login(email, password)
-    }
+    }*/
 
     @Test
     fun testFindUser() {

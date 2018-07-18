@@ -3,4 +3,5 @@ module cryptax.db.simple {
 
     requires kotlin.stdlib;
     requires cryptax.domain;
+    requires io.reactivex.rxjava2;
 }

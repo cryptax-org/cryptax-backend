@@ -6,4 +6,5 @@ module cryptax.controller {
     requires cryptax.usecase;
     requires cryptax.domain;
     requires cryptax.parser;
+    requires io.reactivex.rxjava2;
 }

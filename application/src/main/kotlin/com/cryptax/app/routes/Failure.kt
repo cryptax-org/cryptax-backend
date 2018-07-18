@@ -6,6 +6,7 @@ import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
+import io.reactivex.Maybe
 import io.vertx.core.Handler
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory

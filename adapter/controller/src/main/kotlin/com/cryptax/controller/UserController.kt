@@ -5,6 +5,7 @@ import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
+import io.reactivex.Single
 
 class UserController(
     private val createUser: CreateUser,
@@ -12,14 +13,16 @@ class UserController(
     private val loginUser: LoginUser,
     private val validateUser: ValidateUser) {
 
-    fun createUser(userWeb: UserWeb): Pair<UserWeb, String> {
-        val user = createUser.create(userWeb.toUser())
-        return Pair(UserWeb.toUserWeb(user.first), user.second)
+    fun createUser(userWeb: UserWeb): Single<Pair<UserWeb, String>> {
+        return createUser
+            .create(userWeb.toUser())
+            .map { pair -> Pair(UserWeb.toUserWeb(pair.first), pair.second) }
     }
 
-    fun login(email: String, password: CharArray): UserWeb {
-        val user = loginUser.login(email, password)
-        return UserWeb.toUserWeb(user)
+    fun login(email: String, password: CharArray): Single<UserWeb> {
+        return loginUser
+            .login(email, password)
+            .map { user -> UserWeb.toUserWeb(user) }
     }
 
     fun findUser(userId: String): UserWeb? {

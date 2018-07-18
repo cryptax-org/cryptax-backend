@@ -5,6 +5,7 @@ ext.moduleName = 'cryptax.usecase'
 dependencies {
     implementation(
         project(':domain'),
+        [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
     )
     testImplementation(
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],

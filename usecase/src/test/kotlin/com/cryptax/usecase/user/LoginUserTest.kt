@@ -32,7 +32,7 @@ class LoginUserTest {
     private val hashedPassword = "hashedPassword"
     private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", true)
 
-    @Test
+    /*@Test
     @DisplayName("Login a user")
     fun testLogin() {
         //given
@@ -46,7 +46,7 @@ class LoginUserTest {
         assertEquals(user, actual)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
-    }
+    }*/
 
     @Test
     @DisplayName("Login a user not found")
@@ -65,7 +65,7 @@ class LoginUserTest {
         then(userRepository).should().findByEmail(email)
     }
 
-    @Test
+    /*@Test
     @DisplayName("Login a user wrong password")
     fun testLoginWrongPassword() {
         //given
@@ -82,9 +82,9 @@ class LoginUserTest {
         assertEquals("Password do not match", exception.description)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("Login a user not allowed")
     fun testLoginNotAllowed() {
         //given
@@ -102,5 +102,5 @@ class LoginUserTest {
         assertEquals("Not allowed to login", exception.description)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
-    }
+    }*/
 }

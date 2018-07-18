@@ -5,4 +5,5 @@ module cryptax.usecase {
     requires kotlin.stdlib;
     requires cryptax.domain;
     requires org.slf4j;
+    requires io.reactivex.rxjava2;
 }
