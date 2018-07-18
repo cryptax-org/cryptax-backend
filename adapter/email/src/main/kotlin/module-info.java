@@ -9,4 +9,5 @@ module cryptax.email {
     requires jasypt;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.dataformat.yaml;
+    requires com.fasterxml.jackson.module.kotlin;
 }

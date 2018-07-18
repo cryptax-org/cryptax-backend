@@ -2,6 +2,7 @@ package com.cryptax.email
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import java.lang.management.ManagementFactory
 
@@ -10,9 +11,9 @@ object EmailConfig {
     val emailProperties: EmailProperties
 
     init {
-        val mapper = ObjectMapper(YAMLFactory())
+        val mapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
         emailProperties = mapper.readValue(EmailConfig::class.java.classLoader.getResourceAsStream("email.yml"), EmailProperties::class.java)
-        val decryptedPassword = decryptPassword(emailProperties.email.password!!)
+        val decryptedPassword = decryptPassword(emailProperties.email.password)
         emailProperties.email.password = decryptedPassword
     }
 
@@ -26,8 +27,8 @@ object EmailConfig {
     }
 }
 
-data class EmailProperties(val server: Server = Server(), val email: Email = Email()) {
-    data class Server(var host: String? = null, var port: Int? = null)
-    data class Email(var username: String? = null, var password: String? = null, var from: String? = null)
+data class EmailProperties(val server: Server, val email: Email) {
+    data class Server(val host: String, val port: Int)
+    data class Email(val username: String, var password: String, var from: String)
 }
 

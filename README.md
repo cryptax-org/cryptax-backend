@@ -17,11 +17,11 @@ Create a `.env` file based on `.env.template`. Its contains your env variables i
 
 ### Run
 
-`java -Djasypt.encryptor.password=yourpassword -jar build/cryptax-backend-1.0.0.jar`
+`java -Djasypt.encryptor.password=yourMasterPassword -jar build/cryptax-backend-1.0.0.jar`
 
 ### Run in debug mod
 
-`java -Djasypt.encryptor.password=yourpassword -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
+`java -Djasypt.encryptor.password=yourMasterPassword -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
 
 ### Jasypt
 
