@@ -1,6 +1,6 @@
 package com.cryptax.app.routes
 
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonArray
@@ -10,7 +10,6 @@ import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.LoggerFormat
-import io.vertx.ext.web.handler.LoggerHandler
 import io.vertx.ext.web.handler.impl.LoggerHandlerImpl
 
 val bodyHandler: BodyHandler = BodyHandler.create()
@@ -19,15 +18,15 @@ object Routes {
 
     private val log = LoggerFactory.getLogger(Routes::class.java)
 
-    fun setupRoutes(config: Config, vertx: Vertx, router: Router) {
-        val jwtProvider = JWTAuth.create(vertx, Config.jwtAuthOptions)
+    fun setupRoutes(appConfig: AppConfig, vertx: Vertx, router: Router) {
+        val jwtProvider = JWTAuth.create(vertx, appConfig.jwtAuthOptions)
         val jwtAuthHandler = JWTAuthHandlerCustom(jwtProvider)
         val jwtRefreshAuthHandler = JWTRefreshAuthHandlerCustom(jwtProvider)
 
         router.route().handler(LoggerHandlerImpl(LoggerFormat.SHORT))
-        handleUserRoutes(config, router, jwtAuthHandler)
-        handleTokenRoutes(config, router, jwtProvider, jwtRefreshAuthHandler)
-        handleTransactionRoutes(config, router, jwtAuthHandler)
+        handleUserRoutes(appConfig, router, jwtAuthHandler)
+        handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler)
+        handleTransactionRoutes(appConfig, router, jwtAuthHandler)
 
         // Exception handler
         router.exceptionHandler { throwable ->

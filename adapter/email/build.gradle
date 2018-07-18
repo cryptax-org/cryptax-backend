@@ -7,7 +7,7 @@ dependencies {
         project(':domain'),
         [group: 'io.vertx', name: 'vertx-core', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-mail-client', version: vertxVersion],
-        [group: 'org.jasypt', name: 'jasypt', version: '1.9.2'],
+        [group: 'org.jasypt', name: 'jasypt', version: jasyptVersion],
         [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
     )

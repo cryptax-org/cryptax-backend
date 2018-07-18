@@ -3,7 +3,7 @@ package com.cryptax.app.routes
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendError
 import com.cryptax.app.routes.Routes.sendSuccess
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Source
 import com.cryptax.validation.RestValidation
@@ -17,9 +17,9 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.JWTAuthHandler
 import java.io.ByteArrayInputStream
 
-fun handleTransactionRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
+fun handleTransactionRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
-    val transactionController = config.transactionController
+    val transactionController = appConfig.transactionController
 
     // Add transaction to user with JWT token
     router.post("/users/:userId/transactions")

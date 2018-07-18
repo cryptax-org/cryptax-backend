@@ -2,7 +2,7 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
@@ -12,9 +12,9 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.JWTAuthHandler
 
-fun handleUserRoutes(config: Config, router: Router, jwtAuthHandler: JWTAuthHandler) {
+fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAuthHandler) {
 
-    val userController = config.userController
+    val userController = appConfig.userController
 
     // Create user
     router.post("/users")

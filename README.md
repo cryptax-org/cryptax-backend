@@ -34,7 +34,7 @@ java -cp jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input
 Then you just have to start the app with:
 
 ```
--Djasypt.encryptor.password=yourpassword
+-Djasypt.encryptor.password=yourMasterPassword
 ```
 
 ### Run with Docker
@@ -44,3 +44,9 @@ Then you just have to start the app with:
 ### Reports
 
 `./gradlew testReport jacocoRootReport`
+
+### Generate JWT keystore
+
+```
+keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret -keyalg EC -keysize 521 -alias ES512 -keypass secret -sigalg SHA512withECDSA -dname "CN=,OU=,O=,L=,ST=,C=" -validity 360
+```

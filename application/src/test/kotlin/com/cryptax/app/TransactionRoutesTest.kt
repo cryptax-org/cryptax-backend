@@ -1,6 +1,6 @@
 package com.cryptax.app
 
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
@@ -31,17 +31,19 @@ import java.util.concurrent.TimeUnit
 @DisplayName("Transaction routes integration tests")
 class TransactionRoutesTest {
 
+    private val appConfig = TestAppConfig()
+
     @BeforeAll
     internal fun beforeAll() {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        RestAssured.port = Config.config.server.port
-        RestAssured.baseURI = "http://" + Config.config.server.domain
-        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> Config.objectMapper })
+        RestAssured.port = appConfig.properties.server.port
+        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
+        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> AppConfig.objectMapper })
     }
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestApplication(TestConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestApplication(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(5, TimeUnit.SECONDS)
         // Ugly fix to ensure the server is started
         // Even if the call back is called the server seems not ready

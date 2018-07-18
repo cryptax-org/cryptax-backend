@@ -2,16 +2,16 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 
-fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom) {
+fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom) {
 
-    val userController = config.userController
+    val userController = appConfig.userController
 
     // Get token with user credentials
     router.post("/token")
@@ -23,8 +23,8 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtR
                 email = routingContext.bodyAsJson.getString("email"),
                 password = routingContext.bodyAsJson.getString("password").toCharArray())
 
-            val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), Config.jwtOptions)
-            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), Config.jwtRefreshOptions)
+            val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), appConfig.jwtOptions)
+            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), appConfig.jwtRefreshOptions)
 
             val result = JsonObject()
                 .put("id", userWeb.id!!)
@@ -40,8 +40,8 @@ fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtR
         .handler { routingContext ->
             val userId = routingContext.user().principal().getString("id")
 
-            val token = jwtProvider.generateToken(tokenPayLoad(userId, false), Config.jwtOptions)
-            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userId, true), Config.jwtRefreshOptions)
+            val token = jwtProvider.generateToken(tokenPayLoad(userId, false), appConfig.jwtOptions)
+            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userId, true), appConfig.jwtRefreshOptions)
             val result = JsonObject()
                 .put("id", userId)
                 .put("token", token)

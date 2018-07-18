@@ -1,6 +1,6 @@
 package com.cryptax.app
 
-import com.cryptax.config.Config
+import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.db.InMemoryTransactionRepository
@@ -21,11 +21,11 @@ import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull
 
-val user = Config.objectMapper.readValue(Config::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
-val transaction = Config.objectMapper.readValue(Config::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
+val user = AppConfig.objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
+val transaction = AppConfig.objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
-val transactionsBinance = Config::class.java.getResource("/Binance-Trade-History.csv").readText()
-val transactionsCoinbase = Config::class.java.getResource("/Coinbase-Trade-History.csv").readText()
+val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
+val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
 
 fun createUser(): Pair<User, String> {
     // @formatter:off
@@ -128,11 +128,11 @@ fun initTransaction(): Pair<String, JsonPath> {
     return Pair(pair.first.id!!, token)
 }
 
-class TestConfig(
+class TestAppConfig(
     userRepository: UserRepository = InMemoryUserRepository(),
     transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
     idGenerator: IdGenerator = JugIdGenerator(),
-    emailService: EmailService = EmailServiceStub()) : Config(userRepository, transactionRepository, idGenerator, emailService)
+    emailService: EmailService = EmailServiceStub()) : AppConfig("it", userRepository, transactionRepository, idGenerator, emailService)
 
 class EmailServiceStub : EmailService {
 

@@ -1,6 +1,5 @@
 package com.cryptax.app
 
-import com.cryptax.config.Config
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -24,16 +23,18 @@ import java.util.concurrent.TimeUnit
 @DisplayName("Token routes integration tests")
 class TokenRoutesTest {
 
+    private val appConfig = TestAppConfig()
+
     @BeforeAll
     internal fun beforeAll() {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        RestAssured.port = Config.config.server.port
-        RestAssured.baseURI = "http://" + Config.config.server.domain
+        RestAssured.port = appConfig.properties.server.port
+        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
     }
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestApplication(TestConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestApplication(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(5, TimeUnit.SECONDS)
         // Ugly fix to ensure the server is started
         // Even if the call back is called the server seems not ready
