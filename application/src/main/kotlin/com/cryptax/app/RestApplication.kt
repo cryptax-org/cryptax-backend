@@ -46,6 +46,8 @@ class RestApplication(private val appConfig: AppConfig = DefaultAppConfig()) : A
         @JvmStatic
         fun main(args: Array<String>) {
             Launcher.executeCommand("run", RestApplication::class.java.name)
+            // To use several instances
+            //Vertx.vertx().deployVerticle(RestApplication::class.java.name, DeploymentOptions().setInstances(3))
         }
     }
 }

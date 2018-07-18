@@ -13,15 +13,21 @@ Create a `.env` file based on `.env.template`. Its contains your env variables i
 
 ### Compile
 
-`./gradlew clean build`
+```
+./gradlew clean build
+```
 
 ### Run
 
-`java -Djasypt.encryptor.password=yourMasterPassword -jar build/cryptax-backend-1.0.0.jar`
+```
+java -Djasypt.encryptor.password=yourMasterPassword -jar build/cryptax-backend-1.0.0.jar
+```
 
 ### Run in debug mod
 
-`java -Djasypt.encryptor.password=yourMasterPassword -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
+```
+java -Djasypt.encryptor.password=yourMasterPassword -Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=5005,suspend=n -jar build/cryptax-backend-1.0.0.jar`
+```
 
 ### Jasypt
 
@@ -39,13 +45,17 @@ Then you just have to start the app with:
 
 ### Run with Docker
 
-`docker-compose build && docker-compose up`
+```
+docker-compose build && docker-compose up
+```
 
-### Reports
+### Junit and Jacoco reports
 
-`./gradlew testReport jacocoRootReport`
+```
+./gradlew testReport jacocoRootReport
+```
 
-### Generate JWT keystore
+### Generate jwt keystore
 
 ```
 keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret -keyalg EC -keysize 521 -alias ES512 -keypass secret -sigalg SHA512withECDSA -dname "CN=,OU=,O=,L=,ST=,C=" -validity 360
