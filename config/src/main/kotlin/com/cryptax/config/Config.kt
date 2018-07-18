@@ -9,7 +9,7 @@ import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.email.VertxEmailClient
+import com.cryptax.email.VertxEmailService
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.transaction.AddTransaction
@@ -69,7 +69,7 @@ class DefaultConfig(
     userRepository: UserRepository = InMemoryUserRepository(),
     transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
     idGenerator: IdGenerator = JugIdGenerator(),
-    emailService: EmailService = VertxEmailClient()) : Config(userRepository, transactionRepository, idGenerator, emailService)
+    emailService: EmailService = VertxEmailService()) : Config(userRepository, transactionRepository, idGenerator, emailService)
 
 data class ConfigDto(val server: ServerDto, val jwt: JwtDto)
 data class ServerDto(val domain: String, val port: Int)

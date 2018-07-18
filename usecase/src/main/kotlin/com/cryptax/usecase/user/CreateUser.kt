@@ -7,6 +7,8 @@ import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.Arrays
 
 class CreateUser(
@@ -16,6 +18,7 @@ class CreateUser(
     private val emailService: EmailService) {
 
     fun create(user: User): Pair<User, String> {
+        log.debug("Create new user [$user]")
         validateCreateUser(user)
         repository.findByEmail(user.email)?.run {
             throw UserAlreadyExistsException(user.email)
@@ -33,5 +36,9 @@ class CreateUser(
         Arrays.fill(user.password, '\u0000')
         emailService.welcomeEmail(userToSave, welcomeToken)
         return Pair(repository.create(userToSave), welcomeToken)
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
     }
 }
