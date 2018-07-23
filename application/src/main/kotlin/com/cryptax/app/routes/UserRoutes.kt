@@ -33,8 +33,8 @@ fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAu
                 .createUser(userWeb)
                 .subscribeOn(Schedulers.io())
                 .observeOn(vertxScheduler)
-                .doOnError {
-                    routingContext.fail(it)
+                .doOnError { throwable ->
+                    routingContext.fail(throwable)
                 }
                 .subscribe { pair ->
                     routingContext.response().putHeader("welcomeToken", pair.second)

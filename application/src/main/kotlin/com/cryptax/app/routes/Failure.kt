@@ -1,13 +1,15 @@
 package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Routes.addContentTypeJson
+import com.cryptax.domain.exception.CryptaxException
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
-import io.reactivex.Maybe
+import io.reactivex.exceptions.CompositeException
 import io.vertx.core.Handler
+import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.RoutingContext
@@ -29,38 +31,73 @@ object Failure {
         } else {
             // The framework should guarantee that we have a failure
             val throwable: Throwable = event.failure()
-            // TODO handle rxjava composite exceptions
-            if (throwable is ValidationException) {
-                log.warn("Validation exception [${throwable.message}]")
-                response
-                    .setStatusCode(400)
-                    .end(JsonObject().put("error", "${throwable.message}").encodePrettily())
-            } else if (throwable is LoginException) {
-                log.warn("Unauthorized request for user [${throwable.email}] and with description [${throwable.description}]")
-                response
-                    .setStatusCode(401)
-                    .end(JsonObject().put("error", "Unauthorized").encodePrettily())
-            } else if (throwable is UserNotFoundException) {
-                log.warn("User not found [${throwable.message}]")
-                response
-                    .setStatusCode(400)
-                    .end(JsonObject().put("error", "Bad request").encodePrettily())
-            } else if (throwable is UserAlreadyExistsException) {
-                log.warn("User already exists [${throwable.message}]")
-                response
-                    .setStatusCode(400)
-                    .end(JsonObject().put("error", "Bad request").encodePrettily())
-            } else if (throwable is UserValidationException || throwable is TransactionValidationException) {
-                log.debug("Validation exception [${throwable.message}]")
-                response
-                    .setStatusCode(400)
-                    .end(JsonObject().put("error", "${throwable.message}").encodePrettily())
-            } else {
-                log.error("Exception type [${throwable.javaClass.simpleName}] not handled. Should the devs handle it?", throwable)
-                response
-                    .setStatusCode(500)
-                    .end(JsonObject().put("error", "Something went wrong").encodePrettily())
+            when (throwable) {
+                is ValidationException -> handleValidationException(response, throwable)
+                is CompositeException -> handleRxException(response, throwable)
+                is CryptaxException -> handlerCryptaxException(response, throwable)
+                else -> notHandledException(response, throwable)
             }
         }
+    }
+
+    private fun notHandledException(response: HttpServerResponse, throwable: Throwable) {
+        log.error("Exception type [${throwable.javaClass.simpleName}] not handled. Should the devs handle it?", throwable)
+        response
+            .setStatusCode(500)
+            .end(JsonObject().put("error", "Something went wrong").encodePrettily())
+    }
+
+    private fun handleRxException(response: HttpServerResponse, exception: CompositeException) {
+        val cryptaxException = exception.exceptions.find { throwable -> throwable is CryptaxException }
+        if (cryptaxException != null) {
+            handlerCryptaxException(response, cryptaxException as CryptaxException)
+        } else {
+            notHandledException(response, exception)
+        }
+    }
+
+    private fun handlerCryptaxException(response: HttpServerResponse, exception: CryptaxException) {
+        when (exception) {
+            is LoginException -> handleLoginException(response, exception)
+            is UserNotFoundException -> handleUserNotFoundException(response, exception)
+            is UserAlreadyExistsException -> handleUserUserAlreadyExistsException(response, exception)
+            is UserValidationException -> handleUserTransactionValidationException(response, exception)
+            is TransactionValidationException -> handleUserTransactionValidationException(response, exception)
+        }
+    }
+
+    private fun handleValidationException(response: HttpServerResponse, exception: ValidationException) {
+        log.warn("Validation exception [${exception.message}]")
+        response
+            .setStatusCode(400)
+            .end(JsonObject().put("error", "${exception.message}").encodePrettily())
+    }
+
+    private fun handleLoginException(response: HttpServerResponse, exception: LoginException) {
+        log.warn("Unauthorized request for user [${exception.email}] and with description [${exception.description}]")
+        response
+            .setStatusCode(401)
+            .end(JsonObject().put("error", "Unauthorized").encodePrettily())
+    }
+
+    private fun handleUserNotFoundException(response: HttpServerResponse, exception: UserNotFoundException) {
+        log.warn("User not found [${exception.message}]")
+        response
+            .setStatusCode(400)
+            .end(JsonObject().put("error", "Bad request").encodePrettily())
+    }
+
+    private fun handleUserUserAlreadyExistsException(response: HttpServerResponse, exception: UserAlreadyExistsException) {
+        log.warn("User already exists [${exception.message}]")
+        response
+            .setStatusCode(400)
+            .end(JsonObject().put("error", "Bad request").encodePrettily())
+    }
+
+    private fun handleUserTransactionValidationException(response: HttpServerResponse, exception: com.cryptax.domain.exception.ValidationException) {
+        log.debug("Validation exception [${exception.message}]")
+        response
+            .setStatusCode(400)
+            .end(JsonObject().put("error", "${exception.message}").encodePrettily())
     }
 }
