@@ -1,15 +1,19 @@
 package com.cryptax.app
 
+import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AbstractVerticle
-import io.vertx.core.Launcher
+import io.vertx.core.Vertx
+import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.Json
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
+import io.vertx.ext.dropwizard.DropwizardMetricsOptions
+import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 
@@ -18,9 +22,15 @@ class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : Abst
     override fun start() {
         Json.mapper = AppConfig.objectMapper
 
+        // val vertxOptions = VertxOptions()
+        //vertxOptions.metricsOptions = DropwizardMetricsOptions().setEnabled(true)
+        //val vertx = Vertx.vertx(vertxOptions)
+        val service = MetricsService.create(vertx)
+
         // Create router
         val router = Router.router(vertx)
         Routes.setupRoutes(appConfig, vertx, router)
+        Metrics.setupMetrics(service, vertx, router)
         router.route().handler(
             CorsHandler.create("*")
                 .allowedMethods(
@@ -56,9 +66,10 @@ class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : Abst
 
         @JvmStatic
         fun main(args: Array<String>) {
-            Launcher.executeCommand("run", RestVerticle::class.java.name)
+            //Launcher.executeCommand("run", RestVerticle::class.java.name)
             // To use several instances
-            //Vertx.vertx().deployVerticle(RestApplication::class.java.name, DeploymentOptions().setInstances(3))
+            val vertx = Vertx.vertx(VertxOptions().setMetricsOptions(DropwizardMetricsOptions().setEnabled(true)))
+            vertx.deployVerticle(RestVerticle::class.java.name)
         }
     }
 }
