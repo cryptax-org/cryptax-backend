@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
+import io.reactivex.Maybe
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -32,31 +33,31 @@ class LoginUserTest {
     private val hashedPassword = "hashedPassword"
     private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", true)
 
-    /*@Test
+    @Test
     @DisplayName("Login a user")
     fun testLogin() {
         //given
-        given(userRepository.findByEmail(email)).willReturn(user)
+        given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
         given(securePassword.matchPassword(password, user.password)).willReturn(true)
 
         //when
-        val actual = loginUser.login(email, password)
+        val actual = loginUser.login(email, password).blockingGet()
 
         //then
         assertEquals(user, actual)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
-    }*/
+    }
 
     @Test
     @DisplayName("Login a user not found")
     fun testLoginUserNotFound() {
         //given
-        given(userRepository.findByEmail(email)).willReturn(null)
+        given(userRepository.findByEmail(email)).willReturn(Maybe.empty())
 
         //when
         val exception = assertThrows(LoginException::class.java) {
-            loginUser.login(email, password)
+            loginUser.login(email, password).blockingGet()
         }
 
         //then

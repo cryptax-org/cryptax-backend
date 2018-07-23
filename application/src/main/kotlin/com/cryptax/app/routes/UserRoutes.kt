@@ -8,7 +8,7 @@ import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.Scheduler
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
@@ -17,7 +17,7 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 
 private val log: Logger = LoggerFactory.getLogger("handleUserRoutes")
 
-fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAuthHandler) {
+fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAuthHandler, vertxScheduler: Scheduler) {
 
     val userController = appConfig.userController
 
@@ -30,7 +30,10 @@ fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAu
             val userWeb = routingContext.body.toJsonObject().mapTo(UserWeb::class.java)
             userController
                 .createUser(userWeb)
-                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .doOnError {
+                    routingContext.fail(it)
+                }
                 .subscribe { pair ->
                     routingContext.response().putHeader("welcomeToken", pair.second)
                     sendSuccess(JsonObject.mapFrom(pair.first), routingContext.response())

@@ -6,6 +6,7 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 class UserController(
     private val createUser: CreateUser,
@@ -17,12 +18,14 @@ class UserController(
         return createUser
             .create(userWeb.toUser())
             .map { pair -> Pair(UserWeb.toUserWeb(pair.first), pair.second) }
+            .subscribeOn(Schedulers.io())
     }
 
     fun login(email: String, password: CharArray): Single<UserWeb> {
         return loginUser
             .login(email, password)
             .map { user -> UserWeb.toUserWeb(user) }
+            .subscribeOn(Schedulers.io())
     }
 
     fun findUser(userId: String): UserWeb? {

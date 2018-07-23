@@ -20,6 +20,7 @@ dependencies {
         [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion],
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],

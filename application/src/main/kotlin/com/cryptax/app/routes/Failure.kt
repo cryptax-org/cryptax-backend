@@ -29,6 +29,7 @@ object Failure {
         } else {
             // The framework should guarantee that we have a failure
             val throwable: Throwable = event.failure()
+            // TODO handle rxjava composite exceptions
             if (throwable is ValidationException) {
                 log.warn("Validation exception [${throwable.message}]")
                 response

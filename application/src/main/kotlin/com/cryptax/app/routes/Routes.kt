@@ -11,6 +11,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.impl.LoggerHandlerImpl
+import io.vertx.reactivex.RxHelper
 
 val bodyHandler: BodyHandler = BodyHandler.create()
 
@@ -22,10 +23,11 @@ object Routes {
         val jwtProvider = JWTAuth.create(vertx, appConfig.jwtAuthOptions)
         val jwtAuthHandler = JWTAuthHandlerCustom(jwtProvider)
         val jwtRefreshAuthHandler = JWTRefreshAuthHandlerCustom(jwtProvider)
+        val vertxScheduler = RxHelper.scheduler(vertx)
 
         router.route().handler(LoggerHandlerImpl(LoggerFormat.SHORT))
-        handleUserRoutes(appConfig, router, jwtAuthHandler)
-        handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler)
+        handleUserRoutes(appConfig, router, jwtAuthHandler, vertxScheduler)
+        handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler)
         handleTransactionRoutes(appConfig, router, jwtAuthHandler)
 
         // Exception handler

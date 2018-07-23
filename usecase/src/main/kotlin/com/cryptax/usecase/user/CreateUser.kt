@@ -7,10 +7,10 @@ import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
-import io.reactivex.Maybe
 import io.reactivex.Single
-import io.reactivex.SingleSource
+import io.reactivex.exceptions.Exceptions
 import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Arrays
@@ -22,14 +22,8 @@ class CreateUser(
     private val emailService: EmailService) {
 
     fun create(user: User): Single<Pair<User, String>> {
-        log.debug("Create new user [$user]")
+        log.info("Starting a creation of a user $user")
         validateCreateUser(user)
-        /*repository.findByEmail(user.email)?.run {
-            throw UserAlreadyExistsException(user.email)
-        }*/
-
-        // TODO: need to throw exception if the user exists
-        //val userExists: Single<Boolean> = repository.findByEmail(user.email).isEmpty
 
         val userToSave = User(
             id = idGenerator.generate(),
@@ -44,28 +38,22 @@ class CreateUser(
 
         return repository
             .findByEmail(user.email)
-            .flatMap(
-                {},
-                {},
-                {}
-            )
-            .map { repository.create(userToSave) }
+            .subscribeOn(Schedulers.io())
+            .isEmpty
+            .map { isEmpty ->
+                when (isEmpty) {
+                    true -> repository.create(userToSave)
+                    false -> throw UserAlreadyExistsException(user.email)
+                }
+            }
+            .blockingGet()
             .zipWith(Single.just(welcomeToken), BiFunction { u: User, t: String -> Pair(u, t) })
             .doOnSuccess {
                 emailService.welcomeEmail(userToSave, welcomeToken)
             }
             .doOnError {
-                throw UserAlreadyExistsException(user.email)
+                throw Exceptions.propagate(it)
             }
-
-
-
-/*        return repository
-            .create(userToSave)
-            .zipWith(Single.just(welcomeToken), BiFunction { u: User, t: String -> Pair(u, t) })
-            .doOnSuccess {
-                emailService.welcomeEmail(userToSave, welcomeToken)
-            }*/
     }
 
     companion object {

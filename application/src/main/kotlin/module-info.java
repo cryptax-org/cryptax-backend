@@ -10,4 +10,5 @@ open module cryptax.app {
     requires cryptax.controller;
     requires cryptax.validation;
     requires io.reactivex.rxjava2;
+    requires vertx.rx.java2;
 }
