@@ -7,8 +7,9 @@ import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
-import io.reactivex.Observable
+import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.SingleSource
 import io.reactivex.functions.BiFunction
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -28,7 +29,7 @@ class CreateUser(
         }*/
 
         // TODO: need to throw exception if the user exists
-        val userExists: Single<Boolean> = repository.findByEmail(user.email).isEmpty
+        //val userExists: Single<Boolean> = repository.findByEmail(user.email).isEmpty
 
         val userToSave = User(
             id = idGenerator.generate(),
@@ -40,13 +41,31 @@ class CreateUser(
         )
         val welcomeToken = securePassword.generateToken(userToSave)
         Arrays.fill(user.password, '\u0000')
-        emailService.welcomeEmail(userToSave, welcomeToken)
-
-
 
         return repository
+            .findByEmail(user.email)
+            .flatMap(
+                {},
+                {},
+                {}
+            )
+            .map { repository.create(userToSave) }
+            .zipWith(Single.just(welcomeToken), BiFunction { u: User, t: String -> Pair(u, t) })
+            .doOnSuccess {
+                emailService.welcomeEmail(userToSave, welcomeToken)
+            }
+            .doOnError {
+                throw UserAlreadyExistsException(user.email)
+            }
+
+
+
+/*        return repository
             .create(userToSave)
             .zipWith(Single.just(welcomeToken), BiFunction { u: User, t: String -> Pair(u, t) })
+            .doOnSuccess {
+                emailService.welcomeEmail(userToSave, welcomeToken)
+            }*/
     }
 
     companion object {

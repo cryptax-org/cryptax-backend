@@ -11,6 +11,7 @@ class InMemoryUserRepository : UserRepository {
 
     override fun create(user: User): Single<User> {
         return Single.create<User> { emitter ->
+            println("DB create " + Thread.currentThread().name)
             inMemoryDb[user.id!!] = user
             emitter.onSuccess(user)
         }
@@ -22,6 +23,7 @@ class InMemoryUserRepository : UserRepository {
 
     override fun findByEmail(email: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
+            println("FInd by email " + Thread.currentThread().name)
             val user = inMemoryDb.values.firstOrNull { user -> user.email == email }
             when (user) {
                 null -> emitter.onComplete()
