@@ -5,6 +5,8 @@ import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
+import io.reactivex.exceptions.CompositeException
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -56,52 +58,63 @@ class LoginUserTest {
         given(userRepository.findByEmail(email)).willReturn(Maybe.empty())
 
         //when
-        val exception = assertThrows(LoginException::class.java) {
+        val exception = assertThrows(CompositeException::class.java) {
             loginUser.login(email, password).blockingGet()
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("User not found", exception.description)
+        assertThat(exception.exceptions).hasSize(2)
+        assertThat(exception.exceptions[0]).isOfAnyClassIn(NoSuchElementException::class.java)
+        val exception2 = exception.exceptions[1]
+        assertThat(exception2).isOfAnyClassIn(LoginException::class.java)
+        val loginException = exception2 as LoginException
+        assertThat((loginException).email).isEqualTo(email)
+        assertThat((loginException).description).isEqualTo("User not found")
         then(userRepository).should().findByEmail(email)
     }
 
-    /*@Test
+    @Test
     @DisplayName("Login a user wrong password")
     fun testLoginWrongPassword() {
         //given
-        given(userRepository.findByEmail(email)).willReturn(user)
+        given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
         given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
 
         //when
-        val exception = assertThrows(LoginException::class.java) {
-            loginUser.login(email, "wrong password".toCharArray())
+        val exception = assertThrows(CompositeException::class.java) {
+            loginUser.login(email, "wrong password".toCharArray()).blockingGet()
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("Password do not match", exception.description)
+        assertThat(exception.exceptions).hasSize(1)
+        assertThat(exception.exceptions[0]).isOfAnyClassIn(LoginException::class.java)
+        val loginException = exception.exceptions[0] as LoginException
+        assertThat(loginException.email).isEqualTo(email)
+        assertThat(loginException.description).isEqualTo("Password do not match")
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
-    }*/
+    }
 
-    /*@Test
+    @Test
     @DisplayName("Login a user not allowed")
     fun testLoginNotAllowed() {
         //given
         val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", false)
-        given(userRepository.findByEmail(email)).willReturn(user)
+        given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
         given(securePassword.matchPassword(password, user.password)).willReturn(true)
 
         //when
-        val exception = assertThrows(LoginException::class.java) {
-            loginUser.login(email, password)
+        val exception = assertThrows(CompositeException::class.java) {
+            loginUser.login(email, password).blockingGet()
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("Not allowed to login", exception.description)
+        assertThat(exception.exceptions).hasSize(1)
+        assertThat(exception.exceptions[0]).isOfAnyClassIn(LoginException::class.java)
+        val loginException = exception.exceptions[0] as LoginException
+        assertThat(loginException.email).isEqualTo(email)
+        assertThat(loginException.description).isEqualTo("Not allowed to login")
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
-    }*/
+    }
 }

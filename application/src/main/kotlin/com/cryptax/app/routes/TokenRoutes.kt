@@ -6,6 +6,7 @@ import com.cryptax.config.AppConfig
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import io.reactivex.Scheduler
+import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
@@ -24,6 +25,7 @@ fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth
                 email = routingContext.bodyAsJson.getString("email"),
                 password = routingContext.bodyAsJson.getString("password").toCharArray())
                 .observeOn(vertxScheduler)
+                .subscribeOn(Schedulers.io())
                 .doOnError {
                     routingContext.fail(it)
                 }
