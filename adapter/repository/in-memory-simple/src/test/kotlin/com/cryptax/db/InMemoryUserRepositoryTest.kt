@@ -60,7 +60,7 @@ class InMemoryUserRepositoryTest {
         userRepository.create(user).blockingGet()
 
         // when
-        val actual = userRepository.findById(user.id!!)
+        val actual = userRepository.findById(user.id!!).blockingGet()
 
         // then
         assertEquals(user, actual)
@@ -73,7 +73,7 @@ class InMemoryUserRepositoryTest {
         val userId = ""
 
         // when
-        val actual = userRepository.findById(userId)
+        val actual = userRepository.findById(userId).blockingGet()
 
         // then
         assertNull(actual)

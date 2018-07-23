@@ -5,8 +5,8 @@ import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
+import io.reactivex.Maybe
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 
 class UserController(
     private val createUser: CreateUser,
@@ -26,16 +26,12 @@ class UserController(
             .map { user -> UserWeb.toUserWeb(user) }
     }
 
-    fun findUser(userId: String): UserWeb? {
-        val user = findUser.findById(userId)
-        return if (user != null) {
-            UserWeb.toUserWeb(user)
-        } else {
-            null
-        }
+    fun findUser(userId: String): Maybe<UserWeb> {
+        return findUser.findById(userId)
+            .map { user -> UserWeb.toUserWeb(user) }
     }
 
-    fun allowUser(userId: String, token: String): Boolean {
+    fun allowUser(userId: String, token: String): Single<Boolean> {
         return validateUser.validate(userId, token)
     }
 }

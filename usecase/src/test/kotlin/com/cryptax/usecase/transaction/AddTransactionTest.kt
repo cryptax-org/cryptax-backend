@@ -12,6 +12,7 @@ import com.cryptax.usecase.Utils.oneTransactionExpected
 import com.cryptax.usecase.Utils.twoTransactionExpected
 import com.cryptax.usecase.Utils.twoTransactions
 import com.nhaarman.mockitokotlin2.any
+import io.reactivex.Maybe
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -47,7 +48,7 @@ class AddTransactionTest {
     fun testAdd() {
         // given
         given(idGenerator.generate()).willReturn(id)
-        given(userRepository.findById(transaction.userId)).willReturn(user)
+        given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
         given(transactionRepository.add(any<Transaction>())).willReturn(expected)
 
         // when
@@ -82,7 +83,7 @@ class AddTransactionTest {
     fun testAddSeveral() {
         // given
         given(idGenerator.generate()).willReturn(id)
-        given(userRepository.findById(transaction.userId)).willReturn(user)
+        given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
         given(transactionRepository.add(any<List<Transaction>>())).willReturn(transactions)
 
         // when

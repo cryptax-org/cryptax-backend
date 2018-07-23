@@ -5,8 +5,6 @@ import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
-import io.reactivex.exceptions.CompositeException
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -58,18 +56,13 @@ class LoginUserTest {
         given(userRepository.findByEmail(email)).willReturn(Maybe.empty())
 
         //when
-        val exception = assertThrows(CompositeException::class.java) {
+        val exception = assertThrows(LoginException::class.java) {
             loginUser.login(email, password).blockingGet()
         }
 
         //then
-        assertThat(exception.exceptions).hasSize(2)
-        assertThat(exception.exceptions[0]).isOfAnyClassIn(NoSuchElementException::class.java)
-        val exception2 = exception.exceptions[1]
-        assertThat(exception2).isOfAnyClassIn(LoginException::class.java)
-        val loginException = exception2 as LoginException
-        assertThat((loginException).email).isEqualTo(email)
-        assertThat((loginException).description).isEqualTo("User not found")
+        assertEquals(email, exception.email)
+        assertEquals("User not found", exception.description)
         then(userRepository).should().findByEmail(email)
     }
 
@@ -81,16 +74,13 @@ class LoginUserTest {
         given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
 
         //when
-        val exception = assertThrows(CompositeException::class.java) {
+        val exception = assertThrows(LoginException::class.java) {
             loginUser.login(email, "wrong password".toCharArray()).blockingGet()
         }
 
         //then
-        assertThat(exception.exceptions).hasSize(1)
-        assertThat(exception.exceptions[0]).isOfAnyClassIn(LoginException::class.java)
-        val loginException = exception.exceptions[0] as LoginException
-        assertThat(loginException.email).isEqualTo(email)
-        assertThat(loginException.description).isEqualTo("Password do not match")
+        assertEquals(email, exception.email)
+        assertEquals("Password do not match", exception.description)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
     }
@@ -104,16 +94,13 @@ class LoginUserTest {
         given(securePassword.matchPassword(password, user.password)).willReturn(true)
 
         //when
-        val exception = assertThrows(CompositeException::class.java) {
+        val exception = assertThrows(LoginException::class.java) {
             loginUser.login(email, password).blockingGet()
         }
 
         //then
-        assertThat(exception.exceptions).hasSize(1)
-        assertThat(exception.exceptions[0]).isOfAnyClassIn(LoginException::class.java)
-        val loginException = exception.exceptions[0] as LoginException
-        assertThat(loginException.email).isEqualTo(email)
-        assertThat(loginException.description).isEqualTo("Not allowed to login")
+        assertEquals(email, exception.email)
+        assertEquals("Not allowed to login", exception.description)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
     }

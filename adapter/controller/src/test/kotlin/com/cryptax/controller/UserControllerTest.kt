@@ -8,6 +8,8 @@ import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -51,13 +53,13 @@ class UserControllerTest {
     @InjectMocks
     lateinit var userController: UserController
 
-   /* @Test
+    @Test
     fun testCreateUser() {
         // given
-        given(createUser.create(any())).willReturn(Pair(user, welcomeToken))
+        given(createUser.create(any())).willReturn(Single.just(Pair(user, welcomeToken)))
 
         // when
-        val actual = userController.createUser(userWeb)
+        val actual = userController.createUser(userWeb).blockingGet()
 
         // then
         val actualUser = actual.first
@@ -75,17 +77,17 @@ class UserControllerTest {
             assertEquals(userWeb.lastName, firstValue.lastName)
             assertEquals(userWeb.firstName, firstValue.firstName)
         }
-    }*/
+    }
 
-/*    @Test
+    @Test
     fun testLoginUser() {
         // given
         val email = "email@email.com"
         val password = "mypassword".toCharArray()
-        given(loginUser.login(email, password)).willReturn(user)
+        given(loginUser.login(email, password)).willReturn(Single.just(user))
 
         // when
-        val actual = userController.login(email, password)
+        val actual = userController.login(email, password).blockingGet()
 
         // then
         assertEquals(user.id, actual.id)
@@ -93,16 +95,16 @@ class UserControllerTest {
         assertEquals(user.lastName, actual.lastName)
         assertEquals(user.firstName, actual.firstName)
         then(loginUser).should().login(email, password)
-    }*/
+    }
 
     @Test
     fun testFindUser() {
         // given
         val userId = "random user id"
-        given(findUser.findById(userId)).willReturn(user)
+        given(findUser.findById(userId)).willReturn(Maybe.just(user))
 
         // when
-        val actual = userController.findUser(userId)
+        val actual = userController.findUser(userId).blockingGet()
 
         // then
         assertNotNull(actual)
@@ -117,10 +119,10 @@ class UserControllerTest {
     fun testFindUserNotFound() {
         // given
         val userId = "random user id"
-        given(findUser.findById(userId)).willReturn(null)
+        given(findUser.findById(userId)).willReturn(Maybe.empty())
 
         // when
-        val actual = userController.findUser(userId)
+        val actual = userController.findUser(userId).blockingGet()
 
         // then
         assertNull(actual)
@@ -132,10 +134,10 @@ class UserControllerTest {
         // given
         val userId = "userId"
         val token = "token"
-        given(validateUser.validate(userId, token)).willReturn(true)
+        given(validateUser.validate(userId, token)).willReturn(Single.just(true))
 
         // when
-        val actual = userController.allowUser(userId, token)
+        val actual = userController.allowUser(userId, token).blockingGet()
 
         // then
         assertTrue(actual)

@@ -2,6 +2,7 @@ package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
+import io.reactivex.Maybe
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.DisplayName
@@ -29,10 +30,10 @@ class FindUserTest {
     @DisplayName("Find a user by id")
     fun testFindById() {
         //given
-        given(userRepository.findById(id)).willReturn(user)
+        given(userRepository.findById(id)).willReturn(Maybe.just(user))
 
         //when
-        val actual = findUser.findById(id)
+        val actual = findUser.findById(id).blockingGet()
 
         //then
         assertEquals(user, actual)
@@ -43,10 +44,10 @@ class FindUserTest {
     @DisplayName("Find a user by id not found")
     fun testFindByIdNotFound() {
         //given
-        given(userRepository.findById(id)).willReturn(null)
+        given(userRepository.findById(id)).willReturn(Maybe.empty())
 
         //when
-        val actual = findUser.findById(id)
+        val actual = findUser.findById(id).blockingGet()
 
         //then
         assertNull(actual)

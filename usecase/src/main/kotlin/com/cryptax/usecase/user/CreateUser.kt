@@ -8,7 +8,6 @@ import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
 import io.reactivex.Single
-import io.reactivex.exceptions.Exceptions
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
@@ -51,9 +50,7 @@ class CreateUser(
             .doOnSuccess {
                 emailService.welcomeEmail(userToSave, welcomeToken)
             }
-            .doOnError {
-                throw Exceptions.propagate(it)
-            }
+            .onErrorResumeNext { t: Throwable -> Single.error(t) }
     }
 
     companion object {

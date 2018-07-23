@@ -19,13 +19,20 @@ class InMemoryUserRepository : UserRepository {
         }
     }
 
-    override fun findById(id: String): User? {
-        return inMemoryDb[id]
+    override fun findById(id: String): Maybe<User> {
+        return Maybe.create<User> { emitter ->
+            log.debug("Find user by id [$id]")
+            val user = inMemoryDb[id]
+            when (user) {
+                null -> emitter.onComplete()
+                else -> emitter.onSuccess(user)
+            }
+        }
     }
 
     override fun findByEmail(email: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
-            log.debug("Find by email [$email]")
+            log.debug("Find user by email [$email]")
             val user = inMemoryDb.values.firstOrNull { user -> user.email == email }
             when (user) {
                 null -> emitter.onComplete()

@@ -8,7 +8,7 @@ interface UserRepository {
 
     fun create(user: User): Single<User>
 
-    fun findById(id: String): User?
+    fun findById(id: String): Maybe<User>
 
     fun findByEmail(email: String): Maybe<User>
 

@@ -26,19 +26,19 @@ fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth
                 password = routingContext.bodyAsJson.getString("password").toCharArray())
                 .observeOn(vertxScheduler)
                 .subscribeOn(Schedulers.io())
-                .doOnError {
-                    routingContext.fail(it)
-                }
-                .subscribe { userWeb ->
-                    val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), appConfig.jwtOptions)
-                    val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), appConfig.jwtRefreshOptions)
+                .subscribe(
+                    { userWeb ->
+                        val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), appConfig.jwtOptions)
+                        val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), appConfig.jwtRefreshOptions)
 
-                    val result = JsonObject()
-                        .put("id", userWeb.id!!)
-                        .put("token", token)
-                        .put("refreshToken", refreshToken)
-                    sendSuccess(result, routingContext.response())
-                }
+                        val result = JsonObject()
+                            .put("id", userWeb.id!!)
+                            .put("token", token)
+                            .put("refreshToken", refreshToken)
+                        sendSuccess(result, routingContext.response())
+                    },
+                    { error -> routingContext.fail(error) }
+                )
         }
         .failureHandler(failureHandler)
 

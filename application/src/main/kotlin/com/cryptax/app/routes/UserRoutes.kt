@@ -33,13 +33,12 @@ fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAu
                 .createUser(userWeb)
                 .subscribeOn(Schedulers.io())
                 .observeOn(vertxScheduler)
-                .doOnError { throwable ->
-                    routingContext.fail(throwable)
-                }
-                .subscribe { pair ->
-                    routingContext.response().putHeader("welcomeToken", pair.second)
-                    sendSuccess(JsonObject.mapFrom(pair.first), routingContext.response())
-                }
+                .subscribe(
+                    { pair ->
+                        routingContext.response().putHeader("welcomeToken", pair.second)
+                        sendSuccess(JsonObject.mapFrom(pair.first), routingContext.response())
+                    },
+                    { error -> routingContext.fail(error) })
         }
         .failureHandler(failureHandler)
 
@@ -50,9 +49,16 @@ fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAu
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
             // Previous validation 'insure' (95%) the user exists
-            val userWeb = userController.findUser(userId)!!
-            val result = JsonObject.mapFrom(userWeb)
-            sendSuccess(result, routingContext.response())
+            userController
+                .findUser(userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { user ->
+                        val result = JsonObject.mapFrom(user)
+                        sendSuccess(result, routingContext.response())
+                    },
+                    { error -> routingContext.fail(error) })
         }
         .failureHandler(failureHandler)
 
@@ -62,10 +68,18 @@ fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAu
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
             val token = routingContext.request().getParam("token")
-            val isAllowed = userController.allowUser(userId, token)
-            routingContext.response()
-                .setStatusCode(if (isAllowed) 200 else 400)
-                .end()
+            userController
+                .allowUser(userId, token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { isAllowed ->
+                        routingContext.response()
+                            .setStatusCode(if (isAllowed) 200 else 400)
+                            .end()
+                    },
+                    { error -> routingContext.fail(error) })
         }
+        .failureHandler(failureHandler)
 }
 

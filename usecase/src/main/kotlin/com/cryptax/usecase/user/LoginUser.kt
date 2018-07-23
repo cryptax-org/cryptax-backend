@@ -5,7 +5,6 @@ import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Single
-import io.reactivex.exceptions.Exceptions
 
 class LoginUser(private val userRepository: UserRepository, private val securePassword: SecurePassword) {
 
@@ -20,10 +19,10 @@ class LoginUser(private val userRepository: UserRepository, private val securePa
                 }
                 Single.just(user)
             }
-            .doOnError { throwable ->
+            .onErrorResumeNext { throwable ->
                 when (throwable) {
-                    is NoSuchElementException -> throw Exceptions.propagate(LoginException(email, "User not found"))
-                    else -> throw Exceptions.propagate(throwable)
+                    is NoSuchElementException -> Single.error(LoginException(email, "User not found"))
+                    else -> Single.error(throwable)
                 }
             }
     }
