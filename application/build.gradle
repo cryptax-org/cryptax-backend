@@ -37,7 +37,7 @@ dependencies {
     )
 }
 
-mainClassName = 'com.cryptax.app.RestApplication'
+mainClassName = 'com.cryptax.app.RestVerticle'
 
 shadowJar {
     baseName = rootProject.name

@@ -33,7 +33,7 @@ class UserRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestApplication(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(5, TimeUnit.SECONDS)
         // Ugly fix to ensure the server is started
         // Even if the call back is called the server seems not ready

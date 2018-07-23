@@ -5,13 +5,15 @@ import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Launcher
+import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.Json
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
+import io.vertx.ext.web.handler.CorsHandler
 
-class RestApplication(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
+class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
     override fun start() {
         Json.mapper = AppConfig.objectMapper
@@ -19,6 +21,15 @@ class RestApplication(private val appConfig: AppConfig = DefaultAppConfig()) : A
         // Create router
         val router = Router.router(vertx)
         Routes.setupRoutes(appConfig, vertx, router)
+        router.route().handler(
+            CorsHandler.create("*")
+                .allowedMethods(
+                    setOf(
+                        HttpMethod.POST, HttpMethod.GET,
+                        HttpMethod.PUT, HttpMethod.DELETE,
+                        HttpMethod.OPTIONS)
+                )
+        )
 
         // Server options
         val options = HttpServerOptions()
@@ -41,11 +52,11 @@ class RestApplication(private val appConfig: AppConfig = DefaultAppConfig()) : A
             System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
         }
 
-        private val log: Logger = LoggerFactory.getLogger(RestApplication::class.java)
+        private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 
         @JvmStatic
         fun main(args: Array<String>) {
-            Launcher.executeCommand("run", RestApplication::class.java.name)
+            Launcher.executeCommand("run", RestVerticle::class.java.name)
             // To use several instances
             //Vertx.vertx().deployVerticle(RestApplication::class.java.name, DeploymentOptions().setInstances(3))
         }
