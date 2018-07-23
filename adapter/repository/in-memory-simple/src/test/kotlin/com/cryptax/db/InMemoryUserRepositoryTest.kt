@@ -32,7 +32,7 @@ class InMemoryUserRepositoryTest {
     @Test
     fun testCreate() {
         // when
-        val actual = userRepository.create(user)
+        val actual = userRepository.create(user).blockingGet()
 
         // then
         assertEquals(user, actual)
@@ -46,7 +46,7 @@ class InMemoryUserRepositoryTest {
 
         // when
         assertThrows(NullPointerException::class.java) {
-            userRepository.create(user)
+            userRepository.create(user).blockingGet()
         }
 
         // then
@@ -57,7 +57,7 @@ class InMemoryUserRepositoryTest {
     @Test
     fun testFindById() {
         // given
-        userRepository.create(user)
+        userRepository.create(user).blockingGet()
 
         // when
         val actual = userRepository.findById(user.id!!)
@@ -83,10 +83,10 @@ class InMemoryUserRepositoryTest {
     @Test
     fun testFindByEmail() {
         // given
-        userRepository.create(user)
+        userRepository.create(user).blockingGet()
 
         // when
-        val actual = userRepository.findByEmail(user.email)
+        val actual = userRepository.findByEmail(user.email).blockingGet()
 
         // then
         assertEquals(user, actual)
@@ -99,7 +99,7 @@ class InMemoryUserRepositoryTest {
         val email = ""
 
         // when
-        val actual = userRepository.findByEmail(email)
+        val actual = userRepository.findByEmail(email).blockingGet()
 
         // then
         assertNull(actual)
