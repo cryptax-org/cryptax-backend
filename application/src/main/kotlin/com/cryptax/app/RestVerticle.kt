@@ -20,6 +20,7 @@ import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
     override fun start() {
+
         Json.mapper = AppConfig.objectMapper
         val service = MetricsService.create(vertx)
 

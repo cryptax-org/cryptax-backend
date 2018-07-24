@@ -1,0 +1,13 @@
+apply plugin: 'java-library'
+
+ext {
+    moduleName = 'cryptax.health'
+    javaUuidGeneratorVersion = '3.1.5'
+}
+
+dependencies {
+    implementation(
+        project(":domain"),
+        [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
+    )
+}

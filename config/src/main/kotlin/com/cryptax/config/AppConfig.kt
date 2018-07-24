@@ -1,5 +1,6 @@
 package com.cryptax.config
 
+import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
@@ -10,6 +11,7 @@ import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.email.VertxEmailService
+import com.cryptax.health.DatabaseHealthCheck
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.transaction.AddTransaction
@@ -46,6 +48,11 @@ abstract class AppConfig(
 
     val userController = UserController(createUser, findUser, loginUser, validateUser)
     val transactionController = TransactionController(addTransaction, updateTransaction, findTransaction)
+    val register: HealthCheckRegistry = HealthCheckRegistry()
+
+    init {
+        register.register("database", DatabaseHealthCheck(userRepository))
+    }
 
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
         .registerModule(KotlinModule())

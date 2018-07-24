@@ -29,6 +29,7 @@ object Routes {
         handleUserRoutes(appConfig, router, jwtAuthHandler, vertxScheduler)
         handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler)
         handleTransactionRoutes(appConfig, router, jwtAuthHandler)
+        handleHealthRoutes(appConfig.register, router, vertxScheduler)
 
         // Exception handler
         router.exceptionHandler { throwable ->

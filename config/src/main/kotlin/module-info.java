@@ -19,4 +19,6 @@ module cryptax.config {
     requires vertx.auth.common;
     requires jasypt;
     requires java.management;
+    requires metrics.healthchecks;
+    requires cryptax.health;
 }

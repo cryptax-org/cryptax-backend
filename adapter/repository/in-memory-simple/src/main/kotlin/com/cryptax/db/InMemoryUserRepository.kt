@@ -46,6 +46,10 @@ class InMemoryUserRepository : UserRepository {
         return user
     }
 
+    override fun ping(): Boolean {
+        return true
+    }
+
     companion object {
         private val log: Logger = LoggerFactory.getLogger(InMemoryUserRepository::class.java)
     }
