@@ -5,6 +5,7 @@ import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AbstractVerticle
+import io.vertx.core.Future
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
@@ -19,7 +20,7 @@ import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 
 class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
-    override fun start() {
+    override fun start(startFuture: Future<Void>) {
 
         Json.mapper = AppConfig.objectMapper
         val service = MetricsService.create(vertx)
@@ -44,11 +45,13 @@ class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : Abst
 
         val port = appConfig.properties.server.port
         // Create server
-        vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, appConfig.properties.server.domain) {
-            if (it.failed()) {
-                log.error("Fail to start the server", it.cause())
+        vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, appConfig.properties.server.domain) { ar ->
+            if (ar.failed()) {
+                log.error("Failed to deploy ${this.javaClass.simpleName}", ar.cause())
+                startFuture.fail(ar.cause())
             } else {
-                log.info("Server started on port $port with profile ${appConfig.getProfile()}")
+                log.info("${this.javaClass.simpleName} deployed with profile ${appConfig.getProfile()} and listening on port $port")
+                startFuture.complete()
             }
         }
     }

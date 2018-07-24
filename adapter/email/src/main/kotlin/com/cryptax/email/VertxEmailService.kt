@@ -15,6 +15,7 @@ class VertxEmailService : EmailService {
     private val mailClient: MailClient
 
     init {
+        // TODO avoid creating a new vertx instance here
         val vertx = Vertx.vertx()
         val config = MailConfig()
         config.hostname = EmailConfig.emailProperties.server.host

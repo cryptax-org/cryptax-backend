@@ -22,12 +22,10 @@ import java.util.concurrent.TimeUnit
 @DisplayName("User routes integration tests")
 class UserRoutesTest {
 
-    private val appConfig = TestAppConfig()
-
-    // FIXME: Test is still ran when web server does not deploy
     @BeforeAll
     internal fun beforeAll() {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
+        val appConfig = TestAppConfig()
         RestAssured.port = appConfig.properties.server.port
         RestAssured.baseURI = "http://" + appConfig.properties.server.domain
     }
@@ -35,10 +33,7 @@ class UserRoutesTest {
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
         vertx.deployVerticle(RestVerticle(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
-        testContext.awaitCompletion(5, TimeUnit.SECONDS)
-        // Ugly fix to ensure the server is started
-        // Even if the call back is called the server seems not ready
-        Thread.sleep(100)
+        testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 
     @Test
