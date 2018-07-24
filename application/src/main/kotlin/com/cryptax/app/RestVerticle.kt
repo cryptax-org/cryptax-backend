@@ -12,19 +12,15 @@ import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.Json
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
-import io.vertx.ext.dropwizard.DropwizardMetricsOptions
 import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
+import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 
 class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
     override fun start() {
         Json.mapper = AppConfig.objectMapper
-
-        // val vertxOptions = VertxOptions()
-        //vertxOptions.metricsOptions = DropwizardMetricsOptions().setEnabled(true)
-        //val vertx = Vertx.vertx(vertxOptions)
         val service = MetricsService.create(vertx)
 
         // Create router
@@ -66,9 +62,8 @@ class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : Abst
 
         @JvmStatic
         fun main(args: Array<String>) {
-            //Launcher.executeCommand("run", RestVerticle::class.java.name)
-            // To use several instances
-            val vertx = Vertx.vertx(VertxOptions().setMetricsOptions(DropwizardMetricsOptions().setEnabled(true)))
+            val dropwizardOptions = DropwizardMetricsOptions(baseName = "cryptax", enabled = true)
+            val vertx = Vertx.vertx(VertxOptions().setMetricsOptions(dropwizardOptions))
             vertx.deployVerticle(RestVerticle::class.java.name)
         }
     }

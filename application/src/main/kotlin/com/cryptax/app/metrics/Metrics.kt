@@ -2,6 +2,7 @@ package com.cryptax.app.metrics
 
 import com.cryptax.app.routes.Routes.sendSuccess
 import io.vertx.core.Vertx
+import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
@@ -13,10 +14,18 @@ object Metrics {
                 sendSuccess(JsonObject().put("result", "pong"), routingContext.response())
             }
 
-        router.get("/metrics/all")
+        router.get("/metrics")
             .handler { routingContext ->
-                val metrics = metricsService.getMetricsSnapshot(vertx)
+                val key = routingContext.request().getParam("key")
+                val snapshot = metricsService.getMetricsSnapshot(vertx)
+                val metrics = if (key == null) snapshot else snapshot.getJsonObject(key)
                 sendSuccess(metrics, routingContext.response())
+            }
+
+        router.get("/metrics/available")
+            .handler { routingContext ->
+                val available = JsonArray(metricsService.metricsNames().toList())
+                sendSuccess(available, routingContext.response())
             }
     }
 }
