@@ -24,7 +24,7 @@ object Main {
         vertx.deployVerticle(RestVerticle::class.java.name)
         vertx.deployVerticle(EmailVerticle::class.java.name) { ar: AsyncResult<String> ->
             when {
-                ar.succeeded() -> log.info("${EmailVerticle::class.java.name} deployed")
+                ar.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
                 ar.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", ar.cause())
             }
         }
