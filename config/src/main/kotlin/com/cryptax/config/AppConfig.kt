@@ -8,11 +8,11 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.email.VertxEmailService
 import com.cryptax.health.DatabaseHealthCheck
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
@@ -93,7 +93,11 @@ private val defaultKodein = Kodein.Module(name = "defaultUserModule") {
     bind<UserRepository>() with singleton { InMemoryUserRepository() }
     bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
     bind<IdGenerator>() with singleton { JugIdGenerator() }
-    bind<EmailService>() with singleton { VertxEmailService(null) }
+    bind<EmailService>() with singleton {
+        object : EmailService {
+            override fun welcomeEmail(user: User, token: String) {}
+        }
+    }
 }
 
 class DefaultAppConfig(kodeinModule: Kodein.Module = defaultKodein) : AppConfig(kodeinModule = kodeinModule)

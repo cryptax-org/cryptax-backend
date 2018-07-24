@@ -9,7 +9,7 @@ import io.vertx.core.logging.LoggerFactory
 
 private val log: Logger = LoggerFactory.getLogger(VertxEmailService::class.java)
 
-class VertxEmailService(private val vertx: Vertx?) : EmailService {
+class VertxEmailService(private val vertx: Vertx) : EmailService {
 
     private val address = "cryptax.email"
 
@@ -20,6 +20,6 @@ class VertxEmailService(private val vertx: Vertx?) : EmailService {
             .put("html", "Here is your token: $token.<br />You can click <a href=\"http://localhost:8080/users/${user.id}/allow?token=$token\">here</a> to activate your account")
         log.debug("Publishing message on the event bus to [$address]")
 
-        vertx!!.eventBus().publish(address, message)
+        vertx.eventBus().publish(address, message)
     }
 }
