@@ -4,7 +4,6 @@ import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
-import com.cryptax.config.DefaultAppConfig
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.domain.port.EmailService
@@ -26,7 +25,7 @@ import org.kodein.di.generic.singleton
 
 private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 
-class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
+class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
     private val kodein = Kodein {
         import(appConfig.appConfigKodein, allowOverride = true)

@@ -9,7 +9,6 @@ module cryptax.config {
     requires cryptax.db.simple;
     requires cryptax.security;
     requires cryptax.controller;
-    requires cryptax.email;
     requires cryptax.health;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;

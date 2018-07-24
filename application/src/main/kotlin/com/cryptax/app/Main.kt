@@ -2,6 +2,8 @@ package com.cryptax.app
 
 import com.cryptax.app.verticle.EmailVerticle
 import com.cryptax.app.verticle.RestVerticle
+import com.cryptax.config.AppConfig
+import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
@@ -21,8 +23,9 @@ object Main {
     fun main(args: Array<String>) {
         val dropwizardOptions = DropwizardMetricsOptions(baseName = "cryptax", enabled = true)
         val vertx = Vertx.vertx(VertxOptions().setMetricsOptions(dropwizardOptions))
-        vertx.deployVerticle(RestVerticle::class.java.name)
-        vertx.deployVerticle(EmailVerticle::class.java.name) { ar: AsyncResult<String> ->
+        val appConfig = DefaultAppConfig()
+        vertx.deployVerticle(RestVerticle(appConfig))
+        vertx.deployVerticle(EmailVerticle(appConfig)) { ar: AsyncResult<String> ->
             when {
                 ar.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
                 ar.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", ar.cause())

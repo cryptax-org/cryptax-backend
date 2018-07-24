@@ -10,7 +10,6 @@ dependencies {
         project(':id-generator'),
         project(':security'),
         project(':controller'),
-        project(':email'),
         project(':health'),
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'org.jasypt', name: 'jasypt', version: jasyptVersion],

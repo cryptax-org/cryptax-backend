@@ -1,6 +1,6 @@
 package com.cryptax.app.verticle
 
-import com.cryptax.email.EmailConfig
+import com.cryptax.config.AppConfig
 import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
@@ -12,19 +12,18 @@ import io.vertx.reactivex.core.AbstractVerticle
 import io.vertx.reactivex.core.eventbus.Message
 import io.vertx.reactivex.ext.mail.MailClient
 
-
 private val log: Logger = LoggerFactory.getLogger(EmailVerticle::class.java)
 
-class EmailVerticle : AbstractVerticle() {
+class EmailVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
     private val config: MailConfig = MailConfig()
 
     init {
-        config.hostname = EmailConfig.emailProperties.server.host
-        config.port = EmailConfig.emailProperties.server.port
+        config.hostname = appConfig.properties.email.host
+        config.port = appConfig.properties.email.port
         config.starttls = StartTLSOptions.REQUIRED
-        config.username = EmailConfig.emailProperties.email.username
-        config.password = EmailConfig.emailProperties.email.password
+        config.username = appConfig.properties.email.username
+        config.password = appConfig.properties.email.password()
         config.isTrustAll = true
         config.isSsl = true
     }
@@ -41,15 +40,14 @@ class EmailVerticle : AbstractVerticle() {
             .map { message: Message<JsonObject> ->
                 val email = message.body().getString("to")
                 val mailMessage = MailMessage(
-                    from = EmailConfig.emailProperties.email.from,
+                    from = appConfig.properties.email.from,
                     to = listOf(email),
                     subject = message.body().getString("subject"),
                     html = message.body().getString("html"))
-                log.info("Sending welcome email to [$email]")
                 mailMessage
             }
             .flatMap { mailMessage ->
-                log.info("Sending welcome email 2")
+                log.info("Sending welcome email to ${mailMessage.to}")
                 mailClient.rxSendMail(mailMessage).toFlowable()
             }
             .subscribe(
