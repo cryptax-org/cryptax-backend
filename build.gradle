@@ -8,11 +8,12 @@ buildscript {
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'
         kotlinVersion = '1.2.51'
+        kodeinVersion = '5.2.0'
         log4j2Version = '2.11.0'
         mockitoVersion = '2.19.0'
         mockitoKotlinVersion = '2.0.0-RC1'
         restAssuredVersion = '3.1.0'
-        rxjava2Version = '2.1.16'
+        rxjava2Version = '2.1.17'
         slf4jVersion = '1.8.0-beta2'
         vertxVersion = '3.5.2'
     }
@@ -54,6 +55,18 @@ subprojects {
             java {
                 srcDirs = ['src/main/kotlin']
             }
+        }
+    }
+
+    configurations.all {
+        exclude module: 'kotlin-stdlib-jdk7'
+        exclude module: 'slf4j-ext'
+
+        resolutionStrategy {
+            force "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+            force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+            force "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+            force "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
         }
     }
 

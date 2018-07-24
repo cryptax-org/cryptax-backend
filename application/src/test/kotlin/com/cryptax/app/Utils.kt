@@ -20,6 +20,9 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull
+import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.singleton
 
 val user = AppConfig.objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
 val transaction = AppConfig.objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
@@ -128,11 +131,16 @@ fun initTransaction(): Pair<String, JsonPath> {
     return Pair(pair.first.id!!, token)
 }
 
-class TestAppConfig(
-    userRepository: UserRepository = InMemoryUserRepository(),
-    transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
-    idGenerator: IdGenerator = JugIdGenerator(),
-    emailService: EmailService = EmailServiceStub()) : AppConfig("it", userRepository, transactionRepository, idGenerator, emailService)
+private fun testKodein(): Kodein {
+    return Kodein {
+        bind<UserRepository>() with singleton { InMemoryUserRepository() }
+        bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
+        bind<IdGenerator>() with singleton { JugIdGenerator() }
+        bind<EmailService>() with singleton { EmailServiceStub() }
+    }
+}
+
+class TestAppConfig : AppConfig("it", testKodein())
 
 class EmailServiceStub : EmailService {
 

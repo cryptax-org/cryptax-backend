@@ -1,6 +1,8 @@
 package com.cryptax.config
 
+import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
+import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
@@ -27,32 +29,45 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
-import java.lang.management.ManagementFactory
+import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.singleton
 
-abstract class AppConfig(
-    private val profile: String = "dev",
-    userRepository: UserRepository,
-    transactionRepository: TransactionRepository,
-    idGenerator: IdGenerator,
-    emailService: EmailService) {
+abstract class AppConfig(private val profile: String = "dev", kodein: Kodein) {
 
-    private val securePassword = SecurePassword()
-    private val createUser = CreateUser(userRepository, securePassword, idGenerator, emailService)
-    private val findUser = FindUser(userRepository)
-    private val validateUser = ValidateUser(userRepository, securePassword)
-    private val loginUser = LoginUser(userRepository, securePassword)
-    private val addTransaction = AddTransaction(transactionRepository, userRepository, idGenerator)
-    private val updateTransaction = UpdateTransaction(transactionRepository)
-    private val findTransaction = FindTransaction(transactionRepository)
+    private val appConfigKodein: Kodein = Kodein {
+        // Acquire parent binding
+        extend(kodein)
 
-    val userController = UserController(createUser, findUser, loginUser, validateUser)
-    val transactionController = TransactionController(addTransaction, updateTransaction, findTransaction)
-    val register: HealthCheckRegistry = HealthCheckRegistry()
+        // Usecases
+        bind() from singleton { CreateUser(instance(), instance(), instance(), instance()) }
+        bind() from singleton { FindUser(instance()) }
+        bind() from singleton { ValidateUser(instance(), instance()) }
+        bind() from singleton { LoginUser(instance(), instance()) }
+        bind() from singleton { AddTransaction(instance(), instance(), instance()) }
+        bind() from singleton { UpdateTransaction(instance()) }
+        bind() from singleton { FindTransaction(instance()) }
 
-    init {
-        register.register("database", DatabaseHealthCheck(userRepository))
+        // Controllers
+        bind() from singleton { UserController(instance(), instance(), instance(), instance()) }
+        bind() from singleton { TransactionController(instance(), instance(), instance()) }
+
+        // Health
+        bind() from singleton {
+            val healthCheckRegistry = HealthCheckRegistry()
+            healthCheckRegistry.register("database", instance("databaseCheck"))
+            healthCheckRegistry
+        }
+        bind<HealthCheck>("databaseCheck") with singleton { DatabaseHealthCheck(instance()) }
+
+        // Other
+        bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
     }
+
+    val userController by appConfigKodein.instance<UserController>()
+    val transactionController by appConfigKodein.instance<TransactionController>()
+    val register by appConfigKodein.instance<HealthCheckRegistry>()
 
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
         .registerModule(KotlinModule())
@@ -78,34 +93,11 @@ abstract class AppConfig(
     }
 }
 
-class DefaultAppConfig(
-    userRepository: UserRepository = InMemoryUserRepository(),
-    transactionRepository: TransactionRepository = InMemoryTransactionRepository(),
-    idGenerator: IdGenerator = JugIdGenerator(),
-    emailService: EmailService = VertxEmailService())
-    : AppConfig(userRepository = userRepository, transactionRepository = transactionRepository, idGenerator = idGenerator, emailService = emailService)
-
-data class PropertiesDto(val server: ServerDto, val jwt: JwtDto)
-data class ServerDto(val domain: String, val port: Int)
-data class JwtDto(
-    val keyStorePath: String,
-    private var password: String,
-    val algorithm: String,
-    val issuer: String,
-    val expiresInMinutes: Int,
-    val refreshExpiresInDays: Int) {
-
-    fun password(profile: String): String {
-        if (profile == "it") return password
-        return decryptPassword(password)
-    }
-
-    private fun decryptPassword(password: String): String {
-        val stringEncryptor = StandardPBEStringEncryptor()
-        val runtimeMxBean = ManagementFactory.getRuntimeMXBean()
-        val argument = runtimeMxBean.inputArguments.find { s -> s.contains("jasypt.encryptor.password") } ?: throw RuntimeException("jasypt.encryptor.password not found")
-        val jasyptPassword = argument.substring(argument.indexOf("=") + 1)
-        stringEncryptor.setPassword(jasyptPassword)
-        return stringEncryptor.decrypt(password)
-    }
+private val defaultKodein = Kodein {
+    bind<UserRepository>() with singleton { InMemoryUserRepository() }
+    bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
+    bind<IdGenerator>() with singleton { JugIdGenerator() }
+    bind<EmailService>() with singleton { VertxEmailService() }
 }
+
+class DefaultAppConfig(kodein: Kodein = defaultKodein) : AppConfig(kodein = kodein)

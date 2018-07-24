@@ -20,5 +20,6 @@ dependencies {
         [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
         [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
+        [group: 'org.kodein.di', name: 'kodein-di-generic-jvm', version: kodeinVersion],
     )
 }

@@ -8,9 +8,11 @@ open module cryptax.app {
     requires vertx.rx.java2;
     requires vertx.dropwizard.metrics;
     requires io.reactivex.rxjava2;
+    requires metrics.healthchecks;
+    requires kodein.di.core.jvm;
+    requires kodein.di.generic.jvm;
     requires cryptax.domain;
     requires cryptax.config;
     requires cryptax.controller;
     requires cryptax.validation;
-    requires metrics.healthchecks;
 }

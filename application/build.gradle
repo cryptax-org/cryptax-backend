@@ -26,6 +26,7 @@ dependencies {
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
+        [group: 'org.kodein.di', name: 'kodein-di-generic-jvm', version: kodeinVersion],
     )
 
     testImplementation(
@@ -35,7 +36,7 @@ dependencies {
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
         [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
         [group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion],
-        [group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion]
+        [group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion],
     )
 }
 
