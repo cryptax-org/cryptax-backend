@@ -7,6 +7,7 @@ open module cryptax.app {
     requires vertx.web.api.contract;
     requires vertx.rx.java2;
     requires vertx.dropwizard.metrics;
+    requires vertx.mail.client;
     requires io.reactivex.rxjava2;
     requires metrics.healthchecks;
     requires kodein.di.core.jvm;
@@ -16,4 +17,5 @@ open module cryptax.app {
     requires cryptax.controller;
     requires cryptax.validation;
     requires cryptax.email;
+    requires org.slf4j;
 }

@@ -23,6 +23,7 @@ dependencies {
         [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-rx-java2', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-dropwizard-metrics', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-mail-client', version: vertxVersion],
         [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
@@ -41,7 +42,7 @@ dependencies {
     )
 }
 
-mainClassName = 'com.cryptax.app.RestVerticle'
+mainClassName = 'com.cryptax.app.Main'
 
 shadowJar {
     baseName = rootProject.name

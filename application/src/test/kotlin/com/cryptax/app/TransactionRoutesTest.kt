@@ -1,5 +1,6 @@
 package com.cryptax.app
 
+import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency

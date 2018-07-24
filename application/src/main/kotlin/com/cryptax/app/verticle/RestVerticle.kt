@@ -1,4 +1,4 @@
-package com.cryptax.app
+package com.cryptax.app.verticle
 
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
@@ -11,8 +11,6 @@ import com.cryptax.domain.port.EmailService
 import com.cryptax.email.VertxEmailService
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
-import io.vertx.core.Vertx
-import io.vertx.core.VertxOptions
 import io.vertx.core.http.HttpMethod
 import io.vertx.core.http.HttpServerOptions
 import io.vertx.core.json.Json
@@ -21,11 +19,12 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
-import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+
+private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 
 class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
@@ -73,22 +72,6 @@ class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : Abst
                 log.info("${this.javaClass.simpleName} deployed with profile ${appConfig.getProfile()} and listening on port $port")
                 startFuture.complete()
             }
-        }
-    }
-
-    companion object {
-
-        init {
-            System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        }
-
-        private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
-
-        @JvmStatic
-        fun main(args: Array<String>) {
-            val dropwizardOptions = DropwizardMetricsOptions(baseName = "cryptax", enabled = true)
-            val vertx = Vertx.vertx(VertxOptions().setMetricsOptions(dropwizardOptions))
-            vertx.deployVerticle(RestVerticle::class.java.name)
         }
     }
 }
