@@ -1,9 +1,14 @@
 package com.cryptax.app
 
+import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
+import com.cryptax.controller.TransactionController
+import com.cryptax.controller.UserController
+import com.cryptax.domain.port.EmailService
+import com.cryptax.email.VertxEmailService
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.Vertx
@@ -17,18 +22,33 @@ import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
+import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.singleton
 
 class RestVerticle(private val appConfig: AppConfig = DefaultAppConfig()) : AbstractVerticle() {
 
-    override fun start(startFuture: Future<Void>) {
+    private val kodein = Kodein {
+        import(appConfig.appConfigKodein, allowOverride = true)
 
+        if (appConfig.getProfile() != "it") {
+            bind<EmailService>(overrides = true) with singleton { VertxEmailService(vertx) }
+        }
+    }
+
+    private val userController by kodein.instance<UserController>()
+    private val transactionController by kodein.instance<TransactionController>()
+    private val healthCheckRegistry by kodein.instance<HealthCheckRegistry>()
+
+    override fun start(startFuture: Future<Void>) {
         Json.mapper = AppConfig.objectMapper
-        val service = MetricsService.create(vertx)
+        val metricsService = MetricsService.create(vertx)
 
         // Create router
         val router = Router.router(vertx)
-        Routes.setupRoutes(appConfig, vertx, router)
-        Metrics.setupMetrics(service, vertx, router)
+        Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, healthCheckRegistry)
+        Metrics.setupMetrics(metricsService, vertx, router)
         router.route().handler(
             CorsHandler.create("*")
                 .allowedMethods(

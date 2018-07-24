@@ -10,13 +10,14 @@ import io.vertx.ext.mail.MailConfig
 import io.vertx.ext.mail.MailMessage
 import io.vertx.ext.mail.StartTLSOptions
 
-class VertxEmailService : EmailService {
+private val log: Logger = LoggerFactory.getLogger(VertxEmailService::class.java)
+
+class VertxEmailService(vertx: Vertx) : EmailService {
 
     private val mailClient: MailClient
 
     init {
         // TODO avoid creating a new vertx instance here
-        val vertx = Vertx.vertx()
         val config = MailConfig()
         config.hostname = EmailConfig.emailProperties.server.host
         config.port = EmailConfig.emailProperties.server.port
@@ -25,7 +26,7 @@ class VertxEmailService : EmailService {
         config.password = EmailConfig.emailProperties.email.password
         config.isTrustAll = true
         config.isSsl = true
-        mailClient = MailClient.createShared(vertx, config, "cryptaxpool")
+        mailClient = MailClient.createShared(vertx, config, "CRYPTAX_POOL")
     }
 
     override fun welcomeEmail(user: User, token: String) {
@@ -44,9 +45,5 @@ class VertxEmailService : EmailService {
                 log.error("Failed at sending the welcoming email to [${user.email}]", result.cause())
             }
         }
-    }
-
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(VertxEmailService::class.java)
     }
 }

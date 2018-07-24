@@ -10,7 +10,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 import java.util.SortedMap
 
-fun handleHealthRoutes(healthCheckRegistry: HealthCheckRegistry, router: Router, vertxScheduler: Scheduler) {
+fun handleHealthRoutes(router: Router, vertxScheduler: Scheduler, healthCheckRegistry: HealthCheckRegistry) {
     router.get("/health")
         .handler { routingContext ->
             Single

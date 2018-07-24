@@ -17,6 +17,7 @@ dependencies {
         project(':domain'),
         project(':controller'),
         project(':validation'),
+        project(':email'),
         [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],

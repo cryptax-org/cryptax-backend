@@ -131,8 +131,8 @@ fun initTransaction(): Pair<String, JsonPath> {
     return Pair(pair.first.id!!, token)
 }
 
-private fun testKodein(): Kodein {
-    return Kodein {
+private fun testKodein(): Kodein.Module {
+    return Kodein.Module(name = "testModule") {
         bind<UserRepository>() with singleton { InMemoryUserRepository() }
         bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         bind<IdGenerator>() with singleton { JugIdGenerator() }

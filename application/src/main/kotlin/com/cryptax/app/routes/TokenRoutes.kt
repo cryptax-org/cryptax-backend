@@ -3,6 +3,7 @@ package com.cryptax.app.routes
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.config.AppConfig
+import com.cryptax.controller.UserController
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
 import io.reactivex.Scheduler
@@ -11,9 +12,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 
-fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler) {
-
-    val userController = appConfig.userController
+fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler, userController: UserController) {
 
     // Get token with user credentials
     router.post("/token")

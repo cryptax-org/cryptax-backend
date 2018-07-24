@@ -15,4 +15,5 @@ open module cryptax.app {
     requires cryptax.config;
     requires cryptax.controller;
     requires cryptax.validation;
+    requires cryptax.email;
 }

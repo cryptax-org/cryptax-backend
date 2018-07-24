@@ -8,11 +8,9 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
-import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.email.VertxEmailService
 import com.cryptax.health.DatabaseHealthCheck
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
@@ -34,11 +32,11 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
-abstract class AppConfig(private val profile: String = "dev", kodein: Kodein) {
+abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kodein.Module) {
 
-    private val appConfigKodein: Kodein = Kodein {
-        // Acquire parent binding
-        extend(kodein)
+    val appConfigKodein = Kodein.Module(name = "defaultModule") {
+        // Import module binding
+        import(kodeinModule)
 
         // Usecases
         bind() from singleton { CreateUser(instance(), instance(), instance(), instance()) }
@@ -65,10 +63,6 @@ abstract class AppConfig(private val profile: String = "dev", kodein: Kodein) {
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
     }
 
-    val userController by appConfigKodein.instance<UserController>()
-    val transactionController by appConfigKodein.instance<TransactionController>()
-    val register by appConfigKodein.instance<HealthCheckRegistry>()
-
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
         .registerModule(KotlinModule())
         .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-${getProfile()}.yml"), PropertiesDto::class.java)
@@ -93,11 +87,10 @@ abstract class AppConfig(private val profile: String = "dev", kodein: Kodein) {
     }
 }
 
-private val defaultKodein = Kodein {
+private val defaultKodein = Kodein.Module(name = "defaultUserModule") {
     bind<UserRepository>() with singleton { InMemoryUserRepository() }
     bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
     bind<IdGenerator>() with singleton { JugIdGenerator() }
-    bind<EmailService>() with singleton { VertxEmailService() }
 }
 
-class DefaultAppConfig(kodein: Kodein = defaultKodein) : AppConfig(kodein = kodein)
+class DefaultAppConfig(kodeinModule: Kodein.Module = defaultKodein) : AppConfig(kodeinModule = kodeinModule)

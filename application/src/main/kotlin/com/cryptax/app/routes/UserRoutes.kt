@@ -2,7 +2,7 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
-import com.cryptax.config.AppConfig
+import com.cryptax.controller.UserController
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
@@ -18,9 +18,7 @@ import io.vertx.ext.web.handler.JWTAuthHandler
 
 private val log: Logger = LoggerFactory.getLogger("handleUserRoutes")
 
-fun handleUserRoutes(appConfig: AppConfig, router: Router, jwtAuthHandler: JWTAuthHandler, vertxScheduler: Scheduler) {
-
-    val userController = appConfig.userController
+fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxScheduler: Scheduler, userController: UserController) {
 
     // Create user
     router.post("/users")
