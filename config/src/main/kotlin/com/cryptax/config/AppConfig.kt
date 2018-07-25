@@ -13,7 +13,8 @@ import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.health.DatabaseHealthCheck
+import com.cryptax.health.TransactionRepositoryHealthCheck
+import com.cryptax.health.UserRepositoryHealthCheck
 import com.cryptax.id.JugIdGenerator
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.transaction.AddTransaction
@@ -56,10 +57,12 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
         // Health
         bind() from singleton {
             val healthCheckRegistry = HealthCheckRegistry()
-            healthCheckRegistry.register("database", instance("databaseCheck"))
+            healthCheckRegistry.register("userRepository", instance("userRepositoryCheck"))
+            healthCheckRegistry.register("transactionRepository", instance("transactionRepositoryCheck"))
             healthCheckRegistry
         }
-        bind<HealthCheck>("databaseCheck") with singleton { DatabaseHealthCheck(instance()) }
+        bind<HealthCheck>("userRepositoryCheck") with singleton { UserRepositoryHealthCheck(instance()) }
+        bind<HealthCheck>("transactionRepositoryCheck") with singleton { TransactionRepositoryHealthCheck(instance()) }
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
