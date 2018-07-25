@@ -5,6 +5,8 @@ import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.Utils.oneTransactionWithId
 import com.cryptax.usecase.Utils.oneTransactionWithId2
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -29,11 +31,11 @@ class UpdateTransactionTest {
     fun testUpdateTransaction() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(transaction)
-        given(transactionRepository.update(transaction)).willReturn(transaction)
+        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.just(transaction))
+        given(transactionRepository.update(transaction)).willReturn(Single.just(transaction))
 
         // when
-        val actual = updateTransaction.update(transaction)
+        val actual = updateTransaction.update(transaction).blockingGet()
 
         // then
         assertEquals(transaction, actual)
@@ -45,11 +47,11 @@ class UpdateTransactionTest {
     fun testUpdateTransactionNotFound() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(null)
+        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.empty())
 
         // when
         val exception = assertThrows(TransactionNotFound::class.java) {
-            updateTransaction.update(transaction)
+            updateTransaction.update(transaction).blockingGet()
         }
 
         // then
@@ -64,11 +66,11 @@ class UpdateTransactionTest {
         val transaction = oneTransactionWithId
         val transactionReturned = oneTransactionWithId2
         val expected = "User [${transaction.userId}] tried to update [${transaction.id}], but that transaction is owned by [${transactionReturned.userId}]"
-        given(transactionRepository.get(transaction.id!!)).willReturn(transactionReturned)
+        given(transactionRepository.get(transaction.id!!)).willReturn((Maybe.just(transactionReturned)))
 
         // when
         val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
-            updateTransaction.update(transaction)
+            updateTransaction.update(transaction).blockingGet()
         }
 
         // then

@@ -36,7 +36,7 @@ object Routes {
         router.route().handler(LoggerHandlerImpl(LoggerFormat.SHORT))
         handleUserRoutes(router, jwtAuthHandler, vertxScheduler, userController)
         handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler, userController)
-        handleTransactionRoutes(router, jwtAuthHandler, transactionController)
+        handleTransactionRoutes(router, jwtAuthHandler, vertxScheduler, transactionController)
         handleHealthRoutes(router, vertxScheduler, healthCheckRegistry)
 
         // Exception handler

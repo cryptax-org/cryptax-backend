@@ -33,7 +33,7 @@ class InMemoryTransactionRepositoryTest {
     @Test
     fun testAddTransaction() {
         // when
-        val actual = transactionRepository.add(transaction1)
+        val actual = transactionRepository.add(transaction1).blockingGet()
 
         // then
         assertEquals(transaction1, actual)
@@ -43,7 +43,7 @@ class InMemoryTransactionRepositoryTest {
     @Test
     fun testAddSeveralTransactions() {
         // when
-        val actual = transactionRepository.add(transactions)
+        val actual = transactionRepository.add(transactions).blockingGet()
 
         // then
         assert(actual.size == 2)
@@ -55,10 +55,10 @@ class InMemoryTransactionRepositoryTest {
     @Test
     fun testGetTransaction() {
         // given
-        transactionRepository.add(transaction1)
+        transactionRepository.add(transaction1).blockingGet()
 
         // when
-        val actual = transactionRepository.get(transaction1.id!!)
+        val actual = transactionRepository.get(transaction1.id!!).blockingGet()
 
         // then
         assertEquals(transaction1, actual)
@@ -68,10 +68,10 @@ class InMemoryTransactionRepositoryTest {
     @Test
     fun testGetAllForUser() {
         // given
-        transactionRepository.add(transactions)
+        transactionRepository.add(transactions).blockingGet()
 
         // when
-        val actual = transactionRepository.getAllForUser("userId2")
+        val actual = transactionRepository.getAllForUser("userId2").blockingGet()
 
         // then
         assert(actual.size == 1)
@@ -82,10 +82,10 @@ class InMemoryTransactionRepositoryTest {
     @Test
     fun testUpdateTransaction() {
         // given
-        transactionRepository.add(transaction1)
+        transactionRepository.add(transaction1).blockingGet()
 
         // when
-        val actual = transactionRepository.update(transaction2)
+        val actual = transactionRepository.update(transaction2).blockingGet()
 
         // then
         assertEquals(transaction2, actual)

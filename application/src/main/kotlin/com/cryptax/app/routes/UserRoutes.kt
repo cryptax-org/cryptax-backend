@@ -11,12 +11,8 @@ import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
-import io.vertx.core.logging.Logger
-import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.JWTAuthHandler
-
-private val log: Logger = LoggerFactory.getLogger("handleUserRoutes")
 
 fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxScheduler: Scheduler, userController: UserController) {
 

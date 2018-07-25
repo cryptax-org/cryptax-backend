@@ -5,6 +5,8 @@ import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.Utils.oneTransactionWithId
 import com.cryptax.usecase.Utils.oneTransactionWithId2
 import com.cryptax.usecase.Utils.twoTransactions
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -30,10 +32,10 @@ class FindTransactionTest {
     fun testFindTransaction() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(transaction)
+        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.just(transaction))
 
         // when
-        val actual = findTransaction.find(transaction.id!!, transaction.userId)
+        val actual = findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
 
         // then
         assertEquals(transaction, actual)
@@ -44,10 +46,10 @@ class FindTransactionTest {
     fun testFindTransactionNotFound() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(null)
+        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.empty())
 
         // when
-        val actual = findTransaction.find(transaction.id!!, transaction.userId)
+        val actual = findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
 
         // then
         assertNull(actual)
@@ -60,11 +62,11 @@ class FindTransactionTest {
         val transaction = oneTransactionWithId
         val transactionReturned = oneTransactionWithId2
         val expected = "User [${transaction.userId}] tried to update [${transaction.id}], but that transaction is owned by [${transactionReturned.userId}]"
-        given(transactionRepository.get(transaction.id!!)).willReturn(transactionReturned)
+        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.just(transactionReturned))
 
         // when
         val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
-            findTransaction.find(transaction.id!!, transaction.userId)
+            findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
         }
 
         // then
@@ -76,10 +78,10 @@ class FindTransactionTest {
     fun testFindAllTransaction() {
         // given
         val transactions = twoTransactions
-        given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(transactions)
+        given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(Single.just(transactions))
 
         // when
-        val actual = findTransaction.findAllForUser(transactions[0].userId)
+        val actual = findTransaction.findAllForUser(transactions[0].userId).blockingGet()
 
         // then
         assertEquals(transactions, actual)

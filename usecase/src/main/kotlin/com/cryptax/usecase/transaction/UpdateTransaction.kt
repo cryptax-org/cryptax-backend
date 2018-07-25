@@ -5,16 +5,26 @@ import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.validator.validateUpdateTransaction
+import io.reactivex.Single
 
 class UpdateTransaction(private val transactionRepository: TransactionRepository) {
 
-    fun update(transaction: Transaction): Transaction {
+    fun update(transaction: Transaction): Single<Transaction> {
         validateUpdateTransaction(transaction)
-        val transactionId = transaction.id!!
-        val transactionDb = transactionRepository.get(transactionId) ?: throw TransactionNotFound(transactionId)
-        if (transactionDb.userId != transaction.userId) {
-            throw TransactionUserDoNotMatch(transaction.userId, transactionId, transactionDb.userId)
-        }
-        return transactionRepository.update(transaction)
+        return transactionRepository
+            .get(transaction.id!!)
+            .map { transactionDb ->
+                if (transactionDb.userId != transaction.userId) {
+                    throw TransactionUserDoNotMatch(transaction.userId, transaction.id!!, transactionDb.userId)
+                }
+                transactionDb
+            }
+            .flatMapSingle { transactionRepository.update(transaction) }
+            .onErrorResumeNext { throwable ->
+                when (throwable) {
+                    is NoSuchElementException -> Single.error(TransactionNotFound(transaction.id!!))
+                    else -> Single.error(throwable)
+                }
+            }
     }
 }

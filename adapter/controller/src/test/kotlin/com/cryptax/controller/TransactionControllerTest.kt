@@ -10,6 +10,8 @@ import com.cryptax.usecase.transaction.UpdateTransaction
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.given
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -60,10 +62,10 @@ class TransactionControllerTest {
     @Test
     fun testAddTransaction() {
         // given
-        given(addTransaction.add(any())).willReturn(transactionReturn)
+        given(addTransaction.add(any())).willReturn(Single.just(transactionReturn))
 
         // when
-        val actual = transactionController.addTransaction(userId, transactionWeb)
+        val actual = transactionController.addTransaction(userId, transactionWeb).blockingGet()
 
         // then
         assertEquals(transactionId, actual.id)
@@ -85,10 +87,10 @@ class TransactionControllerTest {
         // given
         val transactionId = "randomId"
         val userId = "userId"
-        given(updateTransaction.update(transactionReturn)).willReturn(transactionReturn)
+        given(updateTransaction.update(transactionReturn)).willReturn(Single.just(transactionReturn))
 
         // when
-        val actual = transactionController.updateTransaction(transactionId, userId, transactionWeb)
+        val actual = transactionController.updateTransaction(transactionId, userId, transactionWeb).blockingGet()
 
         // then
         assertEquals(transactionId, actual.id)
@@ -111,10 +113,10 @@ class TransactionControllerTest {
         // given
         val transactionId = "randomId"
         val userId = "userId"
-        given(findTransaction.find(transactionId, userId)).willReturn(transactionReturn)
+        given(findTransaction.find(transactionId, userId)).willReturn(Maybe.just(transactionReturn))
 
         // when
-        val actual = transactionController.getTransaction(transactionId, userId)
+        val actual = transactionController.getTransaction(transactionId, userId).blockingGet()
 
         // then
         assertNotNull(actual)
@@ -134,10 +136,10 @@ class TransactionControllerTest {
         // given
         val transactionId = "randomId"
         val userId = "userId"
-        given(findTransaction.find(transactionId, userId)).willReturn(null)
+        given(findTransaction.find(transactionId, userId)).willReturn(Maybe.empty())
 
         // when
-        val actual = transactionController.getTransaction(transactionId, userId)
+        val actual = transactionController.getTransaction(transactionId, userId).blockingGet()
 
         // then
         assertNull(actual)
@@ -148,10 +150,10 @@ class TransactionControllerTest {
     fun testGetAllTransactions() {
         // given
         val userId = "userId"
-        given(findTransaction.findAllForUser(userId)).willReturn(listOf(transactionReturn))
+        given(findTransaction.findAllForUser(userId)).willReturn(Single.just(listOf(transactionReturn)))
 
         // when
-        val actual = transactionController.getAllTransactions(userId)
+        val actual = transactionController.getAllTransactions(userId).blockingGet()
 
         // then
         assert(actual.size == 1)

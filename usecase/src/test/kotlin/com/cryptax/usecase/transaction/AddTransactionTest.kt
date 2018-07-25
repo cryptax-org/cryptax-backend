@@ -13,6 +13,7 @@ import com.cryptax.usecase.Utils.twoTransactionExpected
 import com.cryptax.usecase.Utils.twoTransactions
 import com.nhaarman.mockitokotlin2.any
 import io.reactivex.Maybe
+import io.reactivex.Single
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -49,10 +50,10 @@ class AddTransactionTest {
         // given
         given(idGenerator.generate()).willReturn(id)
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
-        given(transactionRepository.add(any<Transaction>())).willReturn(expected)
+        given(transactionRepository.add(any<Transaction>())).willReturn(Single.just(expected))
 
         // when
-        val actual = addTransaction.add(transaction)
+        val actual = addTransaction.add(transaction).blockingGet()
 
         // then
         assertEquals(expected, actual)
@@ -64,11 +65,11 @@ class AddTransactionTest {
     @Test
     fun testAddUserNotFound() {
         // given
-        given(userRepository.findById(transaction.userId)).willReturn(null)
+        given(userRepository.findById(transaction.userId)).willReturn(Maybe.empty())
 
         // when
         val exception = assertThrows(UserNotFoundException::class.java) {
-            addTransaction.add(transaction)
+            addTransaction.add(transaction).blockingGet()
         }
 
         // then
@@ -84,10 +85,10 @@ class AddTransactionTest {
         // given
         given(idGenerator.generate()).willReturn(id)
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
-        given(transactionRepository.add(any<List<Transaction>>())).willReturn(transactions)
+        given(transactionRepository.add(any<List<Transaction>>())).willReturn(Single.just(transactions))
 
         // when
-        val actual = addTransaction.addMultiple(transactions)
+        val actual = addTransaction.addMultiple(transactions).blockingGet()
 
         // then
         assert(actual.size == 2)
@@ -99,11 +100,11 @@ class AddTransactionTest {
     @Test
     fun testAddSeveralUserNotFound() {
         // given
-        given(userRepository.findById(transaction.userId)).willReturn(null)
+        given(userRepository.findById(transaction.userId)).willReturn(Maybe.empty())
 
         // when
         val exception = assertThrows(UserNotFoundException::class.java) {
-            addTransaction.addMultiple(transactions)
+            addTransaction.addMultiple(transactions).blockingGet()
         }
 
         // then

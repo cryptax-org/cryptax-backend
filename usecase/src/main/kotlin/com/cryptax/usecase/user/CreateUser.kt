@@ -14,6 +14,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Arrays
 
+private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
+
 class CreateUser(
     private val repository: UserRepository,
     private val securePassword: SecurePassword,
@@ -21,7 +23,7 @@ class CreateUser(
     private val emailService: EmailService) {
 
     fun create(user: User): Single<Pair<User, String>> {
-        log.info("Starting a creation of a user $user")
+        log.info("Usecase, create a user $user")
         validateCreateUser(user)
 
         val userToSave = User(
@@ -51,9 +53,5 @@ class CreateUser(
                 emailService.welcomeEmail(userToSave, welcomeToken)
             }
             .onErrorResumeNext { t: Throwable -> Single.error(t) }
-    }
-
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
     }
 }
