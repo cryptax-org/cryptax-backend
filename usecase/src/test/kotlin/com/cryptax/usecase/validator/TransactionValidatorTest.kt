@@ -32,7 +32,7 @@ class TransactionValidatorTest {
             currency1 = Currency.ETH,
             currency2 = Currency.BTC)
         //when
-        validateAddTransaction(transaction)
+        validateAddTransaction(transaction).blockingGet()
 
         //then
         // no failure
@@ -43,7 +43,7 @@ class TransactionValidatorTest {
     fun testValidateTransactionFail(transaction: Transaction, errorMessage: String) {
         //when
         val exception = assertThrows(TransactionValidationException::class.java) {
-            validateAddTransaction(transaction)
+            validateAddTransaction(transaction).blockingGet()
         }
 
         //then
@@ -66,7 +66,7 @@ class TransactionValidatorTest {
     fun testValidateTransactionsFail(transactions: List<Transaction>, errorMessage: String) {
         //when
         val exception = assertThrows(TransactionValidationException::class.java) {
-            validateAddTransactions(transactions)
+            validateAddTransactions(transactions).blockingGet()
         }
 
         //then

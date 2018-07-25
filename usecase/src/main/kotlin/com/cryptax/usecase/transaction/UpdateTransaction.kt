@@ -10,16 +10,16 @@ import io.reactivex.Single
 class UpdateTransaction(private val transactionRepository: TransactionRepository) {
 
     fun update(transaction: Transaction): Single<Transaction> {
-        validateUpdateTransaction(transaction)
-        return transactionRepository
-            .get(transaction.id!!)
+
+        return validateUpdateTransaction(transaction)
+            .flatMap { transactionRepository.get(transaction.id!!).toSingle() }
             .map { transactionDb ->
                 if (transactionDb.userId != transaction.userId) {
                     throw TransactionUserDoNotMatch(transaction.userId, transaction.id!!, transactionDb.userId)
                 }
                 transactionDb
             }
-            .flatMapSingle { transactionRepository.update(transaction) }
+            .flatMap { transactionRepository.update(transaction) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(TransactionNotFound(transaction.id!!))

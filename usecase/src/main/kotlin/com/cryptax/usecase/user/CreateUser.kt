@@ -8,7 +8,6 @@ import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Arrays
@@ -23,11 +22,8 @@ class CreateUser(
 
     fun create(user: User): Single<Pair<User, String>> {
         log.info("Usecase, create a user $user")
-        validateCreateUser(user)
-        return repository
-            .findByEmail(user.email)
-            .subscribeOn(Schedulers.io())
-            .isEmpty
+        return validateCreateUser(user)
+            .flatMap { repository.findByEmail(user.email).isEmpty }
             .map { isEmpty ->
                 when (isEmpty) {
                     true -> {
@@ -44,15 +40,9 @@ class CreateUser(
                     false -> throw UserAlreadyExistsException(user.email)
                 }
             }
-            .map { u -> repository.create(u) }
-            .flatMap { singleUser -> singleUser }
-            .map { u ->
-                val token = securePassword.generateToken(u)
-                Pair(u, token)
-            }
-            .doOnSuccess { pair ->
-                emailService.welcomeEmail(pair.first, pair.second)
-            }
+            .flatMap { u -> repository.create(u) }
+            .map { u -> Pair(u, securePassword.generateToken(u)) }
+            .doOnSuccess { pair -> emailService.welcomeEmail(pair.first, pair.second) }
             .onErrorResumeNext { t: Throwable -> Single.error(t) }
     }
 }

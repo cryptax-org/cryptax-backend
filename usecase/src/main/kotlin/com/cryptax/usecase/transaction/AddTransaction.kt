@@ -21,13 +21,8 @@ class AddTransaction(
 
     fun add(transaction: Transaction): Single<Transaction> {
         log.info("Usecase, add a transaction $transaction")
-        // TODO Rxify the validation
-        validateAddTransaction(transaction)
-
-        return userRepository
-            .findById(transaction.userId)
-            .subscribeOn(Schedulers.io())
-            .isEmpty
+        return validateAddTransaction(transaction)
+            .flatMap { userRepository.findById(transaction.userId).isEmpty }
             .map { isEmpty ->
                 when (isEmpty) {
                     true -> throw UserNotFoundException(transaction.userId)

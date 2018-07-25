@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserValidationException
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -20,7 +21,7 @@ class UserValidatorTest {
         val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee", true)
 
         //when
-        validateCreateUser(user)
+        validateCreateUser(user).blockingGet()
 
         //then
         // no failure
@@ -30,8 +31,8 @@ class UserValidatorTest {
     @MethodSource("userProvider")
     fun testValidateCreateUserFail(user: User, errorMessage: String) {
         //when
-        val exception = Assertions.assertThrows(UserValidationException::class.java) {
-            validateCreateUser(user)
+        val exception = assertThrows(UserValidationException::class.java) {
+            validateCreateUser(user).blockingGet()
         }
 
         //then

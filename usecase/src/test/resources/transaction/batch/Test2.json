@@ -11,7 +11,7 @@
     },
     {
         "source": "MANUAL",
-        "userId": "userId2",
+        "userId": "userId1",
         "date": "2011-12-03T10:15:30Z",
         "type": "SELL",
         "price": -10.0,
