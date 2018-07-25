@@ -18,8 +18,8 @@ class VertxEmailService(private val vertx: Vertx) : EmailService {
             .put("subject", "Welcome to Cryptax")
             .put("to", user.email)
             .put("html", "Here is your token: $token.<br />You can click <a href=\"http://localhost:8080/users/${user.id}/allow?token=$token\">here</a> to activate your account")
-        log.debug("Publishing message on the event bus to [$address]")
 
+        log.debug("Publishing message on event bus to [$address]")
         vertx.eventBus().publish(address, message)
     }
 }

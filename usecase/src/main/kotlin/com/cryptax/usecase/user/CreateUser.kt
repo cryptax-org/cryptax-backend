@@ -8,7 +8,6 @@ import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.validator.validateCreateUser
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,32 +24,34 @@ class CreateUser(
     fun create(user: User): Single<Pair<User, String>> {
         log.info("Usecase, create a user $user")
         validateCreateUser(user)
-
-        val userToSave = User(
-            id = idGenerator.generate(),
-            email = user.email,
-            password = securePassword.securePassword(user.password).toCharArray(),
-            lastName = user.lastName,
-            firstName = user.firstName,
-            allowed = false
-        )
-        val welcomeToken = securePassword.generateToken(userToSave)
-        Arrays.fill(user.password, '\u0000')
-
         return repository
             .findByEmail(user.email)
             .subscribeOn(Schedulers.io())
             .isEmpty
             .map { isEmpty ->
                 when (isEmpty) {
-                    true -> repository.create(userToSave)
+                    true -> {
+                        val u = User(
+                            id = idGenerator.generate(),
+                            email = user.email,
+                            password = securePassword.securePassword(user.password).toCharArray(),
+                            lastName = user.lastName,
+                            firstName = user.firstName,
+                            allowed = false)
+                        Arrays.fill(user.password, '\u0000')
+                        u
+                    }
                     false -> throw UserAlreadyExistsException(user.email)
                 }
             }
-            .blockingGet()
-            .zipWith(Single.just(welcomeToken), BiFunction { u: User, t: String -> Pair(u, t) })
-            .doOnSuccess {
-                emailService.welcomeEmail(userToSave, welcomeToken)
+            .map { u -> repository.create(u) }
+            .flatMap { singleUser -> singleUser }
+            .map { u ->
+                val token = securePassword.generateToken(u)
+                Pair(u, token)
+            }
+            .doOnSuccess { pair ->
+                emailService.welcomeEmail(pair.first, pair.second)
             }
             .onErrorResumeNext { t: Throwable -> Single.error(t) }
     }
