@@ -1,5 +1,7 @@
 package com.cryptax.app
 
+import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.objectMapper
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency

@@ -1,17 +1,10 @@
 package com.cryptax.app
 
+import com.cryptax.app.config.objectMapper
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.controller.model.UserWeb
-import com.cryptax.db.InMemoryTransactionRepository
-import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.entity.User
-import com.cryptax.domain.port.EmailService
-import com.cryptax.domain.port.IdGenerator
-import com.cryptax.domain.port.TransactionRepository
-import com.cryptax.domain.port.UserRepository
-import com.cryptax.id.JugIdGenerator
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -21,18 +14,9 @@ import org.hamcrest.Matchers
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
 
-private val kodein = Kodein {
-    import(TestAppConfig().appConfigKodein)
-}
-
-val objectMapper by kodein.instance<ObjectMapper>()
-val user = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
-val transaction = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
+val user: UserWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
+val transaction: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
 val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
@@ -40,20 +24,20 @@ val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-Hi
 fun createUser(): Pair<User, String> {
     // @formatter:off
     val response =  given().
-                            log().all().
-                            body(user).
-                            contentType(ContentType.JSON).
-                        post("/users").
-                        then().
-                            log().all().
-                            assertThat().statusCode(200).
-                            assertThat().body("id", notNullValue()).
-                            assertThat().body("email", IsEqual(user.email)).
-                            assertThat().body("password", IsNull.nullValue()).
-                            assertThat().body("lastName", IsEqual(user.lastName)).
-                            assertThat().body("firstName", IsEqual(user.firstName)).
-                        extract()
-                            .response()
+                        log().all().
+                        body(user).
+                        contentType(ContentType.JSON).
+                    post("/users").
+                    then().
+                        log().all().
+                        assertThat().statusCode(200).
+                        assertThat().body("id", notNullValue()).
+                        assertThat().body("email", IsEqual(user.email)).
+                        assertThat().body("password", IsNull.nullValue()).
+                        assertThat().body("lastName", IsEqual(user.lastName)).
+                        assertThat().body("firstName", IsEqual(user.firstName)).
+                    extract()
+                        .response()
     // @formatter:on
     response.header("welcomeToken")
     return Pair(User(
@@ -136,21 +120,4 @@ fun initTransaction(): Pair<String, JsonPath> {
     val token = getToken()
     addTransaction(pair.first.id!!, token)
     return Pair(pair.first.id!!, token)
-}
-
-private fun testKodein(): Kodein.Module {
-    return Kodein.Module(name = "testModule") {
-        bind<UserRepository>() with singleton { InMemoryUserRepository() }
-        bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
-        bind<IdGenerator>() with singleton { JugIdGenerator() }
-        bind<EmailService>() with singleton { EmailServiceStub() }
-    }
-}
-
-class TestAppConfig : AppConfig("it", testKodein())
-
-class EmailServiceStub : EmailService {
-
-    override fun welcomeEmail(user: User, token: String) {
-    }
 }

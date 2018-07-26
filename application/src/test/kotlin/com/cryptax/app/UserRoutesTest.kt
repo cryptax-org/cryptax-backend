@@ -1,5 +1,6 @@
 package com.cryptax.app
 
+import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
