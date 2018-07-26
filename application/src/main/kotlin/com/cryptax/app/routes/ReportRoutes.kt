@@ -2,6 +2,7 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.controller.ReportController
+import com.cryptax.validation.RestValidation.generateReport
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
@@ -13,6 +14,7 @@ fun handleReportRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSche
     // Generate a report for a user
     router.get("/users/:userId/report")
         .handler(jwtAuthHandler)
+        .handler(generateReport)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
             reportController

@@ -19,7 +19,7 @@ class CryptoCompare : CryptoApi {
     private val client = OkHttpClient()
     private val objectMapper = ObjectMapper()
 
-    override fun getCurrencyInDollarsAt(currency: Currency, date: ZonedDateTime): Double {
+    override fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Double {
         val timestamp = Timestamp.from(date.toInstant())
         val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=${timestamp.time}").build()
         log.debug("Get ${currency.code} price in USD at $date ${request.url()}")

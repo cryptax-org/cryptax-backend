@@ -43,7 +43,6 @@ class AddTransaction(
 
     fun addMultiple(transactions: List<Transaction>): Single<List<Transaction>> {
         log.info("Usecase, add a list of transactions $transactions")
-
         return validateAddTransactions(transactions)
             .flatMap {
                 userRepository.findById(transactions[0].userId)

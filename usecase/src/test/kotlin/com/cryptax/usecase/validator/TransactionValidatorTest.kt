@@ -79,7 +79,7 @@ class TransactionValidatorTest {
         fun transactionProvider(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, -10.0, 4.0, Currency.ETH, Currency.BTC), "Price can't be negative"),
-                Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, -4.0, Currency.ETH, Currency.BTC), "Amount can't be negative"),
+                Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, -4.0, Currency.ETH, Currency.BTC), "Quantity can't be negative"),
                 Arguments.of(Transaction(null, "userId", Source.MANUAL, ZonedDateTime.now(), Transaction.Type.BUY, 10.0, 4.0, Currency.ETH, Currency.ETH), "Currency1 and Currency2 can't be the same")
             )
         }

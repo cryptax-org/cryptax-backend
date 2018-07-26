@@ -125,12 +125,12 @@ data class ReportWeb(val lines: List<LineWeb> = mutableListOf()) {
     }
 }
 
-data class LineWeb(val transaction: TransactionWeb, val dollarAmount: Double) {
+data class LineWeb(val transaction: TransactionWeb, val usdAmount: Double) {
     companion object {
         fun toLineWeb(line: Line): LineWeb {
             return LineWeb(
                 transaction = TransactionWeb.toTransactionWeb(line.transaction),
-                dollarAmount = line.amountDollars)
+                usdAmount = line.usdAmount)
         }
     }
 }

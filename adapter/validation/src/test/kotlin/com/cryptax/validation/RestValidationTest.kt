@@ -386,6 +386,7 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.request().params().add("source", source)
                 it.queryParams().add("source", source)
                 it.next()
@@ -405,6 +406,7 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.request().params().add("source", source)
                 it.queryParams().add("source", source)
                 it.request().params().add("delimiter", delimiter)
@@ -426,6 +428,7 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.request().params().add("source", source)
                 it.queryParams().add("source", source)
                 it.request().params().add("delimiter", delimiter)
@@ -447,6 +450,7 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.request().params().add("source", source)
                 it.queryParams().add("source", source)
                 it.request().params().add("delimiter", delimiter)
@@ -468,6 +472,7 @@ class RestValidationTest {
         router.get("/users/:userId/transactions")
             .handler {
                 // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.request().params().add("source", source)
                 it.queryParams().add("source", source)
                 it.request().params().add("delimiter", delimiter)

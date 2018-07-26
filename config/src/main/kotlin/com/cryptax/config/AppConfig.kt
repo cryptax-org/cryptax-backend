@@ -52,7 +52,7 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
         bind() from singleton { AddTransaction(instance(), instance(), instance()) }
         bind() from singleton { UpdateTransaction(instance()) }
         bind() from singleton { FindTransaction(instance()) }
-        bind() from singleton { GenerateReport(instance(), instance()) }
+        bind() from singleton { GenerateReport(instance(), instance(), instance()) }
 
         // Controllers
         bind() from singleton { UserController(instance(), instance(), instance(), instance()) }

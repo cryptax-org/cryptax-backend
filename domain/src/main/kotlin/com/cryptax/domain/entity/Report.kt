@@ -6,5 +6,5 @@ data class Report(
 
 data class Line(
     val transaction: Transaction,
-    val amountDollars: Double
+    val usdAmount: Double
 )

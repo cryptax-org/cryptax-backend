@@ -10,9 +10,9 @@ class PriceService(private val api: CryptoApi = CryptoCompare()) : com.cryptax.d
         private val log = LoggerFactory.getLogger(PriceService::class.java)
     }
 
-    override fun getPriceInDollars(transaction: Transaction): Double {
-        val priceInDollars = api.getCurrencyInDollarsAt(transaction.currency1, transaction.date)
-        log.debug("Found for ${transaction.currency1.code} price of $priceInDollars in USD")
-        return priceInDollars * transaction.quantity
+    override fun getUsdAmount(transaction: Transaction): Double {
+        val usdPrice = api.findUsdPriceAt(transaction.currency1, transaction.date)
+        log.debug("Found for ${transaction.currency1.code} price of $usdPrice in USD")
+        return usdPrice * transaction.quantity
     }
 }

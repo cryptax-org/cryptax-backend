@@ -40,6 +40,7 @@ object RestValidation {
         .addPathParam("userId", ParameterType.GENERIC_STRING)
         .addQueryParam("source", ParameterType.GENERIC_STRING, true)
         .addQueryParam("delimiter", ParameterType.GENERIC_STRING, false)
+        .addCustomValidatorFunction(userIdPathParamValidation)
         .addCustomValidatorFunction { routingContext ->
             val source = routingContext.request().getParam("source")
             try {
@@ -58,6 +59,10 @@ object RestValidation {
                 }
             }
         }
+
+    val generateReport: HTTPRequestValidationHandler = HTTPRequestValidationHandler
+        .create()
+        .addCustomValidatorFunction(userIdPathParamValidation)
 
     val jsonContentTypeValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
         .addHeaderParamWithCustomTypeValidator("Content-Type", { value ->

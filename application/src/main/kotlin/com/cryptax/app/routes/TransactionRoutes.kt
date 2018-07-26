@@ -113,8 +113,8 @@ fun handleTransactionRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vert
     // Upload CSV
     router.post("/users/:userId/transactions/upload")
         .handler(csvContentTypeValidation)
-        .handler(uploadCsvValidation)
         .handler(jwtAuthHandler)
+        .handler(uploadCsvValidation)
         .handler(bodyHandler)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
