@@ -33,6 +33,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
+import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
@@ -71,7 +72,9 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
-        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService() }
+        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(instance(), instance()) }
+        bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
+        bind<OkHttpClient>() with singleton { OkHttpClient() } // TODO handle thread pool
     }
 
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
@@ -91,10 +94,6 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
     fun getProfile(): String {
         val profileEnv = System.getenv("PROFILE")
         return profileEnv ?: return profile
-    }
-
-    companion object {
-        val objectMapper = JacksonConfig.objectMapper
     }
 }
 

@@ -9,6 +9,7 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.domain.port.EmailService
 import com.cryptax.email.VertxEmailService
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
 import io.vertx.core.http.HttpMethod
@@ -40,10 +41,10 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
     private val transactionController by kodein.instance<TransactionController>()
     private val reportController by kodein.instance<ReportController>()
     private val healthCheckRegistry by kodein.instance<HealthCheckRegistry>()
-
+    private val objectMapper by kodein.instance<ObjectMapper>()
 
     override fun start(startFuture: Future<Void>) {
-        Json.mapper = AppConfig.objectMapper
+        Json.mapper = objectMapper
         val metricsService = MetricsService.create(vertx)
 
         // Create router

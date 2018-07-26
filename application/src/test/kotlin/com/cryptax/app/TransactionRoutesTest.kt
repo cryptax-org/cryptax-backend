@@ -1,7 +1,6 @@
 package com.cryptax.app
 
 import com.cryptax.app.verticle.RestVerticle
-import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
@@ -38,7 +37,7 @@ class TransactionRoutesTest {
         val appConfig = TestAppConfig()
         RestAssured.port = appConfig.properties.server.port
         RestAssured.baseURI = "http://" + appConfig.properties.server.domain
-        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> AppConfig.objectMapper })
+        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> objectMapper })
     }
 
     @BeforeEach

@@ -24,4 +24,5 @@ module cryptax.config {
     requires metrics.healthchecks;
     requires vertx.auth.jwt;
     requires vertx.auth.common;
+    requires okhttp3;
 }

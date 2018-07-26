@@ -21,5 +21,6 @@ dependencies {
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
         [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
         [group: 'org.kodein.di', name: 'kodein-di-generic-jvm', version: kodeinVersion],
+        [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
     )
 }

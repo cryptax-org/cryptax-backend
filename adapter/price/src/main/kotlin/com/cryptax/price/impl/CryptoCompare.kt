@@ -13,11 +13,7 @@ import java.time.ZonedDateTime
 /**
  * https://min-api.cryptocompare.com
  */
-class CryptoCompare : CryptoApi {
-
-
-    private val client = OkHttpClient()
-    private val objectMapper = ObjectMapper()
+class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private val objectMapper: ObjectMapper = ObjectMapper()) : CryptoApi {
 
     override fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Double {
         val timestamp = Timestamp.from(date.toInstant())

@@ -18,4 +18,5 @@ open module cryptax.app {
     requires cryptax.validation;
     requires cryptax.email;
     requires org.slf4j;
+    requires com.fasterxml.jackson.databind;
 }

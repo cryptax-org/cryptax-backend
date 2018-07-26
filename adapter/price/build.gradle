@@ -10,7 +10,7 @@ ext.moduleName = 'cryptax.price'
 dependencies {
     implementation(
         project(':domain'),
-        [group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'],
+        [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
     )
 }
