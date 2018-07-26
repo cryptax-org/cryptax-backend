@@ -43,29 +43,30 @@ class AddTransaction(
 
     fun addMultiple(transactions: List<Transaction>): Single<List<Transaction>> {
         log.info("Usecase, add a list of transactions $transactions")
-        validateAddTransactions(transactions)
 
-        return userRepository
-            .findById(transactions[0].userId)
-            .subscribeOn(Schedulers.io())
-            .isEmpty
-            .map { isEmpty ->
-                when (isEmpty) {
-                    true -> throw UserNotFoundException(transactions[0].userId)
-                    else -> transactions.map {
-                        Transaction(
-                            id = idGenerator.generate(),
-                            userId = it.userId,
-                            source = it.source,
-                            date = it.date,
-                            type = it.type,
-                            price = it.price,
-                            amount = it.amount,
-                            currency1 = it.currency1,
-                            currency2 = it.currency2)
+        return validateAddTransactions(transactions)
+            .flatMap {
+                userRepository.findById(transactions[0].userId)
+                    .subscribeOn(Schedulers.io())
+                    .isEmpty
+                    .map { isEmpty ->
+                        when (isEmpty) {
+                            true -> throw UserNotFoundException(transactions[0].userId)
+                            else -> transactions.map {
+                                Transaction(
+                                    id = idGenerator.generate(),
+                                    userId = it.userId,
+                                    source = it.source,
+                                    date = it.date,
+                                    type = it.type,
+                                    price = it.price,
+                                    amount = it.amount,
+                                    currency1 = it.currency1,
+                                    currency2 = it.currency2)
+                            }
+                        }
                     }
-                }
+                    .flatMap { transactionToSave: List<Transaction> -> transactionRepository.add(transactionToSave) }
             }
-            .flatMap { transactionToSave: List<Transaction> -> transactionRepository.add(transactionToSave) }
     }
 }
