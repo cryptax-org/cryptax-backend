@@ -21,7 +21,7 @@ class GenerateReport(private val transactionRepository: TransactionRepository, p
 
     private fun getDollarsAmount(transaction: Transaction): Double {
         return if (transaction.currency1 == Currency.USD || transaction.currency2 == Currency.USD) {
-            val amountDollars = transaction.amount * transaction.price
+            val amountDollars = transaction.quantity * transaction.price
             if (transaction.type == Transaction.Type.BUY) amountDollars else -amountDollars
         } else {
             priceService.getPriceInDollars(transaction)

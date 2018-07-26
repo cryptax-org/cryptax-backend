@@ -1,0 +1,16 @@
+apply plugin: 'java-library'
+
+repositories {
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+}
+
+
+ext.moduleName = 'cryptax.price'
+
+dependencies {
+    implementation(
+        project(':domain'),
+        [group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.11.0'],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
+    )
+}

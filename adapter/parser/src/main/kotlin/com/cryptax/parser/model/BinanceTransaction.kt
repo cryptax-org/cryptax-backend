@@ -24,7 +24,7 @@ data class BinanceTransaction(
             date = date,
             type = Transaction.Type.valueOf(type),
             price = price,
-            amount = amount,
+            quantity = amount,
             currency1 = market.first,
             currency2 = market.second
         )

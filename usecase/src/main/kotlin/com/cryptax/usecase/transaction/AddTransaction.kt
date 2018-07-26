@@ -33,7 +33,7 @@ class AddTransaction(
                         date = transaction.date,
                         type = transaction.type,
                         price = transaction.price,
-                        amount = transaction.amount,
+                        quantity = transaction.quantity,
                         currency1 = transaction.currency1,
                         currency2 = transaction.currency2)
                 }
@@ -60,7 +60,7 @@ class AddTransaction(
                                     date = it.date,
                                     type = it.type,
                                     price = it.price,
-                                    amount = it.amount,
+                                    quantity = it.quantity,
                                     currency1 = it.currency1,
                                     currency2 = it.currency2)
                             }

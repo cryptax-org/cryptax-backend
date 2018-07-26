@@ -100,7 +100,7 @@ private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHand
     }
 }
 
-private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "amount", "currency1", "currency2")) {
+private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "quantity", "currency1", "currency2")) {
 
     override fun checkBodyFieldsValueType(body: JsonObject) {
         val source = body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")

@@ -12,6 +12,7 @@ include ':validation'
 include ':parser'
 include ':email'
 include ':health'
+include ':price'
 
 project(":security").projectDir = file("adapter/security")
 project(":id-generator").projectDir = file("adapter/id-generator")
@@ -21,3 +22,4 @@ project(":validation").projectDir = file("adapter/validation")
 project(":parser").projectDir = file("adapter/parser")
 project(":email").projectDir = file("adapter/email")
 project(":health").projectDir = file("adapter/health")
+project(":price").projectDir = file("adapter/price")

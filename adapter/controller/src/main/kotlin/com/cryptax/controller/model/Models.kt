@@ -1,6 +1,8 @@
 package com.cryptax.controller.model
 
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.Line
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
@@ -64,7 +66,7 @@ data class TransactionWeb(
     val date: ZonedDateTime,
     val type: Transaction.Type,
     val price: Double,
-    val amount: Double,
+    val quantity: Double,
     val currency1: Currency,
     val currency2: Currency
 ) {
@@ -77,7 +79,7 @@ data class TransactionWeb(
             date = date,
             type = type,
             price = price,
-            amount = amount,
+            quantity = quantity,
             currency1 = currency1,
             currency2 = currency2
         )
@@ -91,7 +93,7 @@ data class TransactionWeb(
             date = date,
             type = type,
             price = price,
-            amount = amount,
+            quantity = quantity,
             currency1 = currency1,
             currency2 = currency2
         )
@@ -106,7 +108,7 @@ data class TransactionWeb(
                 date = transaction.date,
                 type = transaction.type,
                 price = transaction.price,
-                amount = transaction.amount,
+                quantity = transaction.quantity,
                 currency1 = transaction.currency1,
                 currency2 = transaction.currency2
             )
@@ -114,3 +116,21 @@ data class TransactionWeb(
     }
 }
 
+data class ReportWeb(val lines: List<LineWeb> = mutableListOf()) {
+
+    companion object {
+        fun toReportWeb(report: Report): ReportWeb {
+            return ReportWeb(report.lines.map { LineWeb.toLineWeb(it) })
+        }
+    }
+}
+
+data class LineWeb(val transaction: TransactionWeb, val dollarAmount: Double) {
+    companion object {
+        fun toLineWeb(line: Line): LineWeb {
+            return LineWeb(
+                transaction = TransactionWeb.toTransactionWeb(line.transaction),
+                dollarAmount = line.amountDollars)
+        }
+    }
+}

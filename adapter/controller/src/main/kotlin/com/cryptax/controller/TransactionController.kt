@@ -35,7 +35,9 @@ class TransactionController(
     }
 
     fun getAllTransactions(userId: String): Single<List<TransactionWeb>> {
-        return findTransaction.findAllForUser(userId).map { tx -> tx.map { TransactionWeb.toTransactionWeb(it) } }
+        return findTransaction.findAllForUser(userId).map { tx ->
+            tx.map { TransactionWeb.toTransactionWeb(it) }
+        }
     }
 
     fun uploadCSVTransactions(inputStream: InputStream, userId: String, source: Source, delimiter: Char = ','): Single<List<TransactionWeb>> {

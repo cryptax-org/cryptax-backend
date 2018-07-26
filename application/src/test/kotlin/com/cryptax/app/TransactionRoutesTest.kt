@@ -75,7 +75,7 @@ class TransactionRoutesTest {
             //assertThat().body("[0].date", IsEqual(transaction.date)).
             assertThat().body("[0].type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(10.0f)).
-            assertThat().body("[0].amount", equalTo(2.0f)).
+            assertThat().body("[0].quantity", equalTo(2.0f)).
             assertThat().body("[0].currency1", equalTo(transaction.currency1.toString())).
             assertThat().body("[0].currency2", equalTo(transaction.currency2.toString())).
             assertThat().statusCode(200)
@@ -106,7 +106,7 @@ class TransactionRoutesTest {
             //assertThat().body("[0].date", IsEqual(transaction.date)).
             assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(10.0f)).
-            assertThat().body("amount", equalTo(2.0f)).
+            assertThat().body("quantity", equalTo(2.0f)).
             assertThat().body("currency1", equalTo(transaction.currency1.toString())).
             assertThat().body("currency2", equalTo(transaction.currency2.toString())).
             assertThat().statusCode(200)
@@ -127,7 +127,7 @@ class TransactionRoutesTest {
             date = ZonedDateTime.now(),
             type = Transaction.Type.SELL,
             price = 20.0,
-            amount = 5.0,
+            quantity = 5.0,
             currency1 = Currency.BTC,
             currency2 = Currency.ETH)
 
@@ -145,7 +145,7 @@ class TransactionRoutesTest {
             //assertThat().body("[0].date", IsEqual(transaction.date)).
             assertThat().body("type", equalTo(transactionUpdated.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(20.0f)).
-            assertThat().body("amount", equalTo(5.0f)).
+            assertThat().body("quantity", equalTo(5.0f)).
             assertThat().body("currency1", equalTo(transactionUpdated.currency1.toString())).
             assertThat().body("currency2", equalTo(transactionUpdated.currency2.toString())).
             assertThat().statusCode(200)
@@ -176,7 +176,7 @@ class TransactionRoutesTest {
             assertThat().body("[0].date", notNullValue()).
             assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(0.009776f)).
-            assertThat().body("[0].amount", equalTo(150.13f)).
+            assertThat().body("[0].quantity", equalTo(150.13f)).
             assertThat().body("[0].currency1", equalTo(Currency.ICON.code)).
             assertThat().body("[0].currency2", equalTo(Currency.ETH.code)).
             assertThat().statusCode(200)
@@ -207,7 +207,7 @@ class TransactionRoutesTest {
             assertThat().body("[0].date", notNullValue()).
             assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(6417.48f)).
-            assertThat().body("[0].amount", equalTo(0.18730723f)).
+            assertThat().body("[0].quantity", equalTo(0.18730723f)).
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
             assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
             assertThat().statusCode(200)

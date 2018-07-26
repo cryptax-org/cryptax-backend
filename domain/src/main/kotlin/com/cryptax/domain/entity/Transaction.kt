@@ -9,7 +9,7 @@ data class Transaction(
     val date: ZonedDateTime,
     val type: Type,
     val price: Double,
-    val amount: Double,
+    val quantity: Double,
     val currency1: Currency,
     val currency2: Currency) {
 

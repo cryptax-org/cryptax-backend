@@ -104,7 +104,7 @@ fun addTransaction(id: String, token: JsonPath): JsonPath {
                 //assertThat().body("date", IsEqual(transaction.date)).
                 assertThat().body("type", Matchers.equalTo(transaction.type.toString().toLowerCase())).
                 assertThat().body("price", Matchers.equalTo(10.0f)).
-                assertThat().body("amount", Matchers.equalTo(2.0f)).
+                assertThat().body("quantity", Matchers.equalTo(2.0f)).
                 assertThat().body("currency1", Matchers.equalTo(transaction.currency1.toString())).
                 assertThat().body("currency2", Matchers.equalTo(transaction.currency2.toString())).
             extract().

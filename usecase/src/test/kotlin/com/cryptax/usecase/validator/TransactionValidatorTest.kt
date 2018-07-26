@@ -28,7 +28,7 @@ class TransactionValidatorTest {
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
-            amount = 5.0,
+            quantity = 5.0,
             currency1 = Currency.ETH,
             currency2 = Currency.BTC)
         //when

@@ -20,7 +20,7 @@ data class CoinbaseTransaction(
             date = date,
             type = Transaction.Type.valueOf(transactionType.toUpperCase()),
             price = usdPrice,
-            amount = quantity,
+            quantity = quantity,
             currency1 = asset,
             currency2 = Currency.USD
         )

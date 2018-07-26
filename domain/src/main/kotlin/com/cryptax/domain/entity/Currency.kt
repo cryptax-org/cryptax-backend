@@ -1,5 +1,6 @@
 package com.cryptax.domain.entity
 
+// TODO: Add a alias system to handle several code
 enum class Currency constructor(val code: String, val fullName: String, val symbol: String, val type: Type) {
     BTC("BTC", "Bitcoin", "฿", Type.CRYPTO),
     ETH("ETH", "Ethereum", "Ξ", Type.CRYPTO),

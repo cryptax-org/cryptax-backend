@@ -11,6 +11,7 @@ dependencies {
         project(':security'),
         project(':controller'),
         project(':health'),
+        project(':price'),
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'org.jasypt', name: 'jasypt', version: jasyptVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],

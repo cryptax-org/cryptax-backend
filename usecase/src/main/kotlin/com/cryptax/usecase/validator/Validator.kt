@@ -25,7 +25,7 @@ fun validateAddTransaction(transaction: Transaction): Single<Transaction> {
     return Single.create { emitter ->
         when {
             transaction.price < 0 -> emitter.onError(TransactionValidationException("Price can't be negative"))
-            transaction.amount < 0 -> emitter.onError(TransactionValidationException("Amount can't be negative"))
+            transaction.quantity < 0 -> emitter.onError(TransactionValidationException("Quantity can't be negative"))
             transaction.currency1 == transaction.currency2 -> emitter.onError(TransactionValidationException("Currency1 and Currency2 can't be the same"))
             else -> emitter.onSuccess(transaction)
         }

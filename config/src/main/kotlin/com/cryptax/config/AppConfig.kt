@@ -4,6 +4,7 @@ import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
+import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
@@ -16,7 +17,9 @@ import com.cryptax.domain.port.UserRepository
 import com.cryptax.health.TransactionRepositoryHealthCheck
 import com.cryptax.health.UserRepositoryHealthCheck
 import com.cryptax.id.JugIdGenerator
+import com.cryptax.price.PriceService
 import com.cryptax.security.SecurePassword
+import com.cryptax.usecase.report.GenerateReport
 import com.cryptax.usecase.transaction.AddTransaction
 import com.cryptax.usecase.transaction.FindTransaction
 import com.cryptax.usecase.transaction.UpdateTransaction
@@ -49,10 +52,12 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
         bind() from singleton { AddTransaction(instance(), instance(), instance()) }
         bind() from singleton { UpdateTransaction(instance()) }
         bind() from singleton { FindTransaction(instance()) }
+        bind() from singleton { GenerateReport(instance(), instance()) }
 
         // Controllers
         bind() from singleton { UserController(instance(), instance(), instance(), instance()) }
         bind() from singleton { TransactionController(instance(), instance(), instance()) }
+        bind() from singleton { ReportController(instance()) }
 
         // Health
         bind() from singleton {
@@ -66,6 +71,7 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
+        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService() }
     }
 
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())

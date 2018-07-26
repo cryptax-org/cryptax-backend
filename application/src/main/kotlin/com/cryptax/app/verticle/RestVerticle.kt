@@ -4,6 +4,7 @@ import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
+import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.domain.port.EmailService
@@ -37,7 +38,9 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
     private val userController by kodein.instance<UserController>()
     private val transactionController by kodein.instance<TransactionController>()
+    private val reportController by kodein.instance<ReportController>()
     private val healthCheckRegistry by kodein.instance<HealthCheckRegistry>()
+
 
     override fun start(startFuture: Future<Void>) {
         Json.mapper = AppConfig.objectMapper
@@ -45,7 +48,7 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
         // Create router
         val router = Router.router(vertx)
-        Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, healthCheckRegistry)
+        Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, reportController, healthCheckRegistry)
         Metrics.setupMetrics(metricsService, vertx, router)
         router.route().handler(
             CorsHandler.create("*")

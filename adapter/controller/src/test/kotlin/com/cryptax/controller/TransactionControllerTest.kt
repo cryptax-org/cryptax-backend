@@ -38,7 +38,7 @@ class TransactionControllerTest {
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
-        amount = 5.0,
+        quantity = 5.0,
         currency1 = Currency.BTC,
         currency2 = Currency.ETH)
     private val transactionWeb = TransactionWeb(
@@ -46,7 +46,7 @@ class TransactionControllerTest {
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
-        amount = 5.0,
+        quantity = 5.0,
         currency1 = Currency.BTC,
         currency2 = Currency.ETH)
 
@@ -73,7 +73,7 @@ class TransactionControllerTest {
         assertEquals(transactionReturn.date, actual.date)
         assertEquals(transactionReturn.type, actual.type)
         assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.amount, actual.amount)
+        assertEquals(transactionReturn.quantity, actual.quantity)
         assertEquals(transactionReturn.currency1, actual.currency1)
         assertEquals(transactionReturn.currency2, actual.currency2)
         argumentCaptor<Transaction>().apply {
@@ -98,7 +98,7 @@ class TransactionControllerTest {
         assertEquals(transactionReturn.date, actual.date)
         assertEquals(transactionReturn.type, actual.type)
         assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.amount, actual.amount)
+        assertEquals(transactionReturn.quantity, actual.quantity)
         assertEquals(transactionReturn.currency1, actual.currency1)
         assertEquals(transactionReturn.currency2, actual.currency2)
         argumentCaptor<Transaction>().apply {
@@ -125,7 +125,7 @@ class TransactionControllerTest {
         assertEquals(transactionReturn.date, actual.date)
         assertEquals(transactionReturn.type, actual.type)
         assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.amount, actual.amount)
+        assertEquals(transactionReturn.quantity, actual.quantity)
         assertEquals(transactionReturn.currency1, actual.currency1)
         assertEquals(transactionReturn.currency2, actual.currency2)
         then(findTransaction).should().find(transactionId, userId)
@@ -162,7 +162,7 @@ class TransactionControllerTest {
         assertEquals(transactionReturn.date, actual[0].date)
         assertEquals(transactionReturn.type, actual[0].type)
         assertEquals(transactionReturn.price, actual[0].price)
-        assertEquals(transactionReturn.amount, actual[0].amount)
+        assertEquals(transactionReturn.quantity, actual[0].quantity)
         assertEquals(transactionReturn.currency1, actual[0].currency1)
         assertEquals(transactionReturn.currency2, actual[0].currency2)
         then(findTransaction).should().findAllForUser(userId)
