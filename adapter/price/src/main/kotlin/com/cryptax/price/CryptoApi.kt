@@ -5,5 +5,5 @@ import java.time.ZonedDateTime
 
 interface CryptoApi {
 
-    fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Pair<String?, Double>
+    fun findUsdPriceAt(currency1: Currency, currency2: Currency, date: ZonedDateTime): Triple<String?, Double, Double>
 }

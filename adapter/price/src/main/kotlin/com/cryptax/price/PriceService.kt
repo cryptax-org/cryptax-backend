@@ -15,9 +15,10 @@ class PriceService(
         private val log = LoggerFactory.getLogger(PriceService::class.java)
     }
 
-    override fun getUsdAmount(transaction: Transaction): Pair<String?, Double> {
-        val usdPrice = api.findUsdPriceAt(transaction.currency1, transaction.date)
-        log.debug("Found for ${transaction.currency1.code} price of ${usdPrice.second} in USD at ${transaction.date}")
-        return Pair(usdPrice.first, usdPrice.second * transaction.quantity)
+    override fun getUsdAmount(transaction: Transaction): Triple<String?, Double, Double> {
+        val usd = api.findUsdPriceAt(transaction.currency1, transaction.currency2, transaction.date)
+        log.debug("Found for ${transaction.currency1.code} price of ${usd.second} in USD at ${transaction.date}")
+        log.debug("Found for ${transaction.currency2.code} price of ${usd.third} in USD at ${transaction.date}")
+        return Triple(usd.first, usd.second * transaction.quantity, usd.third * transaction.quantity * transaction.price)
     }
 }

@@ -15,17 +15,25 @@ import java.time.ZonedDateTime
  */
 class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private val objectMapper: ObjectMapper = ObjectMapper()) : CryptoApi {
 
-    override fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Pair<String?, Double> {
+    override fun findUsdPriceAt(currency1: Currency, currency2: Currency, date: ZonedDateTime): Triple<String?, Double, Double> {
         val timestamp = Timestamp.from(date.toInstant())
+        val usdPriceCurrency1 = findUsdPriceAt(currency1, timestamp)
+        val usdPriceCurrency2 = findUsdPriceAt(currency2, timestamp)
+
+        return Triple(NAME, usdPriceCurrency1, usdPriceCurrency2)
+    }
+
+    private fun findUsdPriceAt(currency: Currency, timestamp: Timestamp): Double {
         val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=${timestamp.time}").build()
-        log.debug("Get ${currency.code} price in USD at $date ${request.url()}")
+        log.debug("Get ${currency.code} price in USD ${request.url()}")
         val response = client.newCall(request).execute()
         val body = response.body()
         if (body == null) {
             throw RuntimeException("The body received was null")
         } else {
             val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
-            return Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble())
+            log.debug("Body received: $jsonResponse")
+            return jsonResponse.get(currency.code).get("USD").toString().toDouble()
         }
     }
 

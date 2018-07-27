@@ -3,6 +3,7 @@ package com.cryptax.controller.model
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Report
+import com.cryptax.domain.entity.Result
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
@@ -116,27 +117,36 @@ data class TransactionWeb(
     }
 }
 
-data class ReportWeb(val pairs: Map<String, Set<LineWeb>>) {
+data class ReportWeb(val pairs: Map<String, ResultWeb>) {
 
     companion object {
         fun toReportWeb(report: Report): ReportWeb {
-            //return ReportWeb(report.lines.map { LineWeb.toLineWeb(it) })
-            val lines = HashMap<String, Set<LineWeb>>()
-            report.pairs.entries.forEach { entry ->
-                val newLines = report.pairs[entry.key]!!.map { LineWeb.toLineWeb(it) }.toSet()
-                lines[entry.key] = newLines
+            val lines = HashMap<String, ResultWeb>()
+            report.pairs.entries.forEach { entry: Map.Entry<String, Result> ->
+                lines[entry.key] = ResultWeb.toResultWeb(entry.value)
             }
             return ReportWeb(lines)
         }
     }
 }
 
-data class LineWeb(val usdAmount: Double, val amountSource: String? = null, val transaction: TransactionWeb) {
+data class ResultWeb(val gain: Double, val lines: Set<LineWeb>) {
+    companion object {
+        fun toResultWeb(result: Result): ResultWeb {
+            return ResultWeb(
+                result.gain,
+                result.lines.map { LineWeb.toLineWeb(it) }.toSet())
+        }
+    }
+}
+
+data class LineWeb(val amountSource: String? = null, val usdCurrency1: Double, val usdCurrency2: Double, val transaction: TransactionWeb) {
     companion object {
         fun toLineWeb(line: Line): LineWeb {
             return LineWeb(
-                usdAmount = line.usdAmount,
                 amountSource = line.amountSource,
+                usdCurrency1 = line.usdCurrency1,
+                usdCurrency2 = line.usdCurrency2,
                 transaction = TransactionWeb.toTransactionWeb(line.transaction))
         }
     }
