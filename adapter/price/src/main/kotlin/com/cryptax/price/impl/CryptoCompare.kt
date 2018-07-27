@@ -15,7 +15,7 @@ import java.time.ZonedDateTime
  */
 class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private val objectMapper: ObjectMapper = ObjectMapper()) : CryptoApi {
 
-    override fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Double {
+    override fun findUsdPriceAt(currency: Currency, date: ZonedDateTime): Pair<String?, Double> {
         val timestamp = Timestamp.from(date.toInstant())
         val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=${timestamp.time}").build()
         log.debug("Get ${currency.code} price in USD at $date ${request.url()}")
@@ -25,12 +25,13 @@ class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private v
             throw RuntimeException("The body received was null")
         } else {
             val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
-            return jsonResponse.get(currency.code).get("USD").toString().toDouble()
+            return Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble())
         }
     }
 
     companion object {
         private val log = LoggerFactory.getLogger(CryptoCompare::class.java)
         private const val BASE_URL = "https://min-api.cryptocompare.com/data"
+        private const val NAME = "cryptoCompare"
     }
 }

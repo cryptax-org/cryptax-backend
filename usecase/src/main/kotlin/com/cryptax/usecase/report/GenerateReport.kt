@@ -13,6 +13,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.TreeSet
 
 private val log: Logger = LoggerFactory.getLogger(GenerateReport::class.java)
 
@@ -37,15 +38,34 @@ class GenerateReport(
             .flatMap { transactions -> Flowable.fromIterable(transactions) }
             .parallel(10)
             .runOn(Schedulers.io())
-            .map { transaction -> Line(transaction, getUsdAmount(transaction)) }
+            .map { transaction ->
+                val amountResult = getUsdAmount(transaction)
+                Line(amountResult.second, amountResult.first, transaction)
+            }
             .sequential()
-            .collectInto(Report()) { report: Report, line: Line -> report.lines.add(line) }
+            .collectInto(Report()) { report: Report, line: Line ->
+                run {
+                    val map = report.pairs
+                    val key = line.transaction.currency1.code + "/" + line.transaction.currency2.code
+                    val key2 = line.transaction.currency2.code + "/" + line.transaction.currency1.code
+                    when {
+                        map.containsKey(key) -> map[key]!!.add(line)
+                        map.containsKey(key2) -> map[key2]!!.add(line)
+                        else -> {
+                            val set = TreeSet<Line>(Comparator { o1, o2 -> o1.transaction.date.compareTo(o2.transaction.date) })
+                            set.add(line)
+                            (map as HashMap)[key] = set
+                        }
+                    }
+                    report
+                }
+            }
     }
 
-    private fun getUsdAmount(transaction: Transaction): Double {
+    private fun getUsdAmount(transaction: Transaction): Pair<String?, Double> {
         return if (transaction.currency1 == Currency.USD || transaction.currency2 == Currency.USD) {
             val amountDollars = transaction.quantity * transaction.price
-            if (transaction.type == Transaction.Type.BUY) amountDollars else -amountDollars
+            if (transaction.type == Transaction.Type.BUY) Pair(null, amountDollars) else Pair(null, -amountDollars)
         } else {
             priceService.getUsdAmount(transaction)
         }

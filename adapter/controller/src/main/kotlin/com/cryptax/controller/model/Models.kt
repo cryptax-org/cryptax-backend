@@ -116,21 +116,28 @@ data class TransactionWeb(
     }
 }
 
-data class ReportWeb(val lines: List<LineWeb> = mutableListOf()) {
+data class ReportWeb(val pairs: Map<String, Set<LineWeb>>) {
 
     companion object {
         fun toReportWeb(report: Report): ReportWeb {
-            return ReportWeb(report.lines.map { LineWeb.toLineWeb(it) })
+            //return ReportWeb(report.lines.map { LineWeb.toLineWeb(it) })
+            val lines = HashMap<String, Set<LineWeb>>()
+            report.pairs.entries.forEach { entry ->
+                val newLines = report.pairs[entry.key]!!.map { LineWeb.toLineWeb(it) }.toSet()
+                lines[entry.key] = newLines
+            }
+            return ReportWeb(lines)
         }
     }
 }
 
-data class LineWeb(val transaction: TransactionWeb, val usdAmount: Double) {
+data class LineWeb(val usdAmount: Double, val amountSource: String? = null, val transaction: TransactionWeb) {
     companion object {
         fun toLineWeb(line: Line): LineWeb {
             return LineWeb(
-                transaction = TransactionWeb.toTransactionWeb(line.transaction),
-                usdAmount = line.usdAmount)
+                usdAmount = line.usdAmount,
+                amountSource = line.amountSource,
+                transaction = TransactionWeb.toTransactionWeb(line.transaction))
         }
     }
 }
