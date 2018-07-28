@@ -39,8 +39,8 @@ class GenerateReport(
             //.parallel(2)
             //.runOn(Schedulers.io())
             .map { transaction ->
-                val amountResult = getUsdAmount(transaction)
-                Line(amountResult.first, amountResult.second, amountResult.third, transaction)
+                val currenciesUsdValue = usdValues(transaction)
+                Line(currenciesUsdValue.first, currenciesUsdValue.second, 0.0, transaction)
             }
             //.sequential()
             .collectInto(Report()) { report: Report, line: Line ->
@@ -52,7 +52,7 @@ class GenerateReport(
                         if (map.containsKey(line.transaction.currency1.code)) {
                             map[line.transaction.currency1.code]!!.add(line)
                         } else {
-                            (map as MutableMap)[line.transaction.currency1.code] = Result().add(line)
+                            (map as MutableMap)[line.transaction.currency1.code] = Result(line.transaction.currency1).add(line)
                         }
                     }
 
@@ -60,7 +60,7 @@ class GenerateReport(
                         if (map.containsKey(line.transaction.currency2.code)) {
                             map[line.transaction.currency2.code]!!.add(line)
                         } else {
-                            (map as MutableMap)[line.transaction.currency2.code] = Result().add(line)
+                            (map as MutableMap)[line.transaction.currency2.code] = Result(line.transaction.currency2).add(line)
                         }
                     }
                     // FIXME duplicated code
@@ -69,30 +69,22 @@ class GenerateReport(
             }
             .map { report ->
                 report.pairs.entries.forEach { entry: Map.Entry<String, Result> ->
-                    val result = report.pairs[entry.key]
-                    result!!.lines.forEach { line ->
-                        if (line.transaction.currency2.code == entry.key && line.transaction.type == Transaction.Type.BUY) {
-                            val gain = line.usdCurrency2 - getOriginalPrice()
-                            log.debug("Gain found: $gain")
-                            result.gain += gain
-                        }
-                    }
+                    val result: Result = report.pairs[entry.key]!!
+                    result.computeGain()
                 }
-
                 report
             }
     }
 
-    private fun getOriginalPrice(): Double {
-        return 200.0
-    }
-
-    private fun getUsdAmount(transaction: Transaction): Triple<String?, Double, Double> {
-        return if (transaction.currency1 == Currency.USD || transaction.currency2 == Currency.USD) {
-            val amountDollars = transaction.quantity * transaction.price
-            if (transaction.type == Transaction.Type.BUY) Triple(null, amountDollars, 1.0) else Triple(null, -amountDollars, 1.0)
-        } else {
-            priceService.getUsdAmount(transaction)
+    private fun usdValues(transaction: Transaction): Pair<Double, Double> {
+        var c1 = 1.0
+        var c2 = 1.0
+        if (transaction.currency1.type == Currency.Type.CRYPTO) {
+            c1 = priceService.currencyUsdValueAt(transaction.currency1, transaction.date)
         }
+        if (transaction.currency2.type == Currency.Type.CRYPTO) {
+            c2 = priceService.currencyUsdValueAt(transaction.currency2, transaction.date)
+        }
+        return Pair(c1, c2)
     }
 }

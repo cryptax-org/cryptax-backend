@@ -1,13 +1,13 @@
 package com.cryptax.controller
 
-import com.cryptax.controller.model.ReportWeb
+import com.cryptax.domain.entity.Report
 import com.cryptax.usecase.report.GenerateReport
 import io.reactivex.Single
 
 class ReportController(private val generateReport: GenerateReport) {
 
-    fun generateReport(userId: String): Single<ReportWeb> {
+    fun generateReport(userId: String): Single<Report> {
         return generateReport.generate(userId)
-            .map { report -> ReportWeb.toReportWeb(report) }
+            //.map { report -> ReportWeb.toReportWeb(report) }
     }
 }

@@ -17,14 +17,14 @@ class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private v
 
     override fun findUsdPriceAt(currency1: Currency, currency2: Currency, date: ZonedDateTime): Triple<String?, Double, Double> {
         val timestamp = Timestamp.from(date.toInstant())
-        val usdPriceCurrency1 = findUsdPriceAt(currency1, timestamp)
-        val usdPriceCurrency2 = findUsdPriceAt(currency2, timestamp)
+        val usdPriceCurrency1 = findUsdPriceAt(currency1, date.toInstant().toEpochMilli() /1000)
+        val usdPriceCurrency2 = findUsdPriceAt(currency2, date.toInstant().toEpochMilli() /1000)
 
-        return Triple(NAME, usdPriceCurrency1, usdPriceCurrency2)
+        return Triple(NAME, usdPriceCurrency1.second, usdPriceCurrency2.second)
     }
 
-    private fun findUsdPriceAt(currency: Currency, timestamp: Timestamp): Double {
-        val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=${timestamp.time}").build()
+    override fun findUsdPriceAt(currency: Currency, timestamp: Long): Pair<String, Double> {
+        val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=$timestamp").build()
         log.debug("Get ${currency.code} price in USD ${request.url()}")
         val response = client.newCall(request).execute()
         val body = response.body()
@@ -32,8 +32,10 @@ class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private v
             throw RuntimeException("The body received was null")
         } else {
             val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
-            log.debug("Body received: $jsonResponse")
-            return jsonResponse.get(currency.code).get("USD").toString().toDouble()
+            if (!jsonResponse.has(currency.code)) {
+                log.debug("Body received: $jsonResponse")
+            }
+            return Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble())
         }
     }
 

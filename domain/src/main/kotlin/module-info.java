@@ -5,4 +5,5 @@ module cryptax.domain {
 
     requires kotlin.stdlib;
     requires io.reactivex.rxjava2;
+    requires org.slf4j;
 }

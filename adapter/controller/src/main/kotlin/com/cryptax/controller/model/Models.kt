@@ -117,6 +117,7 @@ data class TransactionWeb(
     }
 }
 
+/*
 data class ReportWeb(val pairs: Map<String, ResultWeb>) {
 
     companion object {
@@ -134,20 +135,20 @@ data class ResultWeb(val gain: Double, val lines: Set<LineWeb>) {
     companion object {
         fun toResultWeb(result: Result): ResultWeb {
             return ResultWeb(
-                result.gain,
+                result.getGain(),
                 result.lines.map { LineWeb.toLineWeb(it) }.toSet())
         }
     }
 }
 
-data class LineWeb(val amountSource: String? = null, val usdCurrency1: Double, val usdCurrency2: Double, val transaction: TransactionWeb) {
+data class LineWeb(val currency1UsdValue: Double, val currency2UsdValue: Double, val transaction: TransactionWeb) {
     companion object {
         fun toLineWeb(line: Line): LineWeb {
             return LineWeb(
-                amountSource = line.amountSource,
-                usdCurrency1 = line.usdCurrency1,
-                usdCurrency2 = line.usdCurrency2,
+                currency1UsdValue = line.currency1UsdValue,
+                currency2UsdValue = line.currency2UsdValue,
                 transaction = TransactionWeb.toTransactionWeb(line.transaction))
         }
     }
 }
+*/
