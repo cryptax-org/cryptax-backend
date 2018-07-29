@@ -42,7 +42,8 @@ class GenerateReport(
                 Line(
                     currency1UsdValue = currenciesUsdValue.first,
                     currency2UsdValue = currenciesUsdValue.second,
-                    transaction = transaction)
+                    transaction = transaction
+                )
             }
             .toList()
             .observeOn(Schedulers.computation())

@@ -17,8 +17,9 @@ fun handleReportRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSche
         .handler(generateReport)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
+            val debug = routingContext.request().getParam("debug") ?: "false"
             reportController
-                .generateReport(userId)
+                .generateReport(userId, debug.toBoolean())
                 .subscribeOn(Schedulers.io())
                 .observeOn(vertxScheduler)
                 .subscribe(

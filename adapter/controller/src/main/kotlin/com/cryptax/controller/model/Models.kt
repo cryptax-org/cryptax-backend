@@ -1,9 +1,10 @@
 package com.cryptax.controller.model
 
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.Details
+import com.cryptax.domain.entity.FinalReport
 import com.cryptax.domain.entity.Line
-//import com.cryptax.domain.entity.Report
-//import com.cryptax.domain.entity.Result
+import com.cryptax.domain.entity.Metadata
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
@@ -117,38 +118,52 @@ data class TransactionWeb(
     }
 }
 
-/*
-data class ReportWeb(val pairs: Map<String, ResultWeb>) {
-
+data class FinalReportWeb(
+    val totalGainsLosses: Double,
+    val breakdown: Map<String, DetailsWeb>) {
     companion object {
-        fun toReportWeb(report: Report): ReportWeb {
-            val lines = HashMap<String, ResultWeb>()
-            report.pairs.entries.forEach { entry: Map.Entry<String, Result> ->
-                lines[entry.key] = ResultWeb.toResultWeb(entry.value)
+        fun toReportWeb(report: FinalReport, debug: Boolean): FinalReportWeb {
+            val breakdown: MutableMap<String, DetailsWeb> = mutableMapOf()
+            report.breakdown.forEach {
+                breakdown[it.key.code] = DetailsWeb.toLinesWeb(it.value, debug)
             }
-            return ReportWeb(lines)
+            return FinalReportWeb(
+                totalGainsLosses = report.totalGainsLosses,
+                breakdown = breakdown
+            )
         }
     }
 }
 
-data class ResultWeb(val gainsLosses: Double, val lines: Set<LineWeb>) {
+data class DetailsWeb(val gainsLosses: Double?, val lines: List<LineWeb>) {
     companion object {
-        fun toResultWeb(result: Result): ResultWeb {
-            return ResultWeb(
-                result.getGainsLosses(),
-                result.lines.map { LineWeb.toLineWeb(it) }.toSet())
+        fun toLinesWeb(details: Details, debug: Boolean): DetailsWeb {
+            return DetailsWeb(details.gainsLosses, details.lines.map { LineWeb.toLineWeb(it, debug) })
         }
     }
 }
 
-data class LineWeb(val currency1UsdValue: Double, val currency2UsdValue: Double, val transaction: TransactionWeb) {
+data class LineWeb(
+    val transactionId: String,
+    val date: ZonedDateTime,
+    val currency1: Currency,
+    val currency2: Currency,
+    val type: Transaction.Type,
+    val price: Double,
+    val quantity: Double,
+    var metadata: Metadata? = null) {
     companion object {
-        fun toLineWeb(line: Line): LineWeb {
+        fun toLineWeb(line: Line, debug: Boolean): LineWeb {
             return LineWeb(
-                currency1UsdValue = line.currency1UsdValue,
-                currency2UsdValue = line.currency2UsdValue,
-                transaction = TransactionWeb.toTransactionWeb(line.transaction))
+                transactionId = line.transactionId!!,
+                date = line.date,
+                currency1 = line.currency1,
+                currency2 = line.currency2,
+                type = line.type,
+                price = line.price,
+                quantity = line.quantity,
+                metadata = if (debug) line.metadata else null
+            )
         }
     }
 }
-*/
