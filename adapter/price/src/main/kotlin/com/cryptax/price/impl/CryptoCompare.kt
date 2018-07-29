@@ -7,21 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.slf4j.LoggerFactory
-import java.sql.Timestamp
-import java.time.ZonedDateTime
 
 /**
  * https://min-api.cryptocompare.com
  */
 class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private val objectMapper: ObjectMapper = ObjectMapper()) : CryptoApi {
-
-    override fun findUsdPriceAt(currency1: Currency, currency2: Currency, date: ZonedDateTime): Triple<String?, Double, Double> {
-        val timestamp = Timestamp.from(date.toInstant())
-        val usdPriceCurrency1 = findUsdPriceAt(currency1, date.toInstant().toEpochMilli() /1000)
-        val usdPriceCurrency2 = findUsdPriceAt(currency2, date.toInstant().toEpochMilli() /1000)
-
-        return Triple(NAME, usdPriceCurrency1.second, usdPriceCurrency2.second)
-    }
 
     override fun findUsdPriceAt(currency: Currency, timestamp: Long): Pair<String, Double> {
         val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=$timestamp").build()

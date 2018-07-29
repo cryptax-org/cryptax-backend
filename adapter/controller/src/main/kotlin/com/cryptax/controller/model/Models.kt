@@ -2,8 +2,8 @@ package com.cryptax.controller.model
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Line
-import com.cryptax.domain.entity.Report
-import com.cryptax.domain.entity.Result
+//import com.cryptax.domain.entity.Report
+//import com.cryptax.domain.entity.Result
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
@@ -131,11 +131,11 @@ data class ReportWeb(val pairs: Map<String, ResultWeb>) {
     }
 }
 
-data class ResultWeb(val gain: Double, val lines: Set<LineWeb>) {
+data class ResultWeb(val gainsLosses: Double, val lines: Set<LineWeb>) {
     companion object {
         fun toResultWeb(result: Result): ResultWeb {
             return ResultWeb(
-                result.getGain(),
+                result.getGainsLosses(),
                 result.lines.map { LineWeb.toLineWeb(it) }.toSet())
         }
     }
