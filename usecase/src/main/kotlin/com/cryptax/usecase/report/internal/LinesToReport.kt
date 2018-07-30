@@ -62,15 +62,24 @@ internal fun extractCoinsOwned(currency: Currency, lines: List<Line>): List<Coin
 }
 
 internal fun getOriginalPrice(coinsOwned: List<CoinsOwned>, line: Line): Double {
-    // TODO handle when coinsOwned.quantity becomes < 0
-    return coinsOwned
-        .filter { coin -> coin.quantity >= line.metadata.quantityCurrency2 }
-        .map { coin ->
-            coin.quantity = coin.quantity - line.metadata.quantityCurrency2
-            if (coin.quantity < 0) throw RuntimeException("base.quantity < 0. Not handled yet")
-            coin.price * line.metadata.quantityCurrency2
+    return getOriginalPrice(coinsOwned, 0, line.metadata.quantityCurrency2)
+}
+
+private fun getOriginalPrice(coinsOwned: List<CoinsOwned>, index: Int, value: Double): Double {
+    val coin = coinsOwned[index]
+    return if (coin.quantity >= value) {
+        coin.quantity = coin.quantity - value
+        coin.price * value
+    } else {
+        if (index < coinsOwned.size) {
+            val currentValue = coin.price * coin.quantity
+            val rest = value - coin.quantity
+            coin.quantity = 0.0
+            currentValue + getOriginalPrice(coinsOwned, index + 1, rest)
+        } else {
+            throw RuntimeException("Not enough coin")
         }
-        .firstOrNull() ?: 0.0
+    }
 }
 
 class CoinsOwned(val date: ZonedDateTime, val price: Double, var quantity: Double)
