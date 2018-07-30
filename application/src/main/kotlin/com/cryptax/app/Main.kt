@@ -15,6 +15,7 @@ object Main {
 
     init {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
+        System.setProperty("hazelcast.logging.type", "slf4j")
     }
 
     private val log: Logger = LoggerFactory.getLogger(Main::class.java)
