@@ -3,6 +3,7 @@ buildscript {
         projectName = rootProject.name
 
         assertJVersion = '3.10.0'
+        disruptorVersion = '3.4.2'
         dropwizardVersion = '4.0.2'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
@@ -78,6 +79,7 @@ subprojects {
             [group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
             [group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
             [group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4j2Version],
+            [group: 'com.lmax', name: 'disruptor', version: disruptorVersion]
         )
 
         testImplementation(

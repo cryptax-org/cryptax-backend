@@ -6,17 +6,17 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="io.netty" level="info">
+        <AsyncLogger name="io.netty" level="info">
             <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="io.vertx.ext.mail" level="info">
+        </AsyncLogger>
+        <AsyncLogger name="io.vertx.ext.mail" level="info">
             <AppenderRef ref="Console" />
-        </Logger>
-        <Logger name="io.vertx.ext.jwt.JWT" level="warn">
+        </AsyncLogger>
+        <AsyncLogger name="io.vertx.ext.jwt.JWT" level="warn">
             <AppenderRef ref="Console" />
-        </Logger>
-        <Root level="debug">
+        </AsyncLogger>
+        <AsyncRoot level="debug">
             <AppenderRef ref="Console" />
-        </Root>
+        </AsyncRoot>
     </Loggers>
 </Configuration>

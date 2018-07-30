@@ -68,9 +68,6 @@ fun getOriginalPrice(bases: List<Base>, line: Line): Double {
         .map { base ->
             base.quantity = base.quantity - line.metadata.quantityCurrency2
             if (base.quantity < 0) throw RuntimeException("base.quantity < 0. Not handled yet")
-            if (line.currency1 == Currency.CARDANO && line.currency2 == Currency.ETH) {
-                log.debug("${line.currency1}/${line.currency2} Original Price calculation: ${base.price} * ${line.metadata.quantityCurrency2}")
-            }
             base.price * line.metadata.quantityCurrency2
         }
         .firstOrNull() ?: 0.0
