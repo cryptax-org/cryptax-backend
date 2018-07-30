@@ -19,4 +19,5 @@ open module cryptax.app {
     requires cryptax.email;
     requires org.slf4j;
     requires com.fasterxml.jackson.databind;
+    requires vertx.hazelcast;
 }
