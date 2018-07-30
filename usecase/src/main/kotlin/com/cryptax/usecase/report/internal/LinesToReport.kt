@@ -2,8 +2,8 @@ package com.cryptax.usecase.report.internal
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
-import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Line
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Transaction
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -36,14 +36,14 @@ fun linesToReport(lines: List<Line>): Single<Report> {
         }
 }
 
-fun computeGainsLosses(currency: Currency, details: Details): Double {
-    val bases: List<Base> = extractBase(currency, details.lines)
+internal fun computeGainsLosses(currency: Currency, details: Details): Double {
+    val coinsOwned: List<CoinsOwned> = extractCoinsOwned(currency, details.lines)
     val gainsLosses = details.lines
         .filter { line -> line.currency2 == currency && line.type == Transaction.Type.BUY }
         .filter { currency.type == Currency.Type.CRYPTO }
         .map { line ->
             val currentPrice = line.metadata.currency2UsdValue * line.quantity * line.price
-            val originalPrice = getOriginalPrice(bases, line)
+            val originalPrice = getOriginalPrice(coinsOwned, line)
             line.metadata.ignored = false
             line.metadata.currentPrice = currentPrice
             line.metadata.originalPrice = originalPrice
@@ -55,22 +55,22 @@ fun computeGainsLosses(currency: Currency, details: Details): Double {
     return details.gainsLosses
 }
 
-fun extractBase(currency: Currency, lines: List<Line>): List<Base> {
+internal fun extractCoinsOwned(currency: Currency, lines: List<Line>): List<CoinsOwned> {
     return lines
         .filter { line -> line.currency1 == currency && line.type == Transaction.Type.BUY }
-        .map { line -> Base(line.date, line.price, line.quantity) }
+        .map { line -> CoinsOwned(line.date, line.price, line.quantity) }
 }
 
-fun getOriginalPrice(bases: List<Base>, line: Line): Double {
-    // TODO handle when base.quantity becomes < 0
-    return bases
-        .filter { base -> base.quantity >= line.metadata.quantityCurrency2 }
-        .map { base ->
-            base.quantity = base.quantity - line.metadata.quantityCurrency2
-            if (base.quantity < 0) throw RuntimeException("base.quantity < 0. Not handled yet")
-            base.price * line.metadata.quantityCurrency2
+internal fun getOriginalPrice(coinsOwned: List<CoinsOwned>, line: Line): Double {
+    // TODO handle when coinsOwned.quantity becomes < 0
+    return coinsOwned
+        .filter { coin -> coin.quantity >= line.metadata.quantityCurrency2 }
+        .map { coin ->
+            coin.quantity = coin.quantity - line.metadata.quantityCurrency2
+            if (coin.quantity < 0) throw RuntimeException("base.quantity < 0. Not handled yet")
+            coin.price * line.metadata.quantityCurrency2
         }
         .firstOrNull() ?: 0.0
 }
 
-class Base(val date: ZonedDateTime, val price: Double, var quantity: Double)
+class CoinsOwned(val date: ZonedDateTime, val price: Double, var quantity: Double)

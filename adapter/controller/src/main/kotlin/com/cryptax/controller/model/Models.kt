@@ -155,7 +155,7 @@ data class LineWeb(
     companion object {
         fun toLineWeb(line: Line, debug: Boolean): LineWeb {
             return LineWeb(
-                transactionId = line.transactionId!!,
+                transactionId = line.transactionId,
                 date = line.date,
                 currency1 = line.currency1,
                 currency2 = line.currency2,

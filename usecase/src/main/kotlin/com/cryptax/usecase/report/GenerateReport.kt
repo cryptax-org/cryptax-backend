@@ -1,8 +1,8 @@
 package com.cryptax.usecase.report
 
 import com.cryptax.domain.entity.Currency
-import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Line
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.TransactionRepository
@@ -40,9 +40,15 @@ class GenerateReport(
             .map { transaction ->
                 val currenciesUsd = usdValuesAt(transaction.date, transaction.currency1, transaction.currency2)
                 Line(
+                    transactionId = transaction.id!!,
+                    date = transaction.date,
+                    currency1 = transaction.currency1,
+                    currency2 = transaction.currency2,
+                    type = transaction.type,
+                    price = transaction.price,
+                    quantity = transaction.quantity,
                     currency1UsdValue = currenciesUsd.first,
-                    currency2UsdValue = currenciesUsd.second,
-                    transaction = transaction)
+                    currency2UsdValue = currenciesUsd.second)
             }
             .toList()
             .observeOn(Schedulers.computation())

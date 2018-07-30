@@ -1,5 +1,7 @@
 package com.cryptax.domain.entity
 
+import java.time.ZonedDateTime
+
 data class Report(
     val totalGainsLosses: Double,
     val breakdown: Map<Currency, Details>
@@ -17,22 +19,20 @@ data class Details(var gainsLosses: Double = 0.0, val lines: List<Line> = mutabl
 }
 
 data class Line(
+    val transactionId: String,
+    val date: ZonedDateTime,
+    val currency1: Currency,
+    val currency2: Currency,
+    val type: Transaction.Type,
+    val price: Double,
+    val quantity: Double,
     private val currency1UsdValue: Double,
-    private val currency2UsdValue: Double,
-    private val transaction: Transaction) {
+    private val currency2UsdValue: Double) {
 
-    val transactionId = transaction.id
-    val date = transaction.date
-    val currency1 = transaction.currency1
-    val currency2 = transaction.currency2
-    val type = transaction.type
-    val price = transaction.price
-    val quantity = transaction.quantity
     val metadata: Metadata = Metadata(
         currency1UsdValue = currency1UsdValue,
         currency2UsdValue = currency2UsdValue,
-        quantityCurrency2 = transaction.quantity * transaction.price
-    )
+        quantityCurrency2 = quantity * price)
 
     fun currencies(): List<Currency> {
         return listOf(currency1, currency2)
