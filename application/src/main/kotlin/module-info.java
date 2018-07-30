@@ -17,6 +17,7 @@ open module cryptax.app {
     requires cryptax.controller;
     requires cryptax.validation;
     requires cryptax.email;
+    requires cryptax.cache;
     requires org.slf4j;
     requires com.fasterxml.jackson.databind;
     requires vertx.hazelcast;

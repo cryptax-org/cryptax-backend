@@ -1,0 +1,10 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.cache'
+
+dependencies {
+    implementation(
+        project(':domain'),
+        [group: 'io.vertx', name: 'vertx-hazelcast', version: vertxVersion],
+    )
+}

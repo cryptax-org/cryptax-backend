@@ -1,9 +1,9 @@
 package com.cryptax.usecase.report.internal
 
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.FinalReport
 import com.cryptax.domain.entity.Line
-import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.Transaction
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -29,7 +29,6 @@ fun linesToReport(lines: List<Line>): Single<FinalReport> {
         }
         .map { map: Map<Currency, Details> ->
             val totalGainsLosses = map.keys
-                //.map { str -> Currency.findCurrency(str) }
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
                 .map { currency -> computeGainsLosses(currency, map[currency]!!) }
                 .sum()
@@ -44,15 +43,11 @@ fun computeGainsLosses(currency: Currency, details: Details): Double {
         .filter { currency.type == Currency.Type.CRYPTO }
         .map { line ->
             val currentPrice = line.metadata.currency2UsdValue * line.quantity * line.price
-            if (line.currency1 == Currency.CARDANO && line.currency2 == Currency.ETH) {
-                log.debug("${line.currency1}/${line.currency2} Current price calculation: ${line.metadata.currency2UsdValue} * ${line.quantity} * ${line.price}")
-            }
             val originalPrice = getOriginalPrice(bases, line)
             line.metadata.ignored = false
             line.metadata.currentPrice = currentPrice
             line.metadata.originalPrice = originalPrice
             line.metadata.gainsLosses = currentPrice - originalPrice
-            log.debug("Gainslosses found for ${line.currency1}/${line.currency2} ${line.metadata.gainsLosses}")
             line.metadata.gainsLosses!!
         }
         .sum()

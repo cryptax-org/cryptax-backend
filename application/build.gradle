@@ -18,6 +18,7 @@ dependencies {
         project(':controller'),
         project(':validation'),
         project(':email'),
+        project(':cache'),
         [group: 'io.vertx', name: 'vertx-web', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-web-api-contract', version: vertxVersion],

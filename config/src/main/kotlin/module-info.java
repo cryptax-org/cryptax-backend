@@ -11,6 +11,7 @@ module cryptax.config {
     requires cryptax.controller;
     requires cryptax.health;
     requires cryptax.price;
+    requires cryptax.cache;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.module.kotlin;

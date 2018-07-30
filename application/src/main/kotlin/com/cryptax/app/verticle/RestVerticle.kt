@@ -3,6 +3,8 @@ package com.cryptax.app.verticle
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
+import com.cryptax.cache.CacheService
+import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -34,6 +36,7 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
         if (appConfig.getProfile() != "it") {
             bind<EmailService>(overrides = true) with singleton { VertxEmailService(vertx) }
+            bind<CacheService>(overrides = true) with singleton { VertxCacheService(vertx) }
         }
     }
 
@@ -72,7 +75,7 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
                 log.error("Failed to deploy ${this.javaClass.simpleName}", ar.cause())
                 startFuture.fail(ar.cause())
             } else {
-                log.info("${this.javaClass.simpleName} deployed with profile ${appConfig.getProfile()} and listening on port $port")
+                log.info("Server starter with profile ${appConfig.getProfile()} and listening on port $port")
                 startFuture.complete()
             }
         }

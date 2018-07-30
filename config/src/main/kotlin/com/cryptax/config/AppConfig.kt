@@ -2,6 +2,7 @@ package com.cryptax.config
 
 import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
+import com.cryptax.cache.CacheService
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
@@ -9,6 +10,7 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
@@ -38,6 +40,7 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+import java.time.ZonedDateTime
 
 abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kodein.Module) {
 
@@ -72,7 +75,10 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
-        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(instance(), instance()) }
+        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(
+            client = instance(),
+            objectMapper = instance(),
+            cache = instance()) }
         bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
         bind<OkHttpClient>() with singleton { OkHttpClient() } // TODO handle thread pool
     }
@@ -104,6 +110,14 @@ private val defaultKodein = Kodein.Module(name = "defaultUserModule") {
     bind<EmailService>() with singleton {
         object : EmailService {
             override fun welcomeEmail(user: User, token: String) {}
+        }
+    }
+    bind<CacheService>() with singleton {
+        object : CacheService {
+            override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}
+            override fun get(name: String, currency: Currency, date: ZonedDateTime): Pair<String, Double>? {
+                return null
+            }
         }
     }
 }

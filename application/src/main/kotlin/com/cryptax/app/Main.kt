@@ -26,18 +26,24 @@ object Main {
 
         val mgr = HazelcastClusterManager()
         Vertx.clusteredVertx(VertxOptions().setClusterManager(mgr).setMetricsOptions(dropwizardOptions)) { ar ->
-            if (ar.succeeded()) {
-                val vertx = ar.result()
-                val appConfig = DefaultAppConfig()
-                vertx.deployVerticle(RestVerticle(appConfig))
-                vertx.deployVerticle(EmailVerticle(appConfig)) { ar: AsyncResult<String> ->
-                    when {
-                        ar.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
-                        ar.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", ar.cause())
+            when {
+                ar.succeeded() -> {
+                    val vertx = ar.result()
+                    val appConfig = DefaultAppConfig()
+                    vertx.deployVerticle(RestVerticle(appConfig)) { arRest: AsyncResult<String> ->
+                        when {
+                            arRest.succeeded() -> log.info("${RestVerticle::class.java.simpleName} deployed")
+                            arRest.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arRest.cause())
+                        }
+                    }
+                    vertx.deployVerticle(EmailVerticle(appConfig)) { arEmail: AsyncResult<String> ->
+                        when {
+                            arEmail.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
+                            arEmail.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arEmail.cause())
+                        }
                     }
                 }
-            } else {
-                log.error("Could not deploy start clustered vertx", ar.cause())
+                else -> log.error("Could not deploy start clustered vertx", ar.cause())
             }
         }
     }
