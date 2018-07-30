@@ -3,7 +3,6 @@ package com.cryptax.usecase.report
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.FinalReport
 import com.cryptax.domain.entity.Line
-import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.TransactionRepository
@@ -14,6 +13,7 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.time.ZonedDateTime
 
 private val log: Logger = LoggerFactory.getLogger(GenerateReport::class.java)
 
@@ -38,26 +38,25 @@ class GenerateReport(
             //.parallel(2)
             //.runOn(Schedulers.io())
             .map { transaction ->
-                val currenciesUsdValue: Pair<Double, Double> = usdValues(transaction)
+                val currenciesUsd = usdValuesAt(transaction.date, transaction.currency1, transaction.currency2)
                 Line(
-                    currency1UsdValue = currenciesUsdValue.first,
-                    currency2UsdValue = currenciesUsdValue.second,
-                    transaction = transaction
-                )
+                    currency1UsdValue = currenciesUsd.first,
+                    currency2UsdValue = currenciesUsd.second,
+                    transaction = transaction)
             }
             .toList()
             .observeOn(Schedulers.computation())
-            .flatMap { linesToReport(it) }
+            .flatMap { list -> linesToReport(list) }
         //.sequential()
     }
 
-    private fun usdValues(transaction: Transaction): Pair<Double, Double> {
-        val c1 = if (transaction.currency1.type == Currency.Type.CRYPTO)
-            priceService.currencyUsdValueAt(transaction.currency1, transaction.date).second
+    private fun usdValuesAt(date: ZonedDateTime, currency1: Currency, currency2: Currency): Pair<Double, Double> {
+        val c1 = if (currency1.type == Currency.Type.CRYPTO)
+            priceService.currencyUsdValueAt(currency1, date).second
         else
             1.0
-        val c2 = if (transaction.currency2.type == Currency.Type.CRYPTO)
-            priceService.currencyUsdValueAt(transaction.currency2, transaction.date).second
+        val c2 = if (currency2.type == Currency.Type.CRYPTO)
+            priceService.currencyUsdValueAt(currency2, date).second
         else
             1.0
         return Pair(c1, c2)

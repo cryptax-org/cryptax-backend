@@ -19,7 +19,7 @@ data class Details(var gainsLosses: Double = 0.0, val lines: List<Line> = mutabl
 data class Line(
     private val currency1UsdValue: Double,
     private val currency2UsdValue: Double,
-    private val transaction: Transaction) : Comparable<Line> {
+    private val transaction: Transaction) {
 
     val transactionId = transaction.id
     val date = transaction.date
@@ -38,13 +38,13 @@ data class Line(
         return listOf(currency1, currency2)
     }
 
-    override fun compareTo(other: Line): Int {
+/*    override fun compareTo(other: Line): Int {
         return when {
         // FIXME
             transaction != other.transaction -> -1
             else -> 0
         }
-    }
+    }*/
 }
 
 data class Metadata(
