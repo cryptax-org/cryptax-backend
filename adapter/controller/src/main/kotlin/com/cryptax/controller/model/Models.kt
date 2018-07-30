@@ -2,9 +2,9 @@ package com.cryptax.controller.model
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
-import com.cryptax.domain.entity.FinalReport
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Metadata
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
@@ -118,16 +118,16 @@ data class TransactionWeb(
     }
 }
 
-data class FinalReportWeb(
+data class ReportWeb(
     val totalGainsLosses: Double,
     val breakdown: Map<String, DetailsWeb>) {
     companion object {
-        fun toReportWeb(report: FinalReport, debug: Boolean): FinalReportWeb {
+        fun toReportWeb(report: Report, debug: Boolean): ReportWeb {
             val breakdown: MutableMap<String, DetailsWeb> = mutableMapOf()
             report.breakdown.forEach {
                 breakdown[it.key.code] = DetailsWeb.toLinesWeb(it.value, debug)
             }
-            return FinalReportWeb(
+            return ReportWeb(
                 totalGainsLosses = report.totalGainsLosses,
                 breakdown = breakdown
             )

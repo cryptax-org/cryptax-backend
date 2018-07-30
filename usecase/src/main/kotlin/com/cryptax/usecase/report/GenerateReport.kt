@@ -1,7 +1,7 @@
 package com.cryptax.usecase.report
 
 import com.cryptax.domain.entity.Currency
-import com.cryptax.domain.entity.FinalReport
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.PriceService
@@ -22,7 +22,7 @@ class GenerateReport(
     private val transactionRepository: TransactionRepository,
     private val priceService: PriceService) {
 
-    fun generate(userId: String): Single<FinalReport> {
+    fun generate(userId: String): Single<Report> {
         log.info("Usecase, generate a report for $userId")
         return userRepository.findById(userId)
             .subscribeOn(Schedulers.io())

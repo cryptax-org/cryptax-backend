@@ -9,8 +9,9 @@ import com.cryptax.domain.port.UserRepository
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.eq
+import io.reactivex.Maybe
+import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -39,23 +40,23 @@ class CreateUserTest {
 
     private val id = "random id"
     private val hashedPassword = "fqfdwfewfwfwef"
-    private val email = "john.doe@proton.com"
+    private val email = "john.doe@protonmail.com"
     private val password = "mypassword".toCharArray()
-    private val user = User("1", email, password, "Doe", "John", true)
+    private val user = User(id, email, password, "Doe", "John", false)
     private val token = "randomToken"
 
-    /*@Test
+    @Test
     @DisplayName("Create a user")
     fun testCreate() {
         //given
-        given(userRepository.findByEmail(user.email)).willReturn(null)
+        given(userRepository.findByEmail(user.email)).willReturn(Maybe.empty())
         given(idGenerator.generate()).willReturn(id)
         given(securePassword.securePassword(password)).willReturn(hashedPassword)
-        given(userRepository.create(any())).willReturn(user)
+        given(userRepository.create(any())).willReturn(Single.just(user))
         given(securePassword.generateToken(any())).willReturn(token)
 
         //when
-        val actual = createUser.create(user)
+        val actual = createUser.create(user).blockingGet()
 
         //then
         assertNotNull(actual)
@@ -68,7 +69,7 @@ class CreateUserTest {
             then(securePassword).should().generateToken(capture())
             assertThat(firstValue.id).isEqualTo(id)
             assertThat(firstValue.email).isEqualTo(user.email)
-            assertThat(firstValue.password.joinToString(separator = "")).isEqualTo(hashedPassword)
+            assertThat(firstValue.password).containsOnly('\u0000')
             assertThat(firstValue.lastName).isEqualTo(user.lastName)
             assertThat(firstValue.firstName).isEqualTo(user.firstName)
             assertThat(firstValue.allowed).isFalse()
@@ -77,7 +78,7 @@ class CreateUserTest {
             then(emailService).should().welcomeEmail(capture(), eq(token))
             assertThat(firstValue.id).isEqualTo(id)
             assertThat(firstValue.email).isEqualTo(user.email)
-            assertThat(firstValue.password.joinToString(separator = "")).isEqualTo(hashedPassword)
+            assertThat(firstValue.password).containsOnly('\u0000')
             assertThat(firstValue.lastName).isEqualTo(user.lastName)
             assertThat(firstValue.firstName).isEqualTo(user.firstName)
             assertThat(firstValue.allowed).isFalse()
@@ -91,24 +92,24 @@ class CreateUserTest {
             assertThat(firstValue.firstName).isEqualTo(user.firstName)
             assertThat(firstValue.allowed).isFalse()
         }
-    }*/
+    }
 
-    /*@Test
+    @Test
     @DisplayName("User already exists")
     fun testCreateAlreadyExists() {
         //given
-        given(userRepository.findByEmail(user.email)).willReturn(user)
+        given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
 
         //when
         val exception = assertThrows(UserAlreadyExistsException::class.java) {
-            createUser.create(user)
+            createUser.create(user).blockingGet()
         }
 
         //then
-        assertEquals(user.email, exception.message)
+        assertThat(exception.message).isEqualTo(user.email)
         then(userRepository).shouldHaveNoMoreInteractions()
         then(idGenerator).shouldHaveZeroInteractions()
         then(securePassword).shouldHaveZeroInteractions()
         then(emailService).shouldHaveZeroInteractions()
-    }*/
+    }
 }

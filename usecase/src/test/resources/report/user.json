@@ -1,0 +1,8 @@
+{
+    "id": "user1",
+    "email": "john@doe.com",
+    "password": "password",
+    "lastName": "Doe",
+    "firstName": "John",
+    "allowed": true
+}

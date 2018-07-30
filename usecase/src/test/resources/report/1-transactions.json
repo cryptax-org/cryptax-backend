@@ -1,0 +1,13 @@
+[
+    {
+        "id": "transaction1",
+        "source": "MANUAL",
+        "userId": "user1",
+        "date": "2017-10-01T10:00:00Z",
+        "type": "BUY",
+        "price": 4403.09,
+        "quantity": 0.5,
+        "currency1": "BTC",
+        "currency2": "USD"
+    }
+]

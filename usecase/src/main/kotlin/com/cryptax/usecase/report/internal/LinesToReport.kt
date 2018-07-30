@@ -2,7 +2,7 @@ package com.cryptax.usecase.report.internal
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
-import com.cryptax.domain.entity.FinalReport
+import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Transaction
 import io.reactivex.Observable
@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 
 private val log = LoggerFactory.getLogger("LinesToReport")
 
-fun linesToReport(lines: List<Line>): Single<FinalReport> {
+fun linesToReport(lines: List<Line>): Single<Report> {
     return Observable
         .fromIterable(lines)
         .collectInto(HashMap()) { currencyMap: Map<Currency, Details>, line: Line ->
@@ -32,7 +32,7 @@ fun linesToReport(lines: List<Line>): Single<FinalReport> {
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
                 .map { currency -> computeGainsLosses(currency, map[currency]!!) }
                 .sum()
-            FinalReport(totalGainsLosses, map)
+            Report(totalGainsLosses, map)
         }
 }
 

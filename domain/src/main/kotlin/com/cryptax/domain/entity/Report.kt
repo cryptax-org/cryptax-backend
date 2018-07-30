@@ -1,6 +1,6 @@
 package com.cryptax.domain.entity
 
-data class FinalReport(
+data class Report(
     val totalGainsLosses: Double,
     val breakdown: Map<Currency, Details>
 )
@@ -37,14 +37,6 @@ data class Line(
     fun currencies(): List<Currency> {
         return listOf(currency1, currency2)
     }
-
-/*    override fun compareTo(other: Line): Int {
-        return when {
-        // FIXME
-            transaction != other.transaction -> -1
-            else -> 0
-        }
-    }*/
 }
 
 data class Metadata(
