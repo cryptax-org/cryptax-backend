@@ -1,8 +1,8 @@
 {
-    "totalGainsLosses": 0,
+    "totalCapitalGainShort": 0,
     "breakdown": {
         "BTC": {
-            "gainsLosses": 0,
+            "capitalGainShort": 0,
             "lines": [
                 {
                     "transactionId": "transaction1",
@@ -18,7 +18,7 @@
             ]
         },
         "USD": {
-            "gainsLosses": 0,
+            "capitalGainShort": 0,
             "lines": [
                 {
                     "transactionId": "transaction1",

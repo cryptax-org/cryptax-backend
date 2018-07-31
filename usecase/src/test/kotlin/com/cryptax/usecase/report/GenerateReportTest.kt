@@ -41,7 +41,6 @@ class GenerateReportTest {
             userRepository = userRepository,
             transactionRepository = transactionRepository,
             priceService = priceService)
-
     }
 
     @ParameterizedTest

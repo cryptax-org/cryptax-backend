@@ -28,11 +28,11 @@ fun linesToReport(lines: List<Line>): Single<Report> {
             map.values.forEach { list -> list.sortByDate() }
         }
         .map { map: Map<Currency, Details> ->
-            val totalGainsLosses = map.keys
+            val totalCapitalGainShort = map.keys
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
                 .map { currency -> computeGainsLosses(currency, map[currency]!!) }
                 .sum()
-            Report(totalGainsLosses, map)
+            Report(totalCapitalGainShort = totalCapitalGainShort, totalCapitalGainLong = 0.0, breakdown = map)
         }
 }
 
@@ -47,12 +47,12 @@ internal fun computeGainsLosses(currency: Currency, details: Details): Double {
             line.metadata.ignored = false
             line.metadata.currentPrice = currentPrice
             line.metadata.originalPrice = originalPrice
-            line.metadata.gainsLosses = currentPrice - originalPrice
-            line.metadata.gainsLosses!!
+            line.metadata.capitalGainShort = currentPrice - originalPrice
+            line.metadata.capitalGainShort!!
         }
         .sum()
-    details.gainsLosses = gainsLosses
-    return details.gainsLosses
+    details.capitalGainShort = gainsLosses
+    return details.capitalGainShort
 }
 
 internal fun extractCoinsOwned(currency: Currency, lines: List<Line>): List<CoinsOwned> {

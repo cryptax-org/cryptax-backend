@@ -128,7 +128,7 @@ data class ReportWeb(
                 breakdown[it.key.code] = DetailsWeb.toLinesWeb(it.value, debug)
             }
             return ReportWeb(
-                totalGainsLosses = report.totalGainsLosses,
+                totalGainsLosses = report.totalCapitalGainShort,
                 breakdown = breakdown
             )
         }
@@ -138,7 +138,7 @@ data class ReportWeb(
 data class DetailsWeb(val gainsLosses: Double?, val lines: List<LineWeb>) {
     companion object {
         fun toLinesWeb(details: Details, debug: Boolean): DetailsWeb {
-            return DetailsWeb(details.gainsLosses, details.lines.map { LineWeb.toLineWeb(it, debug) })
+            return DetailsWeb(details.capitalGainShort, details.lines.map { LineWeb.toLineWeb(it, debug) })
         }
     }
 }

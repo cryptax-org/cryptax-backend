@@ -3,11 +3,12 @@ package com.cryptax.domain.entity
 import java.time.ZonedDateTime
 
 data class Report(
-    val totalGainsLosses: Double,
+    val totalCapitalGainShort: Double,
+    val totalCapitalGainLong: Double,
     val breakdown: Map<Currency, Details>
 )
 
-data class Details(var gainsLosses: Double = 0.0, val lines: List<Line> = mutableListOf()) {
+data class Details(var capitalGainShort: Double = 0.0, val lines: List<Line> = mutableListOf()) {
     fun add(line: Line): Details {
         (lines as MutableList).add(line)
         return this
@@ -45,6 +46,7 @@ data class Metadata(
     val currency2UsdValue: Double,
     var currentPrice: Double? = null,
     var originalPrice: Double? = null,
-    var gainsLosses: Double? = null,
+    var capitalGainShort: Double? = null,
+    var capitalGainLong: Double? = null,
     val quantityCurrency2: Double
 )

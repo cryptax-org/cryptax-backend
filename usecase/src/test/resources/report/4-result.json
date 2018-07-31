@@ -1,8 +1,8 @@
 {
-    "totalGainsLosses": 1206.5172223999998,
+    "totalCapitalGainShort": 1206.5172223999998,
     "breakdown": {
         "BTC": {
-            "gainsLosses": 1206.5172223999998,
+            "capitalGainShort": 1206.5172223999998,
             "lines": [
                 {
                     "transactionId": "transaction1",
@@ -29,7 +29,7 @@
             ]
         },
         "ETH": {
-            "gainsLosses": 0,
+            "capitalGainShort": 0,
             "lines": [
                 {
                     "transactionId": "transaction2",
@@ -45,7 +45,7 @@
             ]
         },
         "USD": {
-            "gainsLosses": 0,
+            "capitalGainShort": 0,
             "lines": [
                 {
                     "transactionId": "transaction1",
