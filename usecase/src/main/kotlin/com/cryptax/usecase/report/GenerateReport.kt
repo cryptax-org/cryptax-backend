@@ -7,7 +7,7 @@ import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.usecase.report.internal.linesToReport
+import com.cryptax.usecase.report.internal.Breakdown
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -52,7 +52,26 @@ class GenerateReport(
             }
             .toList()
             .observeOn(Schedulers.computation())
-            .flatMap { list -> linesToReport(list) }
+            .flatMap { lines ->
+                Single.just(lines)
+                    .map { Breakdown(it) }
+                    .map { breakdown ->
+                        breakdown.compute()
+                        val totalCapitalGainShort = breakdown.keys
+                            .filter { currency -> currency.type == Currency.Type.CRYPTO }
+                            .map { currency -> breakdown[currency]!! }
+                            .map { details -> details.capitalGainShort }
+                            .sum()
+
+                        val totalCapitalGainLong = breakdown.keys
+                            .filter { currency -> currency.type == Currency.Type.CRYPTO }
+                            .map { currency -> breakdown[currency]!! }
+                            .map { details -> details.capitalGainLong }
+                            .sum()
+
+                        Report(totalCapitalGainShort = totalCapitalGainShort, totalCapitalGainLong = totalCapitalGainLong, breakdown = breakdown)
+                    }
+            }
         //.sequential()
     }
 

@@ -1,8 +1,10 @@
 {
     "totalCapitalGainShort": 0,
+    "totalCapitalGainLong": 0,
     "breakdown": {
         "BTC": {
             "capitalGainShort": 0,
+            "capitalGainLong": 0,
             "lines": [
                 {
                     "transactionId": "transaction1",

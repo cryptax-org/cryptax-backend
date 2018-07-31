@@ -9,7 +9,7 @@ import java.time.ZonedDateTime
 
 class LinesToReportTest {
 
-    @Test
+    /*@Test
     fun testGetOriginalPrice() {
         // given
         val ownedCoins: List<OwnedCoins> = listOf(
@@ -68,5 +68,5 @@ class LinesToReportTest {
         assertThat(actual).isEqualTo(513.2241704)
         assertThat(ownedCoins[0].quantity).isEqualTo(0.0)
         assertThat(ownedCoins[1].quantity).isEqualTo(4.88344)
-    }
+    }*/
 }
