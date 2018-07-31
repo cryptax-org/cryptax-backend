@@ -12,8 +12,8 @@ class LinesToReportTest {
     @Test
     fun testGetOriginalPrice() {
         // given
-        val coinsOwned: List<CoinsOwned> = listOf(
-            CoinsOwned(
+        val ownedCoins: List<OwnedCoins> = listOf(
+            OwnedCoins(
                 date = ZonedDateTime.now(),
                 price = 4403.09,
                 quantity = 0.5)
@@ -30,22 +30,22 @@ class LinesToReportTest {
             currency2UsdValue = 14754.13)
 
         // when
-        val actual = getOriginalPrice(coinsOwned, line)
+        val actual = getOriginalPrice(ownedCoins, line)
 
         // then
         assertThat(actual).isEqualTo(513.2241704)
-        assertThat(coinsOwned[0].quantity).isEqualTo(0.38344)
+        assertThat(ownedCoins[0].quantity).isEqualTo(0.38344)
     }
 
     @Test
     fun testGetOriginalPrice2() {
         // given
-        val coinsOwned: List<CoinsOwned> = listOf(
-            CoinsOwned(
+        val ownedCoins: List<OwnedCoins> = listOf(
+            OwnedCoins(
                 date = ZonedDateTime.now(),
                 price = 4403.09,
                 quantity = 0.01),
-            CoinsOwned(
+            OwnedCoins(
                 date = ZonedDateTime.now(),
                 price = 4403.09,
                 quantity = 4.99)
@@ -62,11 +62,11 @@ class LinesToReportTest {
             currency2UsdValue = 14754.13)
 
         // when
-        val actual = getOriginalPrice(coinsOwned, line)
+        val actual = getOriginalPrice(ownedCoins, line)
 
         // then
         assertThat(actual).isEqualTo(513.2241704)
-        assertThat(coinsOwned[0].quantity).isEqualTo(0.0)
-        assertThat(coinsOwned[1].quantity).isEqualTo(4.88344)
+        assertThat(ownedCoins[0].quantity).isEqualTo(0.0)
+        assertThat(ownedCoins[1].quantity).isEqualTo(4.88344)
     }
 }

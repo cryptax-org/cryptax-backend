@@ -119,7 +119,8 @@ data class TransactionWeb(
 }
 
 data class ReportWeb(
-    val totalGainsLosses: Double,
+    val totalCapitalGainShort: Double,
+    val totalCapitalGainLong: Double,
     val breakdown: Map<String, DetailsWeb>) {
     companion object {
         fun toReportWeb(report: Report, debug: Boolean): ReportWeb {
@@ -128,17 +129,18 @@ data class ReportWeb(
                 breakdown[it.key.code] = DetailsWeb.toLinesWeb(it.value, debug)
             }
             return ReportWeb(
-                totalGainsLosses = report.totalCapitalGainShort,
+                totalCapitalGainShort = report.totalCapitalGainShort,
+                totalCapitalGainLong = report.totalCapitalGainLong,
                 breakdown = breakdown
             )
         }
     }
 }
 
-data class DetailsWeb(val gainsLosses: Double?, val lines: List<LineWeb>) {
+data class DetailsWeb(val capitalGainShort: Double?, val capitalGainLong: Double?, val lines: List<LineWeb>) {
     companion object {
         fun toLinesWeb(details: Details, debug: Boolean): DetailsWeb {
-            return DetailsWeb(details.capitalGainShort, details.lines.map { LineWeb.toLineWeb(it, debug) })
+            return DetailsWeb(details.capitalGainShort, details.capitalGainLong, details.lines.map { LineWeb.toLineWeb(it, debug) })
         }
     }
 }
