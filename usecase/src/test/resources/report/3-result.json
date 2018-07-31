@@ -43,44 +43,6 @@
                     "currency2UsdValue": 1
                 }
             ]
-        },
-        "USD": {
-            "capitalGainShort": 0,
-            "lines": [
-                {
-                    "transactionId": "transaction1",
-                    "date": "2017-10-01T10:00:00Z",
-                    "currency1": "BTC",
-                    "currency2": "USD",
-                    "type": "BUY",
-                    "price": 4403.09,
-                    "quantity": 0.5,
-                    "currency1UsdValue": 4403.09,
-                    "currency2UsdValue": 1
-                },
-                {
-                    "transactionId": "transaction2",
-                    "date": "2018-01-01T00:00:00Z",
-                    "currency1": "BTC",
-                    "currency2": "USD",
-                    "type": "BUY",
-                    "price": 13444.88,
-                    "quantity": 0.5,
-                    "currency1UsdValue": 13444.88,
-                    "currency2UsdValue": 1
-                },
-                {
-                    "transactionId": "transaction3",
-                    "date": "2018-02-01T00:00:00Z",
-                    "currency1": "ETH",
-                    "currency2": "USD",
-                    "type": "BUY",
-                    "price": 1026.19,
-                    "quantity": 3,
-                    "currency1UsdValue": 1026.19,
-                    "currency2UsdValue": 1
-                }
-            ]
         }
     }
 }

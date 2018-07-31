@@ -17,30 +17,42 @@ fun linesToReport(lines: List<Line>): Single<Report> {
         .fromIterable(lines)
         .collectInto(HashMap()) { currencyMap: Map<Currency, Details>, line: Line ->
             val map = currencyMap as HashMap
-            for (currency in line.currencies()) {
-                val lineCopy = line.copy()
-                if (map.containsKey(currency)) {
-                    map[currency]!!.add(lineCopy)
-                } else {
-                    map[currency] = Details().add(lineCopy)
+            /*for (currency in line.currencies()) {
+                if (currency.type == Currency.Type.CRYPTO) {
+                    val lineCopy = line.copy()
+                    if (map.containsKey(currency)) {
+                        map[currency]!!.add(lineCopy)
+                    } else {
+                        map[currency] = Details().add(lineCopy)
+                    }
                 }
-            }
+            }*/
+            line.currencies()
+                .filter { currency -> currency.type == Currency.Type.CRYPTO }
+                .forEach { currency ->
+                    val lineCopy = line.copy()
+                    if (map.containsKey(currency)) {
+                        map[currency]!!.add(lineCopy)
+                    } else {
+                        map[currency] = Details().add(lineCopy)
+                    }
+                }
             map.values.forEach { list -> list.sortByDate() }
         }
         .map { map: Map<Currency, Details> ->
             val totalCapitalGainShort = map.keys
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
-                .map { currency -> computeGainsLosses(currency, map[currency]!!) }
+                .map { currency -> computeGainsLossesFifo(currency, map[currency]!!) }
                 .sum()
             Report(totalCapitalGainShort = totalCapitalGainShort, totalCapitalGainLong = 0.0, breakdown = map)
         }
 }
 
-internal fun computeGainsLosses(currency: Currency, details: Details): Double {
+// FIXME: This need to return capital short AND long term gains
+internal fun computeGainsLossesFifo(currency: Currency, details: Details): Double {
     val coinsOwned: List<CoinsOwned> = extractCoinsOwned(currency, details.lines)
     val gainsLosses = details.lines
         .filter { line -> line.currency2 == currency && line.type == Transaction.Type.BUY }
-        .filter { currency.type == Currency.Type.CRYPTO }
         .map { line ->
             val currentPrice = line.metadata.currency2UsdValue * line.quantity * line.price
             val originalPrice = getOriginalPrice(coinsOwned, line)
