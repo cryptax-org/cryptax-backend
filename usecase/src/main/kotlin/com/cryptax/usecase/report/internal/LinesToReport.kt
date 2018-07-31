@@ -17,16 +17,6 @@ fun linesToReport(lines: List<Line>): Single<Report> {
         .fromIterable(lines)
         .collectInto(HashMap()) { currencyMap: Map<Currency, Details>, line: Line ->
             val map = currencyMap as HashMap
-            /*for (currency in line.currencies()) {
-                if (currency.type == Currency.Type.CRYPTO) {
-                    val lineCopy = line.copy()
-                    if (map.containsKey(currency)) {
-                        map[currency]!!.add(lineCopy)
-                    } else {
-                        map[currency] = Details().add(lineCopy)
-                    }
-                }
-            }*/
             line.currencies()
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
                 .forEach { currency ->
