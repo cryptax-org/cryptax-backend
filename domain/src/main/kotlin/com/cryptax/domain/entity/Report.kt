@@ -34,14 +34,13 @@ class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Details>() {
             // For each Crypto Currency extract how many coins are owned (has been bought)
             val lines = this[currency]!!.lines
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
+
             // For each line (that match the filter) compute short and long capital gain
             for (line in lines.filter { line -> line.currency2 == currency && line.type == Transaction.Type.BUY }) {
                 val priceUsdAtSellDate = line.metadata.currency2UsdValue * line.quantity * line.price
-                val originalPrice = getOriginalPrice(ownedCoins, line)
                 line.metadata.ignored = false
                 line.metadata.priceUsdAtSellDate = priceUsdAtSellDate
-                line.metadata.originalPrice = originalPrice
-                line.metadata.capitalGainShort = priceUsdAtSellDate - originalPrice
+                line.metadata.capitalGainShort = getCapitalGainShort(ownedCoins, line, priceUsdAtSellDate)
                 // FIXME: This need to compute long/short gains
                 line.metadata.capitalGainLong = 0.0
             }
@@ -61,23 +60,24 @@ class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Details>() {
             .map { line -> OwnedCoins(line.date, line.price, line.quantity) }
     }
 
-    private fun getOriginalPrice(ownedCoins: List<OwnedCoins>, line: Line): Double {
-        return getOriginalPrice(ownedCoins, 0, line.metadata.quantityCurrency2)
+    private fun getCapitalGainShort(ownedCoins: List<OwnedCoins>, line: Line, sellPrice: Double): Double {
+        return getCapitalGainShort(ownedCoins, 0, sellPrice, line.metadata.quantityCurrency2)
     }
 
-    private fun getOriginalPrice(ownedCoins: List<OwnedCoins>, index: Int, value: Double): Double {
+    private fun getCapitalGainShort(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double): Double {
         val coin = ownedCoins[index]
-        return if (coin.quantity >= value) {
-            coin.quantity = coin.quantity - value
-            coin.price * value
+        return if (coin.quantity >= quantity) {
+            coin.quantity = coin.quantity - quantity
+            // capital gain
+            sellPrice - (coin.price * quantity)
         } else {
-            if (index < ownedCoins.size) {
-                val currentValue = coin.price * coin.quantity
-                val rest = value - coin.quantity
+            if (index < ownedCoins.size - 1) {
+                val capitalGain = sellPrice - (coin.price * coin.quantity)
+                val rest = quantity - coin.quantity
                 coin.quantity = 0.0
-                currentValue + getOriginalPrice(ownedCoins, index + 1, rest)
+                capitalGain + getCapitalGainShort(ownedCoins, index + 1, sellPrice, rest)
             } else {
-                throw RuntimeException("Not enough coin")
+                throw RuntimeException("Not enough coins: $ownedCoins")
             }
         }
     }
@@ -128,10 +128,9 @@ data class Metadata(
     val currency1UsdValue: Double,
     val currency2UsdValue: Double,
     var priceUsdAtSellDate: Double? = null,
-    var originalPrice: Double? = null,
     var capitalGainShort: Double? = null,
     var capitalGainLong: Double? = null,
     val quantityCurrency2: Double
 )
 
-class OwnedCoins(val date: ZonedDateTime, val price: Double, var quantity: Double)
+data class OwnedCoins(val date: ZonedDateTime, val price: Double, var quantity: Double)
