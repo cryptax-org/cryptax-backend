@@ -67,7 +67,8 @@ class GenerateReportTest {
                 Arguments.of(transactions("/report/1-transactions.json"), expected("/report/1-result.json")),
                 Arguments.of(transactions("/report/2-transactions.json"), expected("/report/2-result.json")),
                 Arguments.of(transactions("/report/3-transactions.json"), expected("/report/3-result.json")),
-                Arguments.of(transactions("/report/4-transactions.json"), expected("/report/4-result.json"))
+                Arguments.of(transactions("/report/4-transactions.json"), expected("/report/4-result.json")),
+                Arguments.of(transactions("/report/5-transactions.json"), expected("/report/5-result.json"))
             )
         }
 
@@ -88,6 +89,9 @@ class GenerateReportTest {
                         ZonedDateTime.of(2017, 10, 1, 10, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 4403.09)
                         ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 13444.88)
                         ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 14754.13)
+                        ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 995.44)
+                        ZonedDateTime.of(2017, 7, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 2424.61)
+                        ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 13631.98)
                         else -> throw RuntimeException("Stubbing issue, date not handled")
                     }
                 }

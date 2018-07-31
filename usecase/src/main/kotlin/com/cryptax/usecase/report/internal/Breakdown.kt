@@ -6,6 +6,7 @@ import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Transaction
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Details>() {
     init {
@@ -33,8 +34,8 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
 
             // For each line (that match the filter) compute short and long capital gain
-            for (line in lines.filter { line -> line.currency2 == currency && line.type == Transaction.Type.BUY }) {
-                val priceUsdAtSellDate = line.metadata.currency2UsdValue * line.quantity * line.price
+            for (line in linesToCompute(currency, lines)) {
+                val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
                 val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
                 line.metadata.ignored = false
                 line.metadata.priceUsdAtSellDate = priceUsdAtSellDate
@@ -51,6 +52,21 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
         }
     }
 
+    private fun getPriceUsdAtSaleDate(line: Line): Double {
+        return if (line.type == Transaction.Type.BUY) {
+            line.metadata.currency2UsdValue
+        } else {
+            line.price
+        }
+    }
+
+    private fun linesToCompute(currency: Currency, lines: List<Line>): List<Line> {
+        return lines
+            .filter { line ->
+                (line.currency2 == currency && line.type == Transaction.Type.BUY) || (line.currency1 == currency && line.type == Transaction.Type.SELL)
+            }
+    }
+
     private fun extractCoinsOwned(currency: Currency, lines: List<Line>): List<OwnedCoins> {
         return lines
             .filter { line -> line.currency1 == currency && line.type == Transaction.Type.BUY }
@@ -61,19 +77,20 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
      * Pair<Short gain, Long gain>
      */
     private fun getCapitalGain(ownedCoins: List<OwnedCoins>, line: Line, sellPrice: Double): Pair<Double, Double> {
-        val mutablePair = getCapitalGain(ownedCoins, 0, sellPrice, line.metadata.quantityCurrency2, line.date, MutablePair(0.0, 0.0))
+        val quantity = if (line.type == Transaction.Type.BUY) line.metadata.quantityCurrency2 else line.quantity
+        val mutablePair = getCapitalGain(ownedCoins, 0, sellPrice, quantity, line.date, MutablePair(0.0, 0.0))
         return Pair(mutablePair.first, mutablePair.second)
     }
 
-    private fun getCapitalGain(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double, buyDate: ZonedDateTime, result: MutablePair<Double, Double>): MutablePair<Double, Double> {
+    private fun getCapitalGain(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double, date: ZonedDateTime, result: MutablePair<Double, Double>): MutablePair<Double, Double> {
         val coin = ownedCoins[index]
         return if (coin.quantity >= quantity) {
             coin.quantity = coin.quantity - quantity
             // capital gain
-            if (isShortCapitalGain(coin.date, buyDate)) {
-                result.first = result.first + (sellPrice - (coin.price * quantity))
+            if (isShortCapitalGain(coin.date, date)) {
+                result.first = (sellPrice * quantity) - (coin.price * quantity)
             } else {
-                result.second = result.second + (sellPrice - (coin.price * quantity))
+                result.second = (sellPrice * quantity) - (coin.price * quantity)
             }
             result
         } else {
@@ -81,10 +98,11 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
                 val capitalGain = sellPrice - (coin.price * coin.quantity)
                 val rest = quantity - coin.quantity
                 coin.quantity = 0.0
-                if (isShortCapitalGain(coin.date, buyDate)) {
-                    result.first = result.first + capitalGain + getCapitalGain(ownedCoins, index + 1, sellPrice, rest, buyDate, result).first
+                val child = getCapitalGain(ownedCoins, index + 1, sellPrice, rest, date, result)
+                if (isShortCapitalGain(coin.date, date)) {
+                    result.first += capitalGain + child.first
                 } else {
-                    result.second = result.second + capitalGain + getCapitalGain(ownedCoins, index + 1, sellPrice, rest, buyDate, result).second
+                    result.second += capitalGain + child.second
                 }
                 result
             } else {
@@ -93,8 +111,8 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
         }
     }
 
-    private fun isShortCapitalGain(sellDate: ZonedDateTime, buyDate: ZonedDateTime): Boolean {
-        return buyDate.plusYears(1).isAfter(sellDate)
+    private fun isShortCapitalGain(first: ZonedDateTime, second: ZonedDateTime): Boolean {
+        return ChronoUnit.YEARS.between(first, second) < 1L
     }
 
     companion object {
