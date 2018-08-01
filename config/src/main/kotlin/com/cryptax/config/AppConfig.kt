@@ -32,9 +32,11 @@ import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import io.vertx.ext.mail.StartTLSOptions
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
+import io.vertx.kotlin.ext.mail.MailConfig
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -75,10 +77,9 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
-        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(
-            client = instance(),
-            objectMapper = instance(),
-            cache = instance()) }
+        bind<com.cryptax.domain.port.PriceService>() with singleton {
+            PriceService(client = instance(), objectMapper = instance(), cache = instance())
+        }
         bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
         bind<OkHttpClient>() with singleton { OkHttpClient() } // TODO handle thread pool
     }
@@ -96,6 +97,15 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
         algorithm = properties.jwt.algorithm,
         issuer = properties.jwt.issuer,
         expiresInMinutes = properties.jwt.refreshExpiresInDays)
+
+    val mailConfig = MailConfig(
+        hostname = properties.email.host,
+        port = properties.email.port,
+        starttls = StartTLSOptions.REQUIRED,
+        username = properties.email.username,
+        password = properties.email.password(profile),
+        trustAll = true,
+        ssl = true)
 
     fun getProfile(): String {
         val profileEnv = System.getenv("PROFILE")

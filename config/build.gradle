@@ -14,6 +14,7 @@ dependencies {
         project(':price'),
         project(':cache'),
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
+        [group: 'io.vertx', name: 'vertx-mail-client', version: vertxVersion],
         [group: 'org.jasypt', name: 'jasypt', version: jasyptVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],

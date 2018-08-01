@@ -5,8 +5,6 @@ import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.Logger
 import io.vertx.core.logging.LoggerFactory
-import io.vertx.ext.mail.MailConfig
-import io.vertx.ext.mail.StartTLSOptions
 import io.vertx.kotlin.ext.mail.MailMessage
 import io.vertx.reactivex.core.AbstractVerticle
 import io.vertx.reactivex.core.eventbus.Message
@@ -14,23 +12,9 @@ import io.vertx.reactivex.ext.mail.MailClient
 
 private val log: Logger = LoggerFactory.getLogger(EmailVerticle::class.java)
 
-class EmailVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
-
-    private val config: MailConfig = MailConfig()
-
-    init {
-        config.hostname = appConfig.properties.email.host
-        config.port = appConfig.properties.email.port
-        config.starttls = StartTLSOptions.REQUIRED
-        config.username = appConfig.properties.email.username
-        config.password = appConfig.properties.email.password()
-        config.isTrustAll = true
-        config.isSsl = true
-    }
+class EmailVerticle(private val appConfig: AppConfig, private val mailClient: MailClient) : AbstractVerticle() {
 
     override fun start() {
-        val mailClient = MailClient.createShared(vertx, config, "CRYPTAX_POOL")
-
         val eb = vertx.eventBus()
         val emailConsumer = eb.consumer<JsonObject>("cryptax.email")
         emailConsumer

@@ -26,4 +26,5 @@ module cryptax.config {
     requires vertx.auth.jwt;
     requires vertx.auth.common;
     requires okhttp3;
+    requires vertx.mail.client;
 }
