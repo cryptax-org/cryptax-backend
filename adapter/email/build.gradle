@@ -7,4 +7,8 @@ dependencies {
         project(':domain'),
         [group: 'io.vertx', name: 'vertx-core', version: vertxVersion],
     )
+    testImplementation(
+        [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
+    )
 }
