@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Transaction
+import com.cryptax.domain.exception.ReportException
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
@@ -84,30 +85,30 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
 
     private fun getCapitalGain(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double, date: ZonedDateTime, result: MutablePair<Double, Double>): MutablePair<Double, Double> {
         val coin = ownedCoins[index]
-        return if (coin.quantity >= quantity) {
-            coin.quantity = coin.quantity - quantity
-            // capital gain
-            if (isShortCapitalGain(coin.date, date)) {
-                result.first = (sellPrice * quantity) - (coin.price * quantity)
-            } else {
-                result.second = (sellPrice * quantity) - (coin.price * quantity)
+        return when {
+            coin.quantity >= quantity -> {
+                coin.quantity = coin.quantity - quantity
+                // capital gain
+                if (isShortCapitalGain(coin.date, date)) {
+                    result.first = (sellPrice * quantity) - (coin.price * quantity)
+                } else {
+                    result.second = (sellPrice * quantity) - (coin.price * quantity)
+                }
+                result
             }
-            result
-        } else {
-            if (index < ownedCoins.size - 1) {
+            index < ownedCoins.size - 1 -> {
                 val capitalGain = sellPrice - (coin.price * coin.quantity)
                 val rest = quantity - coin.quantity
                 coin.quantity = 0.0
                 val child = getCapitalGain(ownedCoins, index + 1, sellPrice, rest, date, result)
                 if (isShortCapitalGain(coin.date, date)) {
-                    result.first += capitalGain + child.first
+                    result.first = capitalGain + child.first
                 } else {
-                    result.second += capitalGain + child.second
+                    result.second = capitalGain + child.second
                 }
                 result
-            } else {
-                throw RuntimeException("Not enough coins: $ownedCoins")
             }
+            else -> throw ReportException("Not enough coins: $ownedCoins")
         }
     }
 
@@ -116,7 +117,7 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(Breakdown::class.java.simpleName)
+        private val log = LoggerFactory.getLogger(Breakdown::class.java)
     }
 }
 

@@ -35,8 +35,8 @@ class GenerateReport(
             }
             .toFlowable()
             .flatMap { transactions -> Flowable.fromIterable(transactions) }
-            //.parallel(2)
-            //.runOn(Schedulers.io())
+            .parallel(2)
+            .runOn(Schedulers.io())
             .map { transaction ->
                 val currenciesUsd = usdValuesAt(transaction.date, transaction.currency1, transaction.currency2)
                 Line(
@@ -50,6 +50,7 @@ class GenerateReport(
                     currency1UsdValue = currenciesUsd.first,
                     currency2UsdValue = currenciesUsd.second)
             }
+            .sequential()
             .toList()
             .observeOn(Schedulers.computation())
             .flatMap { lines ->
@@ -72,7 +73,8 @@ class GenerateReport(
                         Report(totalCapitalGainShort = totalCapitalGainShort, totalCapitalGainLong = totalCapitalGainLong, breakdown = breakdown)
                     }
             }
-        //.sequential()
+            .onErrorResumeNext { throwable -> Single.error(throwable) }
+
     }
 
     private fun usdValuesAt(date: ZonedDateTime, currency1: Currency, currency2: Currency): Pair<Double, Double> {

@@ -1,0 +1,45 @@
+{
+    "totalCapitalGainShort": 7364.610000000001,
+    "totalCapitalGainLong": 0.0,
+    "breakdown": {
+        "BTC": {
+            "capitalGainShort": 7364.610000000001,
+            "capitalGainLong": 0.0,
+            "lines": [
+                {
+                    "transactionId": "transaction1",
+                    "date": "2017-01-01T00:00:00Z",
+                    "currency1": "BTC",
+                    "currency2": "USD",
+                    "type": "BUY",
+                    "price": 995.44,
+                    "quantity": 1,
+                    "currency1UsdValue": 995.44,
+                    "currency2UsdValue": 1
+                },
+                {
+                    "transactionId": "transaction2",
+                    "date": "2017-07-01T00:00:00Z",
+                    "currency1": "BTC",
+                    "currency2": "USD",
+                    "type": "BUY",
+                    "price": 2424.61,
+                    "quantity": 3,
+                    "currency1UsdValue": 2424.61,
+                    "currency2UsdValue": 1
+                },
+                {
+                    "transactionId": "transaction3",
+                    "date": "2017-10-01T10:00:00Z",
+                    "currency1": "BTC",
+                    "currency2": "USD",
+                    "type": "SELL",
+                    "price": 4403.09,
+                    "quantity": 3,
+                    "currency1UsdValue": 4403.09,
+                    "currency2UsdValue": 1
+                }
+            ]
+        }
+    }
+}

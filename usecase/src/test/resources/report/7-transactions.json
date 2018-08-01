@@ -1,0 +1,35 @@
+[
+    {
+        "id": "transaction1",
+        "source": "MANUAL",
+        "userId": "user1",
+        "date": "2017-01-01T00:00:00Z",
+        "type": "BUY",
+        "price": 995.44,
+        "quantity": 1,
+        "currency1": "BTC",
+        "currency2": "USD"
+    },
+    {
+        "id": "transaction2",
+        "source": "MANUAL",
+        "userId": "user1",
+        "date": "2017-07-01T00:00:00Z",
+        "type": "BUY",
+        "price": 2424.61,
+        "quantity": 3,
+        "currency1": "BTC",
+        "currency2": "USD"
+    },
+    {
+        "id": "transaction3",
+        "source": "MANUAL",
+        "userId": "user1",
+        "date": "2017-10-01T10:00:00Z",
+        "type": "SELL",
+        "price": 4403.09,
+        "quantity": 3,
+        "currency1": "BTC",
+        "currency2": "USD"
+    }
+]

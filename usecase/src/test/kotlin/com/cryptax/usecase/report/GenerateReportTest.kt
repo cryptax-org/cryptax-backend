@@ -68,7 +68,9 @@ class GenerateReportTest {
                 Arguments.of(transactions("/report/2-transactions.json"), expected("/report/2-result.json")),
                 Arguments.of(transactions("/report/3-transactions.json"), expected("/report/3-result.json")),
                 Arguments.of(transactions("/report/4-transactions.json"), expected("/report/4-result.json")),
-                Arguments.of(transactions("/report/5-transactions.json"), expected("/report/5-result.json"))
+                Arguments.of(transactions("/report/5-transactions.json"), expected("/report/5-result.json")),
+                Arguments.of(transactions("/report/6-transactions.json"), expected("/report/6-result.json")),
+                Arguments.of(transactions("/report/7-transactions.json"), expected("/report/7-result.json"))
             )
         }
 
