@@ -79,32 +79,30 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
      */
     private fun getCapitalGain(ownedCoins: List<OwnedCoins>, line: Line, sellPrice: Double): Pair<Double, Double> {
         val quantity = if (line.type == Transaction.Type.BUY) line.metadata.quantityCurrency2 else line.quantity
-        val mutablePair = getCapitalGain(ownedCoins, 0, sellPrice, quantity, line.date, MutablePair(0.0, 0.0))
+        val mutablePair = getCapitalGain(ownedCoins, 0, sellPrice, quantity, line.date)
         return Pair(mutablePair.first, mutablePair.second)
     }
 
-    private fun getCapitalGain(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double, date: ZonedDateTime, result: MutablePair<Double, Double>): MutablePair<Double, Double> {
+    private fun getCapitalGain(ownedCoins: List<OwnedCoins>, index: Int, sellPrice: Double, quantity: Double, date: ZonedDateTime): MutablePair<Double, Double> {
         val coin = ownedCoins[index]
         return when {
             coin.quantity >= quantity -> {
                 coin.quantity = coin.quantity - quantity
-                // capital gain
-                if (isShortCapitalGain(coin.date, date)) {
-                    result.first = (sellPrice * quantity) - (coin.price * quantity)
+                return if (isShortCapitalGain(coin.date, date)) {
+                    MutablePair((sellPrice * quantity) - (coin.price * quantity), 0.0)
                 } else {
-                    result.second = (sellPrice * quantity) - (coin.price * quantity)
+                    MutablePair(0.0, (sellPrice * quantity) - (coin.price * quantity))
                 }
-                result
             }
             index < ownedCoins.size - 1 -> {
                 val capitalGain = sellPrice - (coin.price * coin.quantity)
                 val rest = quantity - coin.quantity
                 coin.quantity = 0.0
-                val child = getCapitalGain(ownedCoins, index + 1, sellPrice, rest, date, result)
+                val result = getCapitalGain(ownedCoins, index + 1, sellPrice, rest, date)
                 if (isShortCapitalGain(coin.date, date)) {
-                    result.first = capitalGain + child.first
+                    result.first += capitalGain
                 } else {
-                    result.second = capitalGain + child.second
+                    result.second += capitalGain
                 }
                 result
             }
