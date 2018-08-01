@@ -164,7 +164,7 @@ task jacocoRootReport(type: JacocoReport) {
     }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/entity/**', '**/model/**'])
+            fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/entity/**', '**/model/**', '**/app/Main**'])
         })
     }
 }
