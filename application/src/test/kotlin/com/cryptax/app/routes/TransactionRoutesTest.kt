@@ -1,7 +1,11 @@
-package com.cryptax.app
+package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
+import com.cryptax.app.initTransaction
+import com.cryptax.app.transaction
+import com.cryptax.app.transactionsBinance
+import com.cryptax.app.transactionsCoinbase
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
@@ -91,7 +95,7 @@ class TransactionRoutesTest {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
-        val transactionId = addTransaction(userId, token).getString("id")
+        val transactionId = com.cryptax.app.addTransaction(userId, token).getString("id")
 
         // @formatter:off
         given().
@@ -122,7 +126,7 @@ class TransactionRoutesTest {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
-        val transactionId = addTransaction(userId, token).getString("id")
+        val transactionId = com.cryptax.app.addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
             source = Source.MANUAL,
             date = ZonedDateTime.now(),

@@ -1,6 +1,11 @@
-package com.cryptax.app
+package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.createUser
+import com.cryptax.app.credentials
+import com.cryptax.app.initUser
+import com.cryptax.app.initUserAndGetToken
+import com.cryptax.app.user
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given

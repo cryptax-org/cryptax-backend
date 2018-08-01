@@ -34,14 +34,16 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
             val lines = this[currency]!!.lines
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
 
-            // For each line (that match the filter) compute short and long capital gain
-            for (line in linesToCompute(currency, lines)) {
-                val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
-                val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
-                line.metadata.ignored = false
-                line.metadata.priceUsdAtSellDate = priceUsdAtSellDate
-                line.metadata.capitalGainShort = capitalGain.first
-                line.metadata.capitalGainLong = capitalGain.second
+            if (ownedCoins.isNotEmpty()) {
+                // For each line (that match the filter) compute short and long capital gain
+                for (line in linesToCompute(currency, lines)) {
+                    val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
+                    val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
+                    line.metadata.ignored = false
+                    line.metadata.priceUsdAtSellDate = priceUsdAtSellDate
+                    line.metadata.capitalGainShort = capitalGain.first
+                    line.metadata.capitalGainLong = capitalGain.second
+                }
             }
             // Compute capital gain for each currency
             this[currency]!!.capitalGainShort = lines

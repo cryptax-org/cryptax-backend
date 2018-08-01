@@ -32,9 +32,10 @@ private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
 
     private val kodein = Kodein {
-        import(appConfig.appConfigKodein, allowOverride = true)
+        import(appConfig.kodeinDefaultModule, allowOverride = true)
 
         if (appConfig.getProfile() != "it") {
+            // Adapters that need vertx to work
             bind<EmailService>(overrides = true) with singleton { VertxEmailService(vertx) }
             bind<CacheService>(overrides = true) with singleton { VertxCacheService(vertx) }
         }
@@ -75,7 +76,7 @@ class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
                 log.error("Failed to deploy ${this.javaClass.simpleName}", ar.cause())
                 startFuture.fail(ar.cause())
             } else {
-                log.info("Server starter with profile ${appConfig.getProfile()} and listening on port $port")
+                log.info("Server starter with profile [${appConfig.getProfile()}] and listening on port [$port]")
                 startFuture.complete()
             }
         }

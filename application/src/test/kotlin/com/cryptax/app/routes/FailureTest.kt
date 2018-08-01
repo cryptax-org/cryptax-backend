@@ -1,10 +1,12 @@
-package com.cryptax.app
+package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.domain.exception.LoginException
+import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
+import io.reactivex.exceptions.CompositeException
 import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
@@ -178,6 +180,71 @@ class FailureTest {
                 resp.bodyHandler {
                     val body = JsonObject(it)
                     assertThat(body.getString("error")).isEqualTo("id")
+                }
+                testContext.completeNow()
+            }
+        }
+    }
+
+    @DisplayName("Validation transaction exception test")
+    @Test
+    fun testNotHandledTransactionException(vertx: Vertx, testContext: VertxTestContext) {
+        router.route()
+            .handler {
+                (it as RoutingContextImpl).fail(TransactionValidationException("id"))
+            }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
+                }
+                testContext.completeNow()
+            }
+        }
+    }
+
+    @DisplayName("Validation composite exception test")
+    @Test
+    fun testNotHandledCompositeException(vertx: Vertx, testContext: VertxTestContext) {
+        val compositeException = CompositeException(RuntimeException())
+        router.route()
+            .handler {
+                (it as RoutingContextImpl).fail(compositeException)
+            }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(500)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
+                }
+                testContext.completeNow()
+            }
+        }
+    }
+
+    @DisplayName("Validation composite/cryptax exception test")
+    @Test
+    fun testNotHandledCompositeCryptaxException(vertx: Vertx, testContext: VertxTestContext) {
+        val compositeException = CompositeException(UserNotFoundException("id"))
+        router.route()
+            .handler {
+                (it as RoutingContextImpl).fail(compositeException)
+            }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isEqualTo("Bas request")
                 }
                 testContext.completeNow()
             }

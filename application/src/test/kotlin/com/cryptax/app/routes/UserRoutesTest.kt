@@ -1,6 +1,8 @@
-package com.cryptax.app
+package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.initUserAndGetToken
+import com.cryptax.app.user
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
@@ -9,6 +11,8 @@ import io.restassured.http.Header
 import io.vertx.core.Vertx
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import org.hamcrest.Matchers
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.BeforeAll
@@ -41,7 +45,7 @@ class UserRoutesTest {
     @Test
     @DisplayName("Create a user")
     fun createUser(testContext: VertxTestContext) {
-        createUser()
+        com.cryptax.app.createUser()
         testContext.completeNow()
     }
 
@@ -59,11 +63,11 @@ class UserRoutesTest {
         get("/users/${token.getString("id")}").
         then().
             log().all().
-            assertThat().body("id", IsEqual(token.getString("id"))).
-            assertThat().body("email", IsEqual(user.email)).
+            assertThat().body("id", equalTo(token.getString("id"))).
+            assertThat().body("email", equalTo(user.email)).
             assertThat().body("password", nullValue()).
-            assertThat().body("lastName", IsEqual(user.lastName)).
-            assertThat().body("firstName", IsEqual(user.firstName)).
+            assertThat().body("lastName", equalTo(user.lastName)).
+            assertThat().body("firstName", equalTo(user.firstName)).
             assertThat().statusCode(200)
         // @formatter:on
 
@@ -84,7 +88,7 @@ class UserRoutesTest {
         get("/users/${token.getString("id")}").
         then().
             log().all().
-            assertThat().body("error", IsEqual("Unauthorized")).
+            assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
         // @formatter:on
 

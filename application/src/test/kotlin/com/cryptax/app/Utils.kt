@@ -11,6 +11,7 @@ import io.restassured.http.Header
 import io.restassured.path.json.JsonPath
 import io.vertx.core.json.JsonObject
 import org.hamcrest.Matchers
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual
 import org.hamcrest.core.IsNull
@@ -93,11 +94,11 @@ fun addTransaction(id: String, token: JsonPath): JsonPath {
                 assertThat().body("userId", IsNull.nullValue()).
                 // FIXME check how to validate dates
                 //assertThat().body("date", IsEqual(transaction.date)).
-                assertThat().body("type", Matchers.equalTo(transaction.type.toString().toLowerCase())).
-                assertThat().body("price", Matchers.equalTo(10.0f)).
-                assertThat().body("quantity", Matchers.equalTo(2.0f)).
-                assertThat().body("currency1", Matchers.equalTo(transaction.currency1.toString())).
-                assertThat().body("currency2", Matchers.equalTo(transaction.currency2.toString())).
+                assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
+                assertThat().body("price", equalTo(10.0f)).
+                assertThat().body("quantity", equalTo(2.0f)).
+                assertThat().body("currency1", equalTo(transaction.currency1.toString())).
+                assertThat().body("currency2", equalTo(transaction.currency2.toString())).
             extract().
                 body().jsonPath()
     // @formatter:on

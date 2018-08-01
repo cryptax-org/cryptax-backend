@@ -46,7 +46,7 @@ import java.time.ZonedDateTime
 
 abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kodein.Module) {
 
-    val appConfigKodein = Kodein.Module(name = "defaultModule") {
+    val kodeinDefaultModule = Kodein.Module(name = "defaultModule") {
         // Import module binding
         import(kodeinModule)
 
@@ -77,8 +77,10 @@ abstract class AppConfig(private val profile: String = "dev", kodeinModule: Kode
 
         // Other
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
-        bind<com.cryptax.domain.port.PriceService>() with singleton {
-            PriceService(client = instance(), objectMapper = instance(), cache = instance())
+        if (profile != "it") {
+            bind<com.cryptax.domain.port.PriceService>(overrides = true) with singleton {
+                PriceService(client = instance(), objectMapper = instance(), cache = instance())
+            }
         }
         bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
         bind<OkHttpClient>() with singleton { OkHttpClient() } // TODO handle thread pool
@@ -127,6 +129,13 @@ private val defaultKodein = Kodein.Module(name = "defaultUserModule") {
             override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}
             override fun get(name: String, currency: Currency, date: ZonedDateTime): Pair<String, Double>? {
                 return null
+            }
+        }
+    }
+    bind<com.cryptax.domain.port.PriceService>() with singleton {
+        object : com.cryptax.domain.port.PriceService {
+            override fun currencyUsdValueAt(currency: Currency, date: ZonedDateTime): Pair<String, Double> {
+                return Pair("", 0.0)
             }
         }
     }
