@@ -12,257 +12,175 @@ import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.ext.web.impl.RoutingContextImpl
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.fail
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import java.util.concurrent.TimeUnit
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisplayName("Failure check")
 @ExtendWith(VertxExtension::class)
 class FailureTest {
 
-    // FIXME: to refactor
-
     private val host = "localhost"
     private val port = 8282
+    private lateinit var router: Router
+
+    @BeforeEach
+    fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
+        router = Router.router(vertx)
+        vertx.createHttpServer().requestHandler { router.accept(it) }.listen(port) { ar ->
+            if (ar.succeeded())
+                testContext.completeNow()
+            else
+                testContext.failNow(AssertionError("Something went wrong"))
+        }
+        testContext.awaitCompletion(5, TimeUnit.SECONDS)
+    }
 
     @DisplayName("401 test")
     @Test
     fun test401(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
-            .handler {
-                (it as RoutingContextImpl).fail(401)
-            }
+            .handler { context -> (context as RoutingContextImpl).fail(401) }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(401, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertEquals("Unauthorized", body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(401)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isEqualTo("Unauthorized")
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation exception test")
     @Test
     fun testValidationException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
-            .handler {
-                (it as RoutingContextImpl).fail(ValidationException(""))
-            }
+            .handler { context -> (context as RoutingContextImpl).fail(ValidationException("")) }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(400, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertNotNull(body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation login exception test")
     @Test
     fun testLoginException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
             .handler {
                 (it as RoutingContextImpl).fail(LoginException("email", "desc"))
             }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(401, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertNotNull(body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(401)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation user not found exception test")
     @Test
     fun testUserNotFoundException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
             .handler {
                 (it as RoutingContextImpl).fail(UserNotFoundException("id"))
             }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(400, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertNotNull(body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation user already exists exception test")
     @Test
     fun testUserAlreadyExistsException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
             .handler {
                 (it as RoutingContextImpl).fail(UserAlreadyExistsException("id"))
             }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(400, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertNotNull(body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isNotNull()
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation user validation exception test")
     @Test
     fun testUserValidationException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
             .handler {
                 (it as RoutingContextImpl).fail(UserValidationException("id"))
             }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(400, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertEquals("id", body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isEqualTo("id")
                 }
+                testContext.completeNow()
             }
+        }
     }
 
     @DisplayName("Validation not handled exception test")
     @Test
     fun testNotHandledException(vertx: Vertx, testContext: VertxTestContext) {
-        // given
-        val router = Router.router(vertx)
         router.route()
             .handler {
                 (it as RoutingContextImpl).fail(RuntimeException("id"))
             }
             .failureHandler(failureHandler)
 
-        vertx.createHttpServer()
-            .requestHandler { router.accept(it) }
-            .listen(port) { res ->
-                if (res.succeeded()) {
-                    // when
-                    val client = vertx.createHttpClient()
-                    client.getNow(port, host, "/") { resp ->
-                        // then
-                        testContext.verify {
-                            assertEquals(500, resp.statusCode())
-                            resp.bodyHandler {
-                                val body = JsonObject(it)
-                                assertEquals("id", body.getString("error"))
-                            }
-                            testContext.completeNow()
-                        }
-                    }
-                } else {
-                    fail("The server did not start")
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(500)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    assertThat(body.getString("error")).isEqualTo("id")
                 }
+                testContext.completeNow()
             }
+        }
     }
 }

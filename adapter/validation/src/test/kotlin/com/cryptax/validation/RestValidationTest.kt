@@ -21,8 +21,6 @@ import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -196,6 +194,31 @@ class RestValidationTest {
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
 
+    @DisplayName("😀 Check transaction body validation")
+    @Test
+    fun testTransactionBodyValidation2(vertx: Vertx, testContext: VertxTestContext) {
+        val userId = "randomId"
+        val transaction = JsonObject()
+            .put("source", "manual")
+            .put("date", "2011-12-03T10:15:30Z")
+            .put("type", "sell")
+            .put("price", 10.0)
+            .put("quantity", 5.0)
+            .put("currency1", "BTC")
+            .put("currency2", "ETH")
+
+        router.get("/users/:userId/transactions")
+            .handler {
+                it.body = transaction.toBuffer()
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+                it.next()
+            }
+            .handler(transactionBodyValidation)
+            .handler(verifySuccessHandler(testContext))
+
+        vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
+    }
+
     @DisplayName("☹ Check transaction body validation wrong source")
     @Test
     fun testTransactionBodyValidationWrongSource(vertx: Vertx, testContext: VertxTestContext) {
@@ -219,9 +242,55 @@ class RestValidationTest {
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
 
-    @DisplayName("☹ Check transaction body validation wrong date format")
+    @DisplayName("☹ Check transaction body validation wrong source")
+    @Test
+    fun testTransactionBodyValidationWrongSource2(vertx: Vertx, testContext: VertxTestContext) {
+        val userId = "randomId"
+        val transaction = JsonObject()
+            .put("source", 3.0)
+            .put("date", "2011-12-03T10:15:30Z")
+            .put("type", "BUY")
+            .put("price", 10.0)
+            .put("quantity", 5.0)
+            .put("currency1", "BTC")
+            .put("currency2", "ETH")
+        router.get("/users/:userId/transactions")
+            .handler {
+                it.body = transaction.toBuffer()
+                it.next()
+            }
+            .handler(transactionBodyValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Object field [source] should be a String"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
+    }
+
+    @DisplayName("☹ Check transaction body validation wrong date")
     @Test
     fun testTransactionBodyValidationWrongDateFormat(vertx: Vertx, testContext: VertxTestContext) {
+        val userId = "randomId"
+        val transaction = JsonObject()
+            .put("source", "manual")
+            .put("date", 0.5)
+            .put("type", "BUY")
+            .put("price", 10.0)
+            .put("quantity", 5.0)
+            .put("currency1", "BTC")
+            .put("currency2", "ETH")
+        router.get("/users/:userId/transactions")
+            .handler {
+                it.body = transaction.toBuffer()
+                it.next()
+            }
+            .handler(transactionBodyValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Object field [date] should be a String"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
+    }
+
+    @DisplayName("☹ Check transaction body validation wrong date format")
+    @Test
+    fun testTransactionBodyValidationWrongDateFormat2(vertx: Vertx, testContext: VertxTestContext) {
         val userId = "randomId"
         val transaction = JsonObject()
             .put("source", "manual")
@@ -484,6 +553,28 @@ class RestValidationTest {
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
+
+    /*@DisplayName("☹ Upload csv validation delimiter fail 2")
+    @Test
+    fun testTransactionBodyValidation(vertx: Vertx, testContext: VertxTestContext) {
+        val userId = "randomId"
+        val source = "BINANCE"
+        val delimiter = "&"
+        router.get("/users/:userId/transactions")
+            .handler {
+                // Not sure we need to add two times the same param
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
+                it.request().params().add("source", source)
+                it.queryParams().add("source", source)
+                it.request().params().add("delimiter", delimiter)
+                it.queryParams().add("delimiter", delimiter)
+                it.next()
+            }
+            .handler(uploadCsvValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Invalid delimiter [&]"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
+    }*/
 
     private fun verifySuccessHandler(testContext: VertxTestContext): Handler<RoutingContext> = Handler {
         testContext.verify {
