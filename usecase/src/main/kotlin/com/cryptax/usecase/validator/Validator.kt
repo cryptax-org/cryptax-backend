@@ -6,9 +6,6 @@ import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserValidationException
 import io.reactivex.Observable
 import io.reactivex.Single
-import org.slf4j.LoggerFactory
-
-private val log = LoggerFactory.getLogger("Validator")
 
 fun validateCreateUser(user: User): Single<User> {
     return Single.create { emitter ->

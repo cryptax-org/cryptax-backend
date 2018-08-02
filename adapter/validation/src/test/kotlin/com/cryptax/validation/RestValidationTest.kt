@@ -554,28 +554,6 @@ class RestValidationTest {
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
 
-    /*@DisplayName("☹ Upload csv validation delimiter fail 2")
-    @Test
-    fun testTransactionBodyValidation(vertx: Vertx, testContext: VertxTestContext) {
-        val userId = "randomId"
-        val source = "BINANCE"
-        val delimiter = "&"
-        router.get("/users/:userId/transactions")
-            .handler {
-                // Not sure we need to add two times the same param
-                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
-                it.request().params().add("source", source)
-                it.queryParams().add("source", source)
-                it.request().params().add("delimiter", delimiter)
-                it.queryParams().add("delimiter", delimiter)
-                it.next()
-            }
-            .handler(uploadCsvValidation)
-            .failureHandler(verifyFailureHandler(testContext, "Invalid delimiter [&]"))
-
-        vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
-    }*/
-
     private fun verifySuccessHandler(testContext: VertxTestContext): Handler<RoutingContext> = Handler {
         testContext.verify {
             assertThat(it.statusCode()).isEqualTo(-1)

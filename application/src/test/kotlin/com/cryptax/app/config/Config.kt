@@ -54,7 +54,7 @@ class CacheServiceStub : CacheService {
 
 class PriceServiceStub : PriceService {
     companion object {
-        private val serviceName = "Stub"
+        private const val serviceName = "Stub"
     }
 
     override fun currencyUsdValueAt(currency: Currency, date: ZonedDateTime): Pair<String, Double> {

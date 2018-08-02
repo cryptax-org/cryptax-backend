@@ -10,7 +10,6 @@ import io.restassured.http.ContentType
 import io.restassured.http.Header
 import io.restassured.path.json.JsonPath
 import io.vertx.core.json.JsonObject
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsEqual

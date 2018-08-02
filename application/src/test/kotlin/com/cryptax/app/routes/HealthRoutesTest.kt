@@ -8,10 +8,8 @@ import io.restassured.http.ContentType
 import io.vertx.core.Vertx
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasKey
-import org.hamcrest.core.IsEqual
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName

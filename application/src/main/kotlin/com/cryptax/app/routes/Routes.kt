@@ -60,13 +60,6 @@ object Routes {
             .end(body.encodePrettily())
     }
 
-    fun sendError(statusCode: Int, response: HttpServerResponse) {
-        response
-            .addContentTypeJson()
-            .setStatusCode(statusCode)
-            .end()
-    }
-
     fun HttpServerResponse.addContentTypeJson(): HttpServerResponse {
         this.putHeader("content-type", "application/json")
         return this

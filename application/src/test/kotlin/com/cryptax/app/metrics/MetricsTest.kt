@@ -13,7 +13,6 @@ import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -22,7 +21,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeUnit
-
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(VertxExtension::class)

@@ -6,8 +6,6 @@ import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
-import io.vertx.ext.mail.MailConfig
-import io.vertx.ext.mail.StartTLSOptions
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 import io.vertx.reactivex.ext.mail.MailClient
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager

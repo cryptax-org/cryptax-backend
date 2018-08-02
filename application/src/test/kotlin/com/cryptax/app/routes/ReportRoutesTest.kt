@@ -4,7 +4,6 @@ import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
 import com.cryptax.app.initTransaction
 import com.cryptax.app.verticle.RestVerticle
-import com.nhaarman.mockitokotlin2.isNull
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.config.ObjectMapperConfig
