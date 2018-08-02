@@ -41,7 +41,7 @@ class HealthRoutesTest {
 
     @Test
     @DisplayName("Get health")
-    fun getHealth(testContext: VertxTestContext) {
+    fun testHealth(testContext: VertxTestContext) {
         // @formatter:off
          given().
             log().all().
