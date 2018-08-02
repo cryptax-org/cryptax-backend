@@ -24,6 +24,7 @@ class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private v
             val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
             if (!jsonResponse.has(currency.code)) {
                 log.debug("Body received: $jsonResponse")
+                throw RuntimeException("The body received does not have the right format $jsonResponse")
             }
             return Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble())
         }
