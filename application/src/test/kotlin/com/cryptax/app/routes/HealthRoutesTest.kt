@@ -42,11 +42,11 @@ class HealthRoutesTest {
     fun testHealth(testContext: VertxTestContext) {
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
         get("/health").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("transactionRepository.healthy", equalTo(true)).
             assertThat().body("transactionRepository", hasKey("timestamp")).
             assertThat().body("userRepository.healthy", equalTo(true)).

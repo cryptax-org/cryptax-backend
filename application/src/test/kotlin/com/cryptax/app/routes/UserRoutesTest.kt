@@ -55,12 +55,12 @@ class UserRoutesTest {
 
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/users/${token.getString("id")}").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("id", equalTo(token.getString("id"))).
             assertThat().body("email", equalTo(user.email)).
             assertThat().body("password", nullValue()).
@@ -80,12 +80,12 @@ class UserRoutesTest {
 
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("refreshToken")}")).
         get("/users/${token.getString("id")}").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
         // @formatter:on

@@ -1,7 +1,9 @@
 package com.cryptax.app.routes
 
+import com.cryptax.app.addTransaction
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
+import com.cryptax.app.formatter
 import com.cryptax.app.initTransaction
 import com.cryptax.app.transaction
 import com.cryptax.app.transactionsBinance
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -73,11 +76,10 @@ class TransactionRoutesTest {
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/users/$userId/transactions").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].userId", nullValue()).
-            // FIXME check how to validate dates
-            //assertThat().body("[0].date", IsEqual(transaction.date)).
+            assertThat().body("[0].date", equalTo(transaction.date.format(formatter))).
             assertThat().body("[0].type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(10.0f)).
             assertThat().body("[0].quantity", equalTo(2.0f)).
@@ -104,11 +106,10 @@ class TransactionRoutesTest {
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/users/$userId/transactions/$transactionId").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("id", notNullValue()).
             assertThat().body("userId", nullValue()).
-            // FIXME check how to validate dates
-            //assertThat().body("[0].date", IsEqual(transaction.date)).
+            assertThat().body("date", equalTo(transaction.date.format(formatter))).
             assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(10.0f)).
             assertThat().body("quantity", equalTo(2.0f)).
@@ -126,7 +127,9 @@ class TransactionRoutesTest {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
-        val transactionId = com.cryptax.app.addTransaction(userId, token).getString("id")
+        val date = ZonedDateTime.now(ZoneId.of("UTC"))
+        println(date.toString())
+        val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
             source = Source.MANUAL,
             date = ZonedDateTime.now(),
@@ -143,11 +146,10 @@ class TransactionRoutesTest {
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         put("/users/$userId/transactions/$transactionId").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("id", equalTo(transactionId)).
             assertThat().body("userId", nullValue()).
-            // FIXME check how to validate dates
-            //assertThat().body("[0].date", IsEqual(transaction.date)).
+            assertThat().body("date", notNullValue()).
             assertThat().body("type", equalTo(transactionUpdated.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(20.0f)).
             assertThat().body("quantity", equalTo(5.0f)).
@@ -174,11 +176,10 @@ class TransactionRoutesTest {
             queryParam("source","binance").
         post("/users/$userId/transactions/upload").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.BINANCE.toString().toLowerCase())).
-            // FIXME check how to validate dates
-            assertThat().body("[0].date", notNullValue()).
+            assertThat().body("[0].date", equalTo("2018-01-09T18:04:24Z")).
             assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(0.009776f)).
             assertThat().body("[0].quantity", equalTo(150.13f)).
@@ -205,11 +206,10 @@ class TransactionRoutesTest {
             queryParam("source","coinbase").
         post("/users/$userId/transactions/upload").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
-            // FIXME check how to validate dates
-            assertThat().body("[0].date", notNullValue()).
+            assertThat().body("[0].date", equalTo("2017-10-31T00:00:00Z")).
             assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(6417.48f)).
             assertThat().body("[0].quantity", equalTo(0.18730723f)).

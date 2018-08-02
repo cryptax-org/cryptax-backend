@@ -59,11 +59,11 @@ class MetricsTest {
     fun testPing(testContext: VertxTestContext) {
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
         get("/ping").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("result", equalTo("pong")).
             assertThat().statusCode(200)
         // @formatter:on
@@ -76,12 +76,12 @@ class MetricsTest {
     fun testMetrics(testContext: VertxTestContext) {
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
             queryParam("key","cryptax.http.servers.0.0.0.0:8080.connections").
         get("/metrics").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("type", equalTo("timer")).
             assertThat().statusCode(200)
         // @formatter:on
@@ -94,11 +94,11 @@ class MetricsTest {
     fun testMetricsAvailable(testContext: VertxTestContext) {
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
         get("/metrics/available").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("[0]", equalTo("cryptax.http.servers.0.0.0.0:8080.connections")).
             assertThat().statusCode(200)
         // @formatter:on

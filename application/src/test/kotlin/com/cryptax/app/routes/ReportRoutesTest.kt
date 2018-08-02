@@ -54,13 +54,13 @@ class ReportRoutesTest {
 
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
             queryParam("debug", false).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/users/$userId/report").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("totalCapitalGainShort", equalTo(0.0f)).
             assertThat().body("totalCapitalGainLong", equalTo(0.0f)).
             assertThat().body("breakdown.BTC.capitalGainShort", equalTo(0.0f)).
@@ -99,13 +99,13 @@ class ReportRoutesTest {
 
         // @formatter:off
          given().
-            log().all().
+            log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("debug", true).
         get("/users/$userId/report").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("totalCapitalGainShort", equalTo(0.0f)).
             assertThat().body("totalCapitalGainLong", equalTo(0.0f)).
             assertThat().body("breakdown.BTC.capitalGainShort", equalTo(0.0f)).

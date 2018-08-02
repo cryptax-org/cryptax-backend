@@ -15,8 +15,8 @@ import io.vertx.core.Vertx
 import io.vertx.core.json.JsonObject
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.core.IsEqual
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -51,12 +51,12 @@ class TokenRoutesTest {
 
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             body(credentials).
             contentType(ContentType.JSON).
         post("/token").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("token", notNullValue()).
             assertThat().body("refreshToken", notNullValue()).
             assertThat().statusCode(200)
@@ -73,13 +73,13 @@ class TokenRoutesTest {
 
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             body(token).
             header(Header("Content-Type", "application/json")).
         post("/token").
         then().
-            log().all().
-            assertThat().body("error", IsEqual("Unauthorized")).
+            log().ifValidationFails().
+            assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
         // @formatter:on
 
@@ -93,13 +93,13 @@ class TokenRoutesTest {
 
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             body(credentials).
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("refreshToken")}")).
         get("/refresh").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().body("token", notNullValue()).
             assertThat().body("refreshToken", notNullValue()).
             assertThat().statusCode(200)
@@ -115,14 +115,14 @@ class TokenRoutesTest {
 
         // @formatter:off
         given().
-            log().all().
+            log().ifValidationFails().
             body(credentials).
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
         get("/refresh").
         then().
-            log().all().
-            assertThat().body("error", IsEqual("Unauthorized")).
+            log().ifValidationFails().
+            assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
         // @formatter:on
 

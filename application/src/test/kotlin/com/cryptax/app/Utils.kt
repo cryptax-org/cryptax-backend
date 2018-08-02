@@ -12,30 +12,31 @@ import io.restassured.path.json.JsonPath
 import io.vertx.core.json.JsonObject
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
-import org.hamcrest.core.IsEqual
-import org.hamcrest.core.IsNull
+import org.hamcrest.core.IsNull.nullValue
+import java.time.format.DateTimeFormatter
 
 val user: UserWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
 val transaction: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
 val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
+val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
 fun createUser(): Pair<User, String> {
     // @formatter:off
     val response =  given().
-                        log().all().
+                        log().ifValidationFails().
                         body(user).
                         contentType(ContentType.JSON).
                     post("/users").
                     then().
-                        log().all().
+                        log().ifValidationFails().
                         assertThat().statusCode(200).
                         assertThat().body("id", notNullValue()).
-                        assertThat().body("email", IsEqual(user.email)).
-                        assertThat().body("password", IsNull.nullValue()).
-                        assertThat().body("lastName", IsEqual(user.lastName)).
-                        assertThat().body("firstName", IsEqual(user.firstName)).
+                        assertThat().body("email", equalTo(user.email)).
+                        assertThat().body("password", nullValue()).
+                        assertThat().body("lastName", equalTo(user.lastName)).
+                        assertThat().body("firstName", equalTo(user.firstName)).
                     extract()
                         .response()
     // @formatter:on
@@ -52,11 +53,11 @@ fun createUser(): Pair<User, String> {
 fun validateUser(pair: Pair<User, String>) {
     // @formatter:off
     given().
-        log().all().
+        log().ifValidationFails().
         queryParam("token", pair.second).
     get("/users/${pair.first.id}/allow").
     then().
-        log().all().
+        log().ifValidationFails().
         assertThat().statusCode(200)
     // @formatter:on
 }
@@ -64,12 +65,12 @@ fun validateUser(pair: Pair<User, String>) {
 private fun getToken(): JsonPath {
     // @formatter:off
     return  given().
-                log().all().
+                log().ifValidationFails().
                 body(credentials).
                 contentType(ContentType.JSON).
             post("/token").
                 then().
-                log().all().
+                log().ifValidationFails().
                 assertThat().statusCode(200).
                 assertThat().body("token", notNullValue()).
                 assertThat().body("refreshToken", notNullValue()).
@@ -81,18 +82,17 @@ private fun getToken(): JsonPath {
 fun addTransaction(id: String, token: JsonPath): JsonPath {
     // @formatter:off
     return  given().
-                log().all().
+                log().ifValidationFails().
                 body(transaction).
                 contentType(ContentType.JSON).
                 header(Header("Authorization", "Bearer ${token.getString("token")}")).
             post("/users/$id/transactions").
             then().
-                log().all().
+                log().ifValidationFails().
                 assertThat().statusCode(200).
                 assertThat().body("id", notNullValue()).
-                assertThat().body("userId", IsNull.nullValue()).
-                // FIXME check how to validate dates
-                //assertThat().body("date", IsEqual(transaction.date)).
+                assertThat().body("userId", nullValue()).
+                assertThat().body("date", equalTo(transaction.date.format(formatter))).
                 assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
                 assertThat().body("price", equalTo(10.0f)).
                 assertThat().body("quantity", equalTo(2.0f)).
