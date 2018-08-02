@@ -4,6 +4,7 @@ import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured
+import io.restassured.RestAssured.given
 import io.restassured.config.ObjectMapperConfig
 import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
@@ -57,7 +58,7 @@ class MetricsTest {
     @DisplayName("Ping the server")
     fun testPing(testContext: VertxTestContext) {
         // @formatter:off
-         RestAssured.given().
+         given().
             log().all().
             contentType(ContentType.JSON).
         get("/ping").
@@ -74,7 +75,7 @@ class MetricsTest {
     @DisplayName("Get metrics from the server")
     fun testMetrics(testContext: VertxTestContext) {
         // @formatter:off
-        RestAssured.given().
+        given().
             log().all().
             contentType(ContentType.JSON).
             queryParam("key","cryptax.http.servers.0.0.0.0:8080.connections").
@@ -92,7 +93,7 @@ class MetricsTest {
     @DisplayName("Get metrics available from the server")
     fun testMetricsAvailable(testContext: VertxTestContext) {
         // @formatter:off
-        RestAssured.given().
+        given().
             log().all().
             contentType(ContentType.JSON).
         get("/metrics/available").

@@ -15,13 +15,13 @@ include ':health'
 include ':price'
 include ':cache'
 
-project(":security").projectDir = file("adapter/security")
-project(":id-generator").projectDir = file("adapter/id-generator")
-project(":in-memory-db-simple").projectDir = file("adapter/repository/in-memory-simple")
-project(":controller").projectDir = file("adapter/controller")
-project(":validation").projectDir = file("adapter/validation")
-project(":parser").projectDir = file("adapter/parser")
-project(":email").projectDir = file("adapter/email")
-project(":health").projectDir = file("adapter/health")
-project(":price").projectDir = file("adapter/price")
-project(":cache").projectDir = file("adapter/cache")
+project(":security").projectDir = file("adapter/primary/security")
+project(":id-generator").projectDir = file("adapter/primary/id-generator")
+project(":in-memory-db-simple").projectDir = file("adapter/primary/repository/in-memory-simple")
+project(":controller").projectDir = file("adapter/secondary/controller")
+project(":validation").projectDir = file("adapter/secondary/validation")
+project(":parser").projectDir = file("adapter/secondary/parser")
+project(":email").projectDir = file("adapter/primary/email")
+project(":health").projectDir = file("adapter/secondary/health")
+project(":price").projectDir = file("adapter/primary/price")
+project(":cache").projectDir = file("adapter/secondary/cache")
