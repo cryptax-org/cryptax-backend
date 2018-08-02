@@ -7,4 +7,10 @@ dependencies {
         project(':domain'),
         [group: 'io.vertx', name: 'vertx-hazelcast', version: vertxVersion],
     )
+    testImplementation(
+        [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+        [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
+        [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+    )
 }
