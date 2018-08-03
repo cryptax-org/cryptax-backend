@@ -2,9 +2,9 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.addTransaction
 import com.cryptax.app.config.TestAppConfig
-import com.cryptax.app.config.objectMapper
 import com.cryptax.app.formatter
 import com.cryptax.app.initTransaction
+import com.cryptax.app.setupRestAssured
 import com.cryptax.app.transaction
 import com.cryptax.app.transactionsBinance
 import com.cryptax.app.transactionsCoinbase
@@ -13,10 +13,7 @@ import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
-import io.restassured.RestAssured
 import io.restassured.RestAssured.given
-import io.restassured.config.ObjectMapperConfig
-import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import io.vertx.core.Vertx
@@ -42,11 +39,7 @@ class TransactionRoutesTest {
 
     @BeforeAll
     internal fun beforeAll() {
-        System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        val appConfig = TestAppConfig()
-        RestAssured.port = appConfig.properties.server.port
-        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
-        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> objectMapper })
+        setupRestAssured()
     }
 
     @BeforeEach

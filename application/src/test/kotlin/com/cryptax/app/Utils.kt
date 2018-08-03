@@ -1,11 +1,16 @@
 package com.cryptax.app
 
+import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.domain.entity.User
+import io.restassured.RestAssured
 import io.restassured.RestAssured.given
+import io.restassured.config.HttpClientConfig
+import io.restassured.config.ObjectMapperConfig
+import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import io.restassured.path.json.JsonPath
@@ -120,4 +125,17 @@ fun initTransaction(): Pair<String, JsonPath> {
     val token = getToken()
     addTransaction(pair.first.id!!, token)
     return Pair(pair.first.id!!, token)
+}
+
+fun setupRestAssured() {
+    System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
+    val appConfig = TestAppConfig()
+    RestAssured.port = appConfig.properties.server.port
+    RestAssured.baseURI = "http://" + appConfig.properties.server.domain
+    RestAssured.config = RestAssuredConfig
+        .config()
+        .objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> objectMapper })
+        .httpClient(HttpClientConfig.httpClientConfig()
+            .setParam("http.connection.timeout", 3000)
+            .setParam("http.socket.timeout", 3000))
 }

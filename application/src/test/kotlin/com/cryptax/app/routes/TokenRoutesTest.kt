@@ -5,9 +5,9 @@ import com.cryptax.app.createUser
 import com.cryptax.app.credentials
 import com.cryptax.app.initUser
 import com.cryptax.app.initUserAndGetToken
+import com.cryptax.app.setupRestAssured
 import com.cryptax.app.user
 import com.cryptax.app.verticle.RestVerticle
-import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -32,10 +32,7 @@ class TokenRoutesTest {
 
     @BeforeAll
     internal fun beforeAll() {
-        System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        val appConfig = TestAppConfig()
-        RestAssured.port = appConfig.properties.server.port
-        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
+        setupRestAssured()
     }
 
     @BeforeEach

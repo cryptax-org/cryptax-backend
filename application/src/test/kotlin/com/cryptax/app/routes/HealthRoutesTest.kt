@@ -1,8 +1,8 @@
 package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.setupRestAssured
 import com.cryptax.app.verticle.RestVerticle
-import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.vertx.core.Vertx
@@ -25,10 +25,7 @@ class HealthRoutesTest {
 
     @BeforeAll
     internal fun beforeAll() {
-        System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        val appConfig = TestAppConfig()
-        RestAssured.port = appConfig.properties.server.port
-        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
+        setupRestAssured()
     }
 
     @BeforeEach

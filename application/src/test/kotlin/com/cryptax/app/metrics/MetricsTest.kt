@@ -2,9 +2,11 @@ package com.cryptax.app.metrics
 
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.objectMapper
+import com.cryptax.app.setupRestAssured
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
+import io.restassured.config.HttpClientConfig
 import io.restassured.config.ObjectMapperConfig
 import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
@@ -13,6 +15,7 @@ import io.vertx.core.VertxOptions
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
+import org.apache.http.params.CoreConnectionPNames
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -32,11 +35,7 @@ class MetricsTest {
 
     @BeforeAll
     internal fun beforeAll() {
-        System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-        val appConfig = TestAppConfig()
-        RestAssured.port = appConfig.properties.server.port
-        RestAssured.baseURI = "http://" + appConfig.properties.server.domain
-        RestAssured.config = RestAssuredConfig.config().objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> objectMapper })
+        setupRestAssured()
     }
 
     @BeforeEach
@@ -58,10 +57,11 @@ class MetricsTest {
     @DisplayName("Ping the server")
     fun testPing(testContext: VertxTestContext) {
         // @formatter:off
-         given().
+        given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
-        get("/ping").
+        `when`().
+            get("/ping").
         then().
             log().ifValidationFails().
             assertThat().body("result", equalTo("pong")).
@@ -79,7 +79,8 @@ class MetricsTest {
             log().ifValidationFails().
             contentType(ContentType.JSON).
             queryParam("key","cryptax.http.servers.0.0.0.0:8080.connections").
-        get("/metrics").
+        `when`().
+            get("/metrics").
         then().
             log().ifValidationFails().
             assertThat().body("type", equalTo("timer")).
@@ -96,7 +97,8 @@ class MetricsTest {
         given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
-        get("/metrics/available").
+        `when`().
+            get("/metrics/available").
         then().
             log().ifValidationFails().
             assertThat().body("[0]", equalTo("cryptax.http.servers.0.0.0.0:8080.connections")).

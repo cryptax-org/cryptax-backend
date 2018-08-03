@@ -9,6 +9,9 @@
         <Logger name="io.netty" level="info">
             <AppenderRef ref="Console" />
         </Logger>
+        <AsyncLogger name="io.vertx.ext.jwt.JWT" level="warn">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
         <Root level="debug">
             <AppenderRef ref="Console" />
         </Root>
