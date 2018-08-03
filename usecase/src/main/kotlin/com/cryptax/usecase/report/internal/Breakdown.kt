@@ -15,9 +15,10 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
             line.currencies()
                 .filter { currency -> currency.type == Currency.Type.CRYPTO }
                 .forEach { currency ->
-                    val lineCopy = line.copy()
-                    if (this.containsKey(currency)) {
-                        this[currency]!!.add(lineCopy)
+                    val lineCopy = line.deepCopy()
+                    val details = this[currency]
+                    if (details != null) {
+                        details.add(lineCopy)
                     } else {
                         this[currency] = Details(lineCopy)
                     }
@@ -42,12 +43,13 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
                     .filter { currency -> currency.type == Currency.Type.CRYPTO }
                     .forEach { currency: Currency ->
                         val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
-                        val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, this[currency]!!.lines)
-                        val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
-                        line.metadata.ignored = false
-                        line.metadata.capitalGainShort = capitalGain.first
-                        line.metadata.capitalGainLong = capitalGain.second
-
+                        val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines(currency))
+                        if (ownedCoins.isNotEmpty()) {
+                            val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
+                            line.metadata.ignored = false
+                            line.metadata.capitalGainShort = capitalGain.first
+                            line.metadata.capitalGainLong = capitalGain.second
+                        }
                         computeCapitalGainForOneCurrency(currency)
                     }
             }
@@ -56,10 +58,10 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
 
     private fun computeCapitalGainForOneCurrency(currency: Currency) {
         // Compute capital gain for one currency
-        this[currency]!!.capitalGainShort = this[currency]!!.lines
+        details(currency).capitalGainShort = lines(currency)
             .map { line -> line.metadata.capitalGainShort }
             .sum()
-        this[currency]!!.capitalGainLong = this[currency]!!.lines
+        details(currency).capitalGainLong = lines(currency)
             .map { line -> line.metadata.capitalGainLong }
             .sum()
     }
@@ -67,20 +69,18 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
     private fun computerTotalCapitalGain() {
         totalCapitalGainShort = keys
             .filter { currency -> currency.type == Currency.Type.CRYPTO }
-            .map { currency -> this[currency]!! }
-            .map { details -> details.capitalGainShort }
+            .map { currency -> details(currency).capitalGainShort }
             .sum()
         totalCapitalGainLong = keys
             .filter { currency -> currency.type == Currency.Type.CRYPTO }
-            .map { currency -> this[currency]!! }
-            .map { details -> details.capitalGainLong }
+            .map { currency -> details(currency).capitalGainLong }
             .sum()
     }
 
     private fun linesToComputeLazy(): List<Line> {
         val result = ArrayList<Line>()
         for (currency in this.keys.filter { currency -> currency.type == Currency.Type.CRYPTO }) {
-            val lines = this[currency]!!.lines
+            val lines = lines(currency)
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
             if (ownedCoins.isNotEmpty()) {
                 result.addAll(
@@ -146,6 +146,19 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
 
     private fun isShortCapitalGain(first: ZonedDateTime, second: ZonedDateTime): Boolean {
         return ChronoUnit.YEARS.between(first, second) < 1L
+    }
+
+    internal fun details(currency: Currency): Details {
+        val details = this[currency]
+        if (details != null) {
+            return details
+        } else {
+            throw ReportException("Could not find [${currency.code}]")
+        }
+    }
+
+    internal fun lines(currency: Currency): List<Line> {
+        return details(currency).lines
     }
 
     companion object {

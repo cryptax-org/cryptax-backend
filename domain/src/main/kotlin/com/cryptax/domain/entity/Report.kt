@@ -35,15 +35,21 @@ data class Line(
     val price: Double,
     val quantity: Double) {
 
-    val metadata: Metadata = Metadata()
+    var metadata: Metadata = Metadata()
 
     fun currencies(): List<Currency> {
         return listOf(currency1, currency2)
     }
+
+    fun deepCopy(): Line {
+        val metadataCopy = metadata.copy()
+        val lineCopy = this.copy()
+        lineCopy.metadata = metadataCopy
+        return lineCopy
+    }
 }
 
-class Metadata {
-    var ignored: Boolean = true
+data class Metadata(var ignored: Boolean = true) {
     var currency1UsdValue: Double = 0.0
     var currency2UsdValue: Double = 0.0
     var quantityCurrency2: Double = 0.0 // quantity * price

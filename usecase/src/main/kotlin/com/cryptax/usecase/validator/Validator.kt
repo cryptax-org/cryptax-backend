@@ -45,7 +45,7 @@ fun validateAddTransactions(transactions: List<Transaction>): Single<List<Transa
 fun validateUpdateTransaction(transaction: Transaction): Single<Transaction> {
     return Single.create { emitter ->
         if (transaction.id == null) {
-            emitter.onError(TransactionValidationException("Id can't be null"))
+            emitter.onError(TransactionValidationException("Id can not be null"))
         } else {
             emitter.onSuccess(transaction)
         }

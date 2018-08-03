@@ -1,0 +1,65 @@
+package com.cryptax.usecase.report.internal
+
+import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.Line
+import com.cryptax.domain.entity.Transaction
+import com.cryptax.domain.exception.ReportException
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import java.time.ZonedDateTime
+
+class BreakdownTest {
+
+    @Test
+    fun testDetails() {
+        // given
+        val lines = listOf(Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0))
+        val breakdown = Breakdown(lines)
+
+        // when
+        val actual = breakdown.details(Currency.ETH)
+
+        // then
+        assertThat(actual).isNotNull
+        assertThat(actual.lines).hasSize(1)
+    }
+
+    @Test
+    fun testDetailsFail() {
+        // given
+        val lines = listOf(Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0))
+        val breakdown = Breakdown(lines)
+
+        // when
+        val actual = assertThrows<ReportException> {
+            breakdown.details(Currency.BTC)
+        }
+
+        // then
+        assertThat(actual.message).isEqualTo("Could not find [BTC]")
+    }
+
+    @Test
+    fun testComputeFail() {
+        // given
+        val line1 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0)
+        line1.metadata.ignored = false
+        line1.metadata.currency1UsdValue = 1.0
+        line1.metadata.currency2UsdValue = 2.0
+        val line2 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.BUY, 15.0, 1.0)
+        line2.metadata.ignored = false
+        line2.metadata.currency1UsdValue = 1.0
+        line2.metadata.currency2UsdValue = 2.0
+        val lines = listOf(line1, line2)
+        val breakdown = Breakdown(lines)
+
+        // when
+        val actual = assertThrows<ReportException> {
+            breakdown.compute()
+        }
+
+        // then
+        assertThat(actual.message).startsWith("Not enough coins:")
+    }
+}

@@ -4,8 +4,10 @@ import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.exception.TransactionValidationException
+import com.cryptax.usecase.Utils.oneTransaction
 import com.cryptax.usecase.Utils.twoTransactions
 import com.cryptax.usecase.objectMapper
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
@@ -71,6 +73,20 @@ class TransactionValidatorTest {
 
         //then
         assertEquals(errorMessage, exception.message)
+    }
+
+    @Test
+    fun testValidateUpdateTransaction() {
+        // given
+        val transaction = oneTransaction
+
+        // when
+        val exception = assertThrows(TransactionValidationException::class.java) {
+            validateUpdateTransaction(transaction).blockingGet()
+        }
+
+        // then
+        assertThat(exception.message).isEqualTo("Id can not be null")
     }
 
     companion object {
