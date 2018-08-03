@@ -12,16 +12,17 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.given
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.BDDMockito.then
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import java.io.InputStream
 import java.time.ZonedDateTime
 
 @DisplayName("Transaction controller")
@@ -51,6 +52,8 @@ class TransactionControllerTest {
         currency2 = Currency.ETH)
 
     @Mock
+    lateinit var inputStream: InputStream
+    @Mock
     lateinit var addTransaction: AddTransaction
     @Mock
     lateinit var updateTransaction: UpdateTransaction
@@ -68,17 +71,17 @@ class TransactionControllerTest {
         val actual = transactionController.addTransaction(userId, transactionWeb).blockingGet()
 
         // then
-        assertEquals(transactionId, actual.id)
-        assertEquals(transactionReturn.source, actual.source)
-        assertEquals(transactionReturn.date, actual.date)
-        assertEquals(transactionReturn.type, actual.type)
-        assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.quantity, actual.quantity)
-        assertEquals(transactionReturn.currency1, actual.currency1)
-        assertEquals(transactionReturn.currency2, actual.currency2)
+        assertThat(transactionId).isEqualTo(actual.id)
+        assertThat(transactionReturn.source).isEqualTo(actual.source)
+        assertThat(transactionReturn.date).isEqualTo(actual.date)
+        assertThat(transactionReturn.type).isEqualTo(actual.type)
+        assertThat(transactionReturn.price).isEqualTo(actual.price)
+        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
+        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
+        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
         argumentCaptor<Transaction>().apply {
             then(addTransaction).should().add(capture())
-            assertEquals(userId, firstValue.userId)
+            assertThat(userId).isEqualTo(firstValue.userId)
         }
     }
 
@@ -93,18 +96,18 @@ class TransactionControllerTest {
         val actual = transactionController.updateTransaction(transactionId, userId, transactionWeb).blockingGet()
 
         // then
-        assertEquals(transactionId, actual.id)
-        assertEquals(transactionReturn.source, actual.source)
-        assertEquals(transactionReturn.date, actual.date)
-        assertEquals(transactionReturn.type, actual.type)
-        assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.quantity, actual.quantity)
-        assertEquals(transactionReturn.currency1, actual.currency1)
-        assertEquals(transactionReturn.currency2, actual.currency2)
+        assertThat(transactionId).isEqualTo(actual.id)
+        assertThat(transactionReturn.source).isEqualTo(actual.source)
+        assertThat(transactionReturn.date).isEqualTo(actual.date)
+        assertThat(transactionReturn.type).isEqualTo(actual.type)
+        assertThat(transactionReturn.price).isEqualTo(actual.price)
+        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
+        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
+        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
         argumentCaptor<Transaction>().apply {
             then(updateTransaction).should().update(capture())
-            assertEquals(userId, firstValue.userId)
-            assertEquals(transactionId, firstValue.id)
+            assertThat(userId).isEqualTo(firstValue.userId)
+            assertThat(transactionId).isEqualTo(firstValue.id)
         }
     }
 
@@ -119,15 +122,15 @@ class TransactionControllerTest {
         val actual = transactionController.getTransaction(transactionId, userId).blockingGet()
 
         // then
-        assertNotNull(actual)
-        assertEquals(transactionId, actual!!.id)
-        assertEquals(transactionReturn.source, actual.source)
-        assertEquals(transactionReturn.date, actual.date)
-        assertEquals(transactionReturn.type, actual.type)
-        assertEquals(transactionReturn.price, actual.price)
-        assertEquals(transactionReturn.quantity, actual.quantity)
-        assertEquals(transactionReturn.currency1, actual.currency1)
-        assertEquals(transactionReturn.currency2, actual.currency2)
+        assertThat(actual).isNotNull
+        assertThat(transactionId).isEqualTo(actual!!.id)
+        assertThat(transactionReturn.source).isEqualTo(actual.source)
+        assertThat(transactionReturn.date).isEqualTo(actual.date)
+        assertThat(transactionReturn.type).isEqualTo(actual.type)
+        assertThat(transactionReturn.price).isEqualTo(actual.price)
+        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
+        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
+        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
         then(findTransaction).should().find(transactionId, userId)
     }
 
@@ -142,7 +145,7 @@ class TransactionControllerTest {
         val actual = transactionController.getTransaction(transactionId, userId).blockingGet()
 
         // then
-        assertNull(actual)
+        assertThat(actual).isNull()
         then(findTransaction).should().find(transactionId, userId)
     }
 
@@ -156,15 +159,27 @@ class TransactionControllerTest {
         val actual = transactionController.getAllTransactions(userId).blockingGet()
 
         // then
-        assert(actual.size == 1)
-        assertEquals(transactionId, actual[0].id)
-        assertEquals(transactionReturn.source, actual[0].source)
-        assertEquals(transactionReturn.date, actual[0].date)
-        assertEquals(transactionReturn.type, actual[0].type)
-        assertEquals(transactionReturn.price, actual[0].price)
-        assertEquals(transactionReturn.quantity, actual[0].quantity)
-        assertEquals(transactionReturn.currency1, actual[0].currency1)
-        assertEquals(transactionReturn.currency2, actual[0].currency2)
+        assertThat(actual).hasSize(1)
+        assertThat(transactionId).isEqualTo(actual[0].id)
+        assertThat(transactionReturn.source).isEqualTo(actual[0].source)
+        assertThat(transactionReturn.date).isEqualTo(actual[0].date)
+        assertThat(transactionReturn.type).isEqualTo(actual[0].type)
+        assertThat(transactionReturn.price).isEqualTo(actual[0].price)
+        assertThat(transactionReturn.quantity).isEqualTo(actual[0].quantity)
+        assertThat(transactionReturn.currency1).isEqualTo(actual[0].currency1)
+        assertThat(transactionReturn.currency2).isEqualTo(actual[0].currency2)
         then(findTransaction).should().findAllForUser(userId)
+    }
+
+    @Test
+    fun testUploadCSVTransactions() {
+        // when
+        val actual = assertThrows<RuntimeException> {
+            transactionController.uploadCSVTransactions(inputStream, "", Source.MANUAL)
+        }
+
+        // then
+        assertThat(actual.message).isEqualTo("Source [MANUAL] not handled")
+        then(addTransaction).shouldHaveZeroInteractions()
     }
 }
