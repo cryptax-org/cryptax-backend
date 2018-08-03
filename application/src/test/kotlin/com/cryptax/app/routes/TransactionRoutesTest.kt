@@ -8,6 +8,7 @@ import com.cryptax.app.setupRestAssured
 import com.cryptax.app.transaction
 import com.cryptax.app.transactionsBinance
 import com.cryptax.app.transactionsCoinbase
+import com.cryptax.app.transactionsCoinbase2
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
@@ -121,7 +122,7 @@ class TransactionRoutesTest {
         val userId = result.first
         val token = result.second
         val date = ZonedDateTime.now(ZoneId.of("UTC"))
-        println(date.toString())
+
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
             source = Source.MANUAL,
@@ -204,6 +205,36 @@ class TransactionRoutesTest {
             assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
             assertThat().body("[0].date", equalTo("2017-10-31T00:00:00Z")).
             assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
+            assertThat().body("[0].price", equalTo(6417.48f)).
+            assertThat().body("[0].quantity", equalTo(0.18730723f)).
+            assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
+            assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Upload a Coinbase CSV 2")
+    fun uploadCoinbaseCsv2(testContext: VertxTestContext) {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+
+        // @formatter:off
+        given().
+            body(transactionsCoinbase2).
+            contentType("text/csv").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+            queryParam("source","coinbase").
+        post("/users/$userId/transactions/upload").
+        then().
+            log().ifValidationFails().
+            assertThat().body("[0].id", notNullValue()).
+            assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
+            assertThat().body("[0].date", equalTo("2017-10-31T00:00:00Z")).
+            assertThat().body("[0].type", equalTo(Transaction.Type.SELL.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(6417.48f)).
             assertThat().body("[0].quantity", equalTo(0.18730723f)).
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).

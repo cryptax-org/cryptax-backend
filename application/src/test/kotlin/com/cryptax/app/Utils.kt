@@ -25,6 +25,7 @@ val transaction: TransactionWeb = objectMapper.readValue(AppConfig::class.java.g
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
 val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
+val transactionsCoinbase2 = AppConfig::class.java.getResource("/Coinbase-Trade-History2.csv").readText()
 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
 fun createUser(): Pair<User, String> {
