@@ -68,18 +68,16 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
 
     private fun computerTotalCapitalGain() {
         totalCapitalGainShort = keys
-            .filter { currency -> currency.type == Currency.Type.CRYPTO }
             .map { currency -> details(currency).capitalGainShort }
             .sum()
         totalCapitalGainLong = keys
-            .filter { currency -> currency.type == Currency.Type.CRYPTO }
             .map { currency -> details(currency).capitalGainLong }
             .sum()
     }
 
     private fun linesToComputeLazy(): List<Line> {
         val result = ArrayList<Line>()
-        for (currency in this.keys.filter { currency -> currency.type == Currency.Type.CRYPTO }) {
+        for (currency in this.keys) {
             val lines = lines(currency)
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
             if (ownedCoins.isNotEmpty()) {
