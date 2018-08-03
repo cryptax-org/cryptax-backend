@@ -112,8 +112,10 @@ class ReportRoutesTest {
             assertThat().body("breakdown.BTC.lines[0].quantity", equalTo(2.0f)).
             assertThat().body("breakdown.BTC.lines[0].metadata.ignored", equalTo(true)).
             assertThat().body("breakdown.BTC.lines[0].metadata.currency1UsdValue", equalTo(0.0f)).
-            assertThat().body("breakdown.BTC.lines[0].metadata.currency2UsdValue", equalTo(100.0f)).
-            assertThat().body("breakdown.BTC.lines[0].metadata.quantityCurrency2", equalTo(20.0f)).
+            assertThat().body("breakdown.BTC.lines[0].metadata.currency2UsdValue", equalTo(0.0f)).
+            assertThat().body("breakdown.BTC.lines[0].metadata.quantityCurrency2", equalTo(00.0f)).
+            assertThat().body("breakdown.BTC.lines[0].metadata.capitalGainShort", equalTo(00.0f)).
+            assertThat().body("breakdown.BTC.lines[0].metadata.capitalGainLong", equalTo(00.0f)).
             assertThat().body("breakdown.ETH.capitalGainShort", equalTo(0.0f)).
             assertThat().body("breakdown.ETH.capitalGainLong", equalTo(0.0f)).
             assertThat().body("breakdown.ETH.lines[0].transactionId", notNullValue()).
@@ -125,8 +127,10 @@ class ReportRoutesTest {
             assertThat().body("breakdown.ETH.lines[0].quantity", equalTo(2.0f)).
             assertThat().body("breakdown.ETH.lines[0].metadata.ignored", equalTo(true)).
             assertThat().body("breakdown.ETH.lines[0].metadata.currency1UsdValue", equalTo(0.0f)).
-            assertThat().body("breakdown.ETH.lines[0].metadata.currency2UsdValue", equalTo(100.0f)).
-            assertThat().body("breakdown.ETH.lines[0].metadata.quantityCurrency2", equalTo(20.0f)).
+            assertThat().body("breakdown.ETH.lines[0].metadata.currency2UsdValue", equalTo(0.0f)).
+            assertThat().body("breakdown.ETH.lines[0].metadata.quantityCurrency2", equalTo(0.0f)).
+            assertThat().body("breakdown.ETH.lines[0].metadata.capitalGainShort", equalTo(0.0f)).
+            assertThat().body("breakdown.ETH.lines[0].metadata.capitalGainLong", equalTo(0.0f)).
             assertThat().statusCode(200)
         // @formatter:on
 

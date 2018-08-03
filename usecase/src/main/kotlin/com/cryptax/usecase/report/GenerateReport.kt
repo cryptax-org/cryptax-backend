@@ -8,12 +8,12 @@ import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.report.internal.Breakdown
-import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.time.ZonedDateTime
 
 private val log: Logger = LoggerFactory.getLogger(GenerateReport::class.java)
 
@@ -33,59 +33,46 @@ class GenerateReport(
                     else -> transactionRepository.getAllForUser(userId)
                 }
             }
-            .toFlowable()
-            .flatMap { transactions -> Flowable.fromIterable(transactions) }
-            .parallel(2)
-            .runOn(Schedulers.io())
-            .map { transaction ->
-                val currenciesUsd = usdValuesAt(transaction.date, transaction.currency1, transaction.currency2)
-                Line(
-                    transactionId = transaction.id!!,
-                    date = transaction.date,
-                    currency1 = transaction.currency1,
-                    currency2 = transaction.currency2,
-                    type = transaction.type,
-                    price = transaction.price,
-                    quantity = transaction.quantity,
-                    currency1UsdValue = currenciesUsd.first,
-                    currency2UsdValue = currenciesUsd.second)
+            .map { transactions ->
+                transactions.map { transaction ->
+                    Line(
+                        transactionId = transaction.id!!,
+                        date = transaction.date,
+                        currency1 = transaction.currency1,
+                        currency2 = transaction.currency2,
+                        type = transaction.type,
+                        price = transaction.price,
+                        quantity = transaction.quantity)
+                }
             }
-            .sequential()
-            .toList()
-            .observeOn(Schedulers.computation())
-            .flatMap { lines ->
-                Single.just(lines)
-                    .map { Breakdown(it) }
-                    .map { breakdown ->
-                        breakdown.compute()
-                        val totalCapitalGainShort = breakdown.keys
-                            .filter { currency -> currency.type == Currency.Type.CRYPTO }
-                            .map { currency -> breakdown[currency]!! }
-                            .map { details -> details.capitalGainShort }
-                            .sum()
-
-                        val totalCapitalGainLong = breakdown.keys
-                            .filter { currency -> currency.type == Currency.Type.CRYPTO }
-                            .map { currency -> breakdown[currency]!! }
-                            .map { details -> details.capitalGainLong }
-                            .sum()
-
-                        Report(totalCapitalGainShort = totalCapitalGainShort, totalCapitalGainLong = totalCapitalGainLong, breakdown = breakdown)
+            .map { lines -> Breakdown(lines) }
+            .map { breakdown ->
+                val observables: Observable<Line> = Observable.fromIterable(breakdown.linesToCompute)
+                    .flatMap { line ->
+                        val obs1 = Observable.just(line).map(usdPrice(line.currency1))
+                        val obs2 = Observable.just(line).map(usdPrice(line.currency2))
+                        val zipped = Observable.zip(obs1, obs2, BiFunction<Double, Double, Line> { price1: Double, price2: Double ->
+                            line.metadata.ignored = false
+                            line.metadata.currency1UsdValue = price1
+                            line.metadata.currency2UsdValue = price2
+                            line.metadata.quantityCurrency2 = line.quantity * line.price
+                            line
+                        })
+                        zipped
                     }
+                observables.blockingSubscribe()
+                breakdown.compute()
+                Report(breakdown.totalCapitalGainShort, breakdown.totalCapitalGainLong, breakdown)
             }
             .onErrorResumeNext { throwable -> Single.error(throwable) }
-
     }
 
-    private fun usdValuesAt(date: ZonedDateTime, currency1: Currency, currency2: Currency): Pair<Double, Double> {
-        val c1 = if (currency1.type == Currency.Type.CRYPTO)
-            priceService.currencyUsdValueAt(currency1, date).second
-        else
-            1.0
-        val c2 = if (currency2.type == Currency.Type.CRYPTO)
-            priceService.currencyUsdValueAt(currency2, date).second
-        else
-            1.0
-        return Pair(c1, c2)
+    private fun usdPrice(currency: Currency): io.reactivex.functions.Function<Line, Double> {
+        return io.reactivex.functions.Function { line ->
+            if (currency.type == Currency.Type.CRYPTO)
+                priceService.currencyUsdValueAt(currency, line.date).second
+            else
+                1.0
+        }
     }
 }

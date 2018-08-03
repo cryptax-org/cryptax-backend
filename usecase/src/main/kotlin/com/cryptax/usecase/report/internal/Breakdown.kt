@@ -26,33 +26,72 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
         this.values.forEach { list -> list.sortByDate() }
     }
 
+    val linesToCompute: List<Line> by lazy { linesToComputeLazy() }
+    var totalCapitalGainShort = 0.0
+        private set
+    var totalCapitalGainLong = 0.0
+        private set
+
     fun compute() {
         log.info("Compute report...")
-        // Loop over all Crypto Currencies
+        this.values
+            .flatMap { detail -> detail.lines }
+            .filter { line -> !line.metadata.ignored }
+            .forEach { line ->
+                line.currencies()
+                    .filter { currency -> currency.type == Currency.Type.CRYPTO }
+                    .forEach { currency: Currency ->
+                        val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
+                        val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, this[currency]!!.lines)
+                        val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
+                        line.metadata.ignored = false
+                        line.metadata.capitalGainShort = capitalGain.first
+                        line.metadata.capitalGainLong = capitalGain.second
+
+                        computeCapitalGainForOneCurrency(currency)
+                    }
+            }
+        computerTotalCapitalGain()
+    }
+
+    private fun computeCapitalGainForOneCurrency(currency: Currency) {
+        // Compute capital gain for one currency
+        this[currency]!!.capitalGainShort = this[currency]!!.lines
+            .map { line -> line.metadata.capitalGainShort }
+            .sum()
+        this[currency]!!.capitalGainLong = this[currency]!!.lines
+            .map { line -> line.metadata.capitalGainLong }
+            .sum()
+    }
+
+    private fun computerTotalCapitalGain() {
+        totalCapitalGainShort = keys
+            .filter { currency -> currency.type == Currency.Type.CRYPTO }
+            .map { currency -> this[currency]!! }
+            .map { details -> details.capitalGainShort }
+            .sum()
+        totalCapitalGainLong = keys
+            .filter { currency -> currency.type == Currency.Type.CRYPTO }
+            .map { currency -> this[currency]!! }
+            .map { details -> details.capitalGainLong }
+            .sum()
+    }
+
+    private fun linesToComputeLazy(): List<Line> {
+        val result = ArrayList<Line>()
         for (currency in this.keys.filter { currency -> currency.type == Currency.Type.CRYPTO }) {
-            // For each Crypto Currency extract how many coins are owned (has been bought)
             val lines = this[currency]!!.lines
             val ownedCoins: List<OwnedCoins> = extractCoinsOwned(currency, lines)
-
             if (ownedCoins.isNotEmpty()) {
-                // For each line (that match the filter) compute short and long capital gain
-                for (line in linesToCompute(currency, lines)) {
-                    val priceUsdAtSellDate = getPriceUsdAtSaleDate(line)
-                    val capitalGain = getCapitalGain(ownedCoins, line, priceUsdAtSellDate)
-                    line.metadata.ignored = false
-                    line.metadata.priceUsdAtSellDate = priceUsdAtSellDate
-                    line.metadata.capitalGainShort = capitalGain.first
-                    line.metadata.capitalGainLong = capitalGain.second
-                }
+                result.addAll(
+                    lines.filter { line ->
+                        (line.currency2 == currency && line.type == Transaction.Type.BUY)
+                            || (line.currency1 == currency && line.type == Transaction.Type.SELL)
+                    }
+                )
             }
-            // Compute capital gain for each currency
-            this[currency]!!.capitalGainShort = lines
-                .map { line -> line.metadata.capitalGainShort ?: 0.0 }
-                .sum()
-            this[currency]!!.capitalGainLong = lines
-                .map { line -> line.metadata.capitalGainLong ?: 0.0 }
-                .sum()
         }
+        return result
     }
 
     private fun getPriceUsdAtSaleDate(line: Line): Double {
@@ -61,13 +100,6 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
         } else {
             line.price
         }
-    }
-
-    private fun linesToCompute(currency: Currency, lines: List<Line>): List<Line> {
-        return lines
-            .filter { line ->
-                (line.currency2 == currency && line.type == Transaction.Type.BUY) || (line.currency1 == currency && line.type == Transaction.Type.SELL)
-            }
     }
 
     private fun extractCoinsOwned(currency: Currency, lines: List<Line>): List<OwnedCoins> {
@@ -121,6 +153,6 @@ internal class Breakdown(lines: List<Line>) : java.util.HashMap<Currency, Detail
     }
 }
 
-internal data class OwnedCoins(val date: ZonedDateTime, val price: Double, var quantity: Double)
+private data class OwnedCoins(val date: ZonedDateTime, val price: Double, var quantity: Double)
 
 private data class MutablePair<A, B>(var first: A, var second: B)

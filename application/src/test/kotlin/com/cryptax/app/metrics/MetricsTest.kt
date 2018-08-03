@@ -1,21 +1,15 @@
 package com.cryptax.app.metrics
 
 import com.cryptax.app.config.TestAppConfig
-import com.cryptax.app.config.objectMapper
 import com.cryptax.app.setupRestAssured
 import com.cryptax.app.verticle.RestVerticle
-import io.restassured.RestAssured
 import io.restassured.RestAssured.given
-import io.restassured.config.HttpClientConfig
-import io.restassured.config.ObjectMapperConfig
-import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
-import org.apache.http.params.CoreConnectionPNames
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll

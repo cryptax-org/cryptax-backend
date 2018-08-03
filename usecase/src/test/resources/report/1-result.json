@@ -14,8 +14,14 @@
                     "type": "BUY",
                     "price": 4403.09,
                     "quantity": 0.5,
-                    "currency1UsdValue": 4403.09,
-                    "currency2UsdValue": 1
+                    "metadata": {
+                        "ignored": true,
+                        "currency1UsdValue": 0.0,
+                        "currency2UsdValue": 0.0,
+                        "quantityCurrency2": 0.0,
+                        "capitalGainShort": 0.0,
+                        "capitalGainLong": 0.0
+                    }
                 }
             ]
         }

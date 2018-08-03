@@ -14,8 +14,14 @@
                     "type": "BUY",
                     "price": 995.44,
                     "quantity": 1,
-                    "currency1UsdValue": 995.44,
-                    "currency2UsdValue": 1
+                    "metadata": {
+                        "ignored": true,
+                        "currency1UsdValue": 0.0,
+                        "currency2UsdValue": 0.0,
+                        "quantityCurrency2": 0.0,
+                        "capitalGainShort": 0.0,
+                        "capitalGainLong": 0.0
+                    }
                 },
                 {
                     "transactionId": "transaction2",
@@ -25,8 +31,14 @@
                     "type": "BUY",
                     "price": 2424.61,
                     "quantity": 3,
-                    "currency1UsdValue": 2424.61,
-                    "currency2UsdValue": 1
+                    "metadata": {
+                        "ignored": true,
+                        "currency1UsdValue": 0.0,
+                        "currency2UsdValue": 0.0,
+                        "quantityCurrency2": 0.0,
+                        "capitalGainShort": 0.0,
+                        "capitalGainLong": 0.0
+                    }
                 },
                 {
                     "transactionId": "transaction3",
@@ -36,8 +48,14 @@
                     "type": "SELL",
                     "price": 13631.98,
                     "quantity": 3,
-                    "currency1UsdValue": 13631.98,
-                    "currency2UsdValue": 1
+                    "metadata": {
+                        "ignored": false,
+                        "currency1UsdValue": 13631.98,
+                        "currency2UsdValue": 1,
+                        "quantityCurrency2": 40895.94,
+                        "capitalGainShort": 22414.739999999998,
+                        "capitalGainLong": 12636.539999999999
+                    }
                 }
             ]
         }
