@@ -62,4 +62,34 @@ class BreakdownTest {
         // then
         assertThat(actual.message).startsWith("Not enough coins:")
     }
+
+    @Test
+    fun testLineToCompute() {
+        // given
+        val line1 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.BUY, 15.0, 5.0)
+        val line2 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0)
+        val lines = listOf(line1, line2)
+        val breakdown = Breakdown(lines)
+
+        // when
+        val actual = breakdown.linesToCompute
+
+        // then
+        assertThat(actual).hasSize(1)
+    }
+
+    @Test
+    fun testLineToCompute2() {
+        // given
+        val line1 = Line("id1", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.BUY, 15.0, 5.0)
+        val line2 = Line("id2", ZonedDateTime.now(), Currency.USD, Currency.ETH, Transaction.Type.BUY, 15.0, 2.0)
+        val lines = listOf(line1, line2)
+        val breakdown = Breakdown(lines)
+
+        // when
+        val actual = breakdown.linesToCompute
+
+        // then
+        assertThat(actual).hasSize(1)
+    }
 }
