@@ -30,7 +30,7 @@ object Main {
             when {
                 ar.succeeded() -> {
                     val vertx: Vertx = ar.result()
-                    val appConfig = DefaultAppConfig()
+                    val appConfig = DefaultAppConfig(profile = "dev", kodeinModule = null)
                     vertx.deployVerticle(RestVerticle(appConfig)) { arRest: AsyncResult<String> ->
                         when {
                             arRest.succeeded() -> log.info("${RestVerticle::class.java.simpleName} deployed")
