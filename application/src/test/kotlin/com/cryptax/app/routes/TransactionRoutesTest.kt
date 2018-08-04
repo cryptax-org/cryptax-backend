@@ -2,6 +2,7 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.addTransaction
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.kodein
 import com.cryptax.app.formatter
 import com.cryptax.app.initTransaction
 import com.cryptax.app.setupRestAssured
@@ -29,7 +30,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +45,7 @@ class TransactionRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestVerticle(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestAppConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 

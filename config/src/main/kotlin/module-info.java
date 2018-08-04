@@ -12,6 +12,7 @@ module cryptax.config {
     requires cryptax.health;
     requires cryptax.price;
     requires cryptax.cache;
+    requires cryptax.email;
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.module.kotlin;
@@ -27,4 +28,6 @@ module cryptax.config {
     requires vertx.auth.common;
     requires okhttp3;
     requires vertx.mail.client;
+    requires vertx.core;
+    requires vertx.rx.java2;
 }

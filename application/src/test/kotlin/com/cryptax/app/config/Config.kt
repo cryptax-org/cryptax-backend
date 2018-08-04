@@ -19,11 +19,13 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
-private val kodein = Kodein {
-    import(TestAppConfig().kodeinDefaultModule, true)
+fun kodein(): Kodein {
+    return Kodein {
+        import(TestAppConfig().kodeinDefaultModule, true)
+    }
 }
 
-val objectMapper by kodein.instance<ObjectMapper>()
+val objectMapper by kodein().instance<ObjectMapper>()
 
 private fun testKodein(): Kodein.Module {
     return Kodein.Module(name = "testModule") {
@@ -36,5 +38,5 @@ private fun testKodein(): Kodein.Module {
     }
 }
 
-class TestAppConfig : AppConfig("it", testKodein())
+class TestAppConfig : AppConfig("it", null, testKodein())
 

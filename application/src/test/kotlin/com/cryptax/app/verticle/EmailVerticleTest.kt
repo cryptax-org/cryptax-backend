@@ -14,6 +14,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.kodein.di.Kodein
+import org.kodein.di.generic.bind
+import org.kodein.di.generic.singleton
 import org.mockito.BDDMockito.given
 import org.mockito.Mockito.mock
 import java.util.concurrent.TimeUnit
@@ -27,7 +30,8 @@ class EmailVerticleTest {
     fun deploy_verticle(vertx: Vertx, testContext: VertxTestContext) {
         val config = TestAppConfig()
         mailClient = mock(MailClient::class.java)
-        val emailVerticle = EmailVerticle(config, mailClient)
+        val kodin = Kodein { bind<MailClient>() with singleton { mailClient } }
+        val emailVerticle = EmailVerticle(config, kodin)
         vertx.deployVerticle(emailVerticle) { ar ->
             if (ar.succeeded())
                 testContext.completeNow()

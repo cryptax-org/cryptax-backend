@@ -1,6 +1,7 @@
 package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.kodein
 import com.cryptax.app.initUserAndGetToken
 import com.cryptax.app.setupRestAssured
 import com.cryptax.app.user
@@ -33,7 +34,7 @@ class UserRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestVerticle(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestAppConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 

@@ -7,8 +7,8 @@ import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
-import io.vertx.reactivex.ext.mail.MailClient
 import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager
+import org.kodein.di.Kodein
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -30,15 +30,16 @@ object Main {
             when {
                 ar.succeeded() -> {
                     val vertx: Vertx = ar.result()
-                    val appConfig = DefaultAppConfig(profile = "dev", kodeinModule = null)
-                    vertx.deployVerticle(RestVerticle(appConfig)) { arRest: AsyncResult<String> ->
+                    val appConfig = DefaultAppConfig(profile = "dev", vertx = vertx, kodeinModule = null)
+                    val kodein = Kodein { import(appConfig.kodeinDefaultModule) }
+
+                    vertx.deployVerticle(RestVerticle(appConfig, kodein)) { arRest: AsyncResult<String> ->
                         when {
                             arRest.succeeded() -> log.info("${RestVerticle::class.java.simpleName} deployed")
                             arRest.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arRest.cause())
                         }
                     }
-                    val mailClient = MailClient.createShared(io.vertx.reactivex.core.Vertx(vertx), appConfig.mailConfig, "CRYPTAX_POOL")
-                    vertx.deployVerticle(EmailVerticle(appConfig, mailClient)) { arEmail: AsyncResult<String> ->
+                    vertx.deployVerticle(EmailVerticle(appConfig, kodein)) { arEmail: AsyncResult<String> ->
                         when {
                             arEmail.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
                             arEmail.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arEmail.cause())

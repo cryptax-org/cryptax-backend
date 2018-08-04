@@ -3,14 +3,10 @@ package com.cryptax.app.verticle
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.metrics.Metrics
 import com.cryptax.app.routes.Routes
-import com.cryptax.cache.CacheService
-import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
-import com.cryptax.domain.port.EmailService
-import com.cryptax.email.VertxEmailService
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.vertx.core.AbstractVerticle
 import io.vertx.core.Future
@@ -23,23 +19,11 @@ import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.CorsHandler
 import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
-import org.kodein.di.generic.singleton
 
 private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 
-class RestVerticle(private val appConfig: AppConfig) : AbstractVerticle() {
-
-    private val kodein = Kodein {
-        import(appConfig.kodeinDefaultModule, allowOverride = true)
-
-        if (appConfig.getProfile() != "it") {
-            // Adapters that need vertx to work
-            bind<EmailService>(overrides = true) with singleton { VertxEmailService(vertx) }
-            bind<CacheService>(overrides = true) with singleton { VertxCacheService(vertx) }
-        }
-    }
+class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractVerticle() {
 
     private val userController by kodein.instance<UserController>()
     private val transactionController by kodein.instance<TransactionController>()

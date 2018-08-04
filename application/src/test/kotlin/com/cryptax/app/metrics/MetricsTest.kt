@@ -1,6 +1,7 @@
 package com.cryptax.app.metrics
 
 import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.kodein
 import com.cryptax.app.setupRestAssured
 import com.cryptax.app.verticle.RestVerticle
 import io.restassured.RestAssured.given
@@ -36,7 +37,7 @@ class MetricsTest {
     @BeforeEach
     fun beforeEach(testContext: VertxTestContext) {
         vertx = Vertx.vertx(VertxOptions().setMetricsOptions(DropwizardMetricsOptions(baseName = "cryptax", enabled = true)))
-        vertx.deployVerticle(RestVerticle(TestAppConfig()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestAppConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 

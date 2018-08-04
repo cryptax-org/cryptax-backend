@@ -3,6 +3,7 @@ package com.cryptax.config.kodein
 import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.cache.CacheService
+import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
@@ -16,6 +17,7 @@ import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
+import com.cryptax.email.VertxEmailService
 import com.cryptax.health.TransactionRepositoryHealthCheck
 import com.cryptax.health.UserRepositoryHealthCheck
 import com.cryptax.id.JugIdGenerator
@@ -30,6 +32,9 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.vertx.core.Vertx
+import io.vertx.ext.mail.MailConfig
+import io.vertx.reactivex.ext.mail.MailClient
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
@@ -39,7 +44,7 @@ import org.kodein.di.generic.singleton
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
-class KodeinConfig(properties: PropertiesDto, externalKodeinModule: Kodein.Module?) {
+class KodeinConfig(properties: PropertiesDto, mailConfig: MailConfig, vertx: Vertx?, externalKodeinModule: Kodein.Module?) {
 
     val kodeinModule = Kodein.Module(name = "defaultModule") {
 
@@ -85,17 +90,24 @@ class KodeinConfig(properties: PropertiesDto, externalKodeinModule: Kodein.Modul
             PriceService(client = instance(), objectMapper = instance(), cache = instance())
         }
 
-        // This will be overridden later
-        bind<EmailService>() with singleton {
-            object : EmailService {
-                override fun welcomeEmail(user: User, token: String) {}
+        if (vertx != null) {
+            // Vertx dependencies
+            bind<EmailService>() with singleton { VertxEmailService(vertx) }
+            bind<CacheService>() with singleton { VertxCacheService(vertx) }
+            bind<MailClient>() with singleton { MailClient.createShared(io.vertx.reactivex.core.Vertx(vertx), mailConfig, "CRYPTAX_POOL") }
+        } else {
+            // If vertx is not provided, we stub the dependencies
+            bind<EmailService>() with singleton {
+                object : EmailService {
+                    override fun welcomeEmail(user: User, token: String) {}
+                }
             }
-        }
-        bind<CacheService>() with singleton {
-            object : CacheService {
-                override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}
-                override fun get(name: String, currency: Currency, date: ZonedDateTime): Pair<String, Double>? {
-                    return null
+            bind<CacheService>() with singleton {
+                object : CacheService {
+                    override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}
+                    override fun get(name: String, currency: Currency, date: ZonedDateTime): Pair<String, Double>? {
+                        return null
+                    }
                 }
             }
         }

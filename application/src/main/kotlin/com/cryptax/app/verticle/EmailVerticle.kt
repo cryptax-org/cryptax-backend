@@ -9,10 +9,14 @@ import io.vertx.kotlin.ext.mail.MailMessage
 import io.vertx.reactivex.core.AbstractVerticle
 import io.vertx.reactivex.core.eventbus.Message
 import io.vertx.reactivex.ext.mail.MailClient
+import org.kodein.di.Kodein
+import org.kodein.di.generic.instance
 
 private val log: Logger = LoggerFactory.getLogger(EmailVerticle::class.java)
 
-class EmailVerticle(private val appConfig: AppConfig, private val mailClient: MailClient) : AbstractVerticle() {
+class EmailVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractVerticle() {
+
+    private val mailClient by kodein.instance<MailClient>()
 
     override fun start() {
         val eb = vertx.eventBus()
