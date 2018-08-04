@@ -14,3 +14,6 @@ email:
   from: webmaster.stock@yahoo.com
   username: webmaster.stock
   password: QB5LX65NOI3erVB04kMNEUgLWIDpkHjy3z//aAIzFy4=
+http:
+  maxIdleConnections: 50
+  keepAliveDuration: 15

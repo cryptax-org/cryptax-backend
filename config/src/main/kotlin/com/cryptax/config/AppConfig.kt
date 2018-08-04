@@ -14,11 +14,11 @@ import org.kodein.di.Kodein
 
 abstract class AppConfig(private val profile: String = "dev", externalKodeinModule: Kodein.Module?) {
 
-    val kodeinDefaultModule = KodeinConfig(externalKodeinModule).kodeinModule
-
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
         .registerModule(KotlinModule())
         .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-${getProfile()}.yml"), PropertiesDto::class.java)
+
+    val kodeinDefaultModule = KodeinConfig(properties, externalKodeinModule).kodeinModule
 
     val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = properties.jwt.keyStorePath, password = properties.jwt.password(profile)))
     val jwtOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.expiresInMinutes)

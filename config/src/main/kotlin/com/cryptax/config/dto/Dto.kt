@@ -3,7 +3,7 @@ package com.cryptax.config.dto
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import java.lang.management.ManagementFactory
 
-data class PropertiesDto(val server: ServerDto, val jwt: JwtDto, val email: EmailDto)
+data class PropertiesDto(val server: ServerDto, val jwt: JwtDto, val email: EmailDto, val http: HttpDto)
 data class ServerDto(val domain: String, val port: Int)
 data class JwtDto(
     val keyStorePath: String,
@@ -20,12 +20,13 @@ data class JwtDto(
 }
 
 data class EmailDto(val host: String, val port: Int, val username: String, private var password: String, val from: String) {
-
     fun password(profile: String? = null): String {
         if (profile == "it") return password
         return decryptPassword(password)
     }
 }
+
+data class HttpDto(val maxIdleConnections: Int, val keepAliveDuration: Long)
 
 private fun decryptPassword(password: String): String {
     val stringEncryptor = StandardPBEStringEncryptor()

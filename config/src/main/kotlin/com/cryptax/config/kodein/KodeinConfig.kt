@@ -3,6 +3,7 @@ package com.cryptax.config.kodein
 import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.cache.CacheService
+import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -29,14 +30,16 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import java.time.ZonedDateTime
+import java.util.concurrent.TimeUnit
 
-class KodeinConfig(externalKodeinModule: Kodein.Module?) {
+class KodeinConfig(properties: PropertiesDto, externalKodeinModule: Kodein.Module?) {
 
     val kodeinModule = Kodein.Module(name = "defaultModule") {
 
@@ -67,7 +70,11 @@ class KodeinConfig(externalKodeinModule: Kodein.Module?) {
 
         // Other
         bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
-        bind<OkHttpClient>() with singleton { OkHttpClient() } // TODO handle thread pool
+        bind<OkHttpClient>() with singleton {
+            val connectionPool = ConnectionPool(properties.http.maxIdleConnections, properties.http.keepAliveDuration, TimeUnit.MINUTES)
+            val builder = OkHttpClient.Builder().connectionPool(connectionPool)
+            builder.build()
+        }
 
         bind<UserRepository>() with singleton { InMemoryUserRepository() }
         bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
@@ -84,7 +91,6 @@ class KodeinConfig(externalKodeinModule: Kodein.Module?) {
                 override fun welcomeEmail(user: User, token: String) {}
             }
         }
-
         bind<CacheService>() with singleton {
             object : CacheService {
                 override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}
@@ -94,7 +100,7 @@ class KodeinConfig(externalKodeinModule: Kodein.Module?) {
             }
         }
 
-        // Import module binding
+        // Override binding if needed
         if (externalKodeinModule != null) {
             import(externalKodeinModule, allowOverride = true)
         }
