@@ -6,6 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
+        <AsyncLogger name="com.hazelcast.internal.partition.InternalPartitionService" level="info">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
         <AsyncLogger name="io.netty" level="info">
             <AppenderRef ref="Console" />
         </AsyncLogger>
