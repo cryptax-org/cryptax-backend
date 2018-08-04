@@ -8,7 +8,6 @@ import com.cryptax.usecase.Utils.oneTransaction
 import com.cryptax.usecase.Utils.twoTransactions
 import com.cryptax.usecase.objectMapper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -49,7 +48,7 @@ class TransactionValidatorTest {
         }
 
         //then
-        assertEquals(errorMessage, exception.message)
+        assertThat(errorMessage).isEqualTo(exception.message)
     }
 
     @Test
@@ -72,7 +71,7 @@ class TransactionValidatorTest {
         }
 
         //then
-        assertEquals(errorMessage, exception.message)
+        assertThat(errorMessage).isEqualTo(exception.message)
     }
 
     @Test

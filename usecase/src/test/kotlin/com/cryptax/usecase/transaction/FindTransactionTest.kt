@@ -7,8 +7,7 @@ import com.cryptax.usecase.Utils.oneTransactionWithId2
 import com.cryptax.usecase.Utils.twoTransactions
 import io.reactivex.Maybe
 import io.reactivex.Single
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -38,7 +37,7 @@ class FindTransactionTest {
         val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
 
         // then
-        assertEquals(transaction, actual)
+        assertThat(transaction).isEqualTo(actual)
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -52,7 +51,7 @@ class FindTransactionTest {
         val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
 
         // then
-        assertNull(actual)
+        assertThat(actual).isNull()
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -70,7 +69,7 @@ class FindTransactionTest {
         }
 
         // then
-        assertEquals(expected, exception.message)
+        assertThat(expected).isEqualTo(exception.message)
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -84,7 +83,7 @@ class FindTransactionTest {
         val actual = findTransaction.findAllForUser(transactions[0].userId).blockingGet()
 
         // then
-        assertEquals(transactions, actual)
+        assertThat(transactions).isEqualTo(actual)
         then(transactionRepository).should().getAllForUser(transactions[0].userId)
     }
 }

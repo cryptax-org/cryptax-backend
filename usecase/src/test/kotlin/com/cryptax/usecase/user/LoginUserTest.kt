@@ -5,7 +5,7 @@ import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -44,7 +44,7 @@ class LoginUserTest {
         val actual = loginUser.login(email, password).blockingGet()
 
         //then
-        assertEquals(user, actual)
+        assertThat(user).isEqualTo(actual)
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
     }
@@ -61,8 +61,8 @@ class LoginUserTest {
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("User not found", exception.description)
+        assertThat(email).isEqualTo(exception.email)
+        assertThat(exception.description).isEqualTo("User not found")
         then(userRepository).should().findByEmail(email)
     }
 
@@ -79,8 +79,8 @@ class LoginUserTest {
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("Password do not match", exception.description)
+        assertThat(email).isEqualTo(exception.email)
+        assertThat(exception.description).isEqualTo("Password do not match")
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword("wrong password".toCharArray(), user.password)
     }
@@ -99,8 +99,8 @@ class LoginUserTest {
         }
 
         //then
-        assertEquals(email, exception.email)
-        assertEquals("Not allowed to login", exception.description)
+        assertThat(email).isEqualTo(exception.email)
+        assertThat(exception.description).isEqualTo("Not allowed to login")
         then(userRepository).should().findByEmail(email)
         then(securePassword).should().matchPassword(password, user.password)
     }

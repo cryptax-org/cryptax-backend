@@ -14,7 +14,7 @@ import com.cryptax.usecase.Utils.twoTransactions
 import com.nhaarman.mockitokotlin2.any
 import io.reactivex.Maybe
 import io.reactivex.Single
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -56,7 +56,7 @@ class AddTransactionTest {
         val actual = addTransaction.add(transaction).blockingGet()
 
         // then
-        assertEquals(expected, actual)
+        assertThat(expected).isEqualTo(actual)
         then(userRepository).should().findById(transaction.userId)
         then(idGenerator).should().generate()
         then(transactionRepository).should().add(expected)
@@ -73,7 +73,7 @@ class AddTransactionTest {
         }
 
         // then
-        assertEquals(transaction.userId, exception.message)
+        assertThat(transaction.userId).isEqualTo(exception.message)
         then(userRepository).should().findById(transaction.userId)
         then(userRepository).shouldHaveNoMoreInteractions()
         then(idGenerator).shouldHaveZeroInteractions()
@@ -91,7 +91,7 @@ class AddTransactionTest {
         val actual = addTransaction.addMultiple(transactions).blockingGet()
 
         // then
-        assert(actual.size == 2)
+        assertThat(actual).hasSize(2)
         then(userRepository).should().findById(transaction.userId)
         then(idGenerator).should(times(transactions.size)).generate()
         then(transactionRepository).should().add(transactionsExcepted)
@@ -108,7 +108,7 @@ class AddTransactionTest {
         }
 
         // then
-        assertEquals(transactions[0].userId, exception.message)
+        assertThat(transactions[0].userId).isEqualTo(exception.message)
         then(userRepository).should().findById(transaction.userId)
         then(userRepository).shouldHaveNoMoreInteractions()
         then(idGenerator).shouldHaveZeroInteractions()

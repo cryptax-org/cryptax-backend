@@ -11,6 +11,7 @@ import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import io.vertx.kotlin.ext.dropwizard.DropwizardMetricsOptions
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -67,6 +68,24 @@ class MetricsTest {
 
     @Test
     @DisplayName("Get metrics from the server")
+    fun testOneMetric(testContext: VertxTestContext) {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+        `when`().
+            get("/metrics").
+        then().
+            log().ifValidationFails().
+            assertThat().body("$", notNullValue()).
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Get one metric from the server")
     fun testMetrics(testContext: VertxTestContext) {
         // @formatter:off
         given().

@@ -1,7 +1,7 @@
 package com.cryptax.db
 
 import com.cryptax.domain.entity.Transaction
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -36,7 +36,7 @@ class InMemoryTransactionRepositoryTest {
         val actual = transactionRepository.add(transaction1).blockingGet()
 
         // then
-        assertEquals(transaction1, actual)
+        assertThat(transaction1).isEqualTo(actual)
     }
 
     @DisplayName("Add several transactions")
@@ -46,9 +46,9 @@ class InMemoryTransactionRepositoryTest {
         val actual = transactionRepository.add(transactions).blockingGet()
 
         // then
-        assert(actual.size == 2)
-        assertEquals(transactions[0], actual[0])
-        assertEquals(transactions[1], actual[1])
+        assertThat(actual).hasSize(2)
+        assertThat(transactions[0]).isEqualTo(actual[0])
+        assertThat(transactions[1]).isEqualTo(actual[1])
     }
 
     @DisplayName("Get a transaction")
@@ -61,7 +61,7 @@ class InMemoryTransactionRepositoryTest {
         val actual = transactionRepository.get(transaction1.id).blockingGet()
 
         // then
-        assertEquals(transaction1, actual)
+        assertThat(transaction1).isEqualTo(actual)
     }
 
     @DisplayName("Add several transactions")
@@ -74,8 +74,8 @@ class InMemoryTransactionRepositoryTest {
         val actual = transactionRepository.getAllForUser("userId2").blockingGet()
 
         // then
-        assert(actual.size == 1)
-        assertEquals(transactions[1], actual[0])
+        assertThat(actual).hasSize(1)
+        assertThat(transactions[1]).isEqualTo(actual[0])
     }
 
     @DisplayName("Update a transaction")
@@ -88,6 +88,6 @@ class InMemoryTransactionRepositoryTest {
         val actual = transactionRepository.update(transaction2).blockingGet()
 
         // then
-        assertEquals(transaction2, actual)
+        assertThat(transaction2).isEqualTo(actual)
     }
 }

@@ -3,8 +3,7 @@ package com.cryptax.usecase.user
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -36,7 +35,7 @@ class FindUserTest {
         val actual = findUser.findById(id).blockingGet()
 
         //then
-        assertEquals(user, actual)
+        assertThat(user).isEqualTo(actual)
         then(userRepository).should().findById(id)
     }
 
@@ -50,7 +49,7 @@ class FindUserTest {
         val actual = findUser.findById(id).blockingGet()
 
         //then
-        assertNull(actual)
+        assertThat(actual).isNull()
         then(userRepository).should().findById(id)
     }
 }

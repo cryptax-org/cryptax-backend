@@ -1,7 +1,7 @@
 package com.cryptax.parser.utils
 
 import com.cryptax.domain.entity.Currency
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -18,7 +18,7 @@ class UtilsTest {
         val actual = extractCurrencies(market)
 
         // then
-        assertEquals(expected, actual)
+        assertThat(expected).isEqualTo(actual)
     }
 
     @ParameterizedTest

@@ -7,7 +7,7 @@ import com.cryptax.usecase.Utils.oneTransactionWithId
 import com.cryptax.usecase.Utils.oneTransactionWithId2
 import io.reactivex.Maybe
 import io.reactivex.Single
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -38,7 +38,7 @@ class UpdateTransactionTest {
         val actual = updateTransaction.update(transaction).blockingGet()
 
         // then
-        assertEquals(transaction, actual)
+        assertThat(transaction).isEqualTo(actual)
         then(transactionRepository).should().get(transaction.id)
         then(transactionRepository).should().update(transaction)
     }
@@ -55,7 +55,7 @@ class UpdateTransactionTest {
         }
 
         // then
-        assertEquals(transaction.id, exception.message)
+        assertThat(transaction.id).isEqualTo(exception.message)
         then(transactionRepository).should().get(transaction.id)
         then(transactionRepository).shouldHaveNoMoreInteractions()
     }
@@ -74,7 +74,7 @@ class UpdateTransactionTest {
         }
 
         // then
-        assertEquals(expected, exception.message)
+        assertThat(expected).isEqualTo(exception.message)
         then(transactionRepository).should().get(transaction.id)
         then(transactionRepository).shouldHaveNoMoreInteractions()
     }

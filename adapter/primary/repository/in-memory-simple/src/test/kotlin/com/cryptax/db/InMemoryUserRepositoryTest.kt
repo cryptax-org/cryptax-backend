@@ -2,8 +2,7 @@ package com.cryptax.db
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -34,7 +33,7 @@ class InMemoryUserRepositoryTest {
         val actual = userRepository.create(user).blockingGet()
 
         // then
-        assertEquals(user, actual)
+        assertThat(user).isEqualTo(actual)
     }
 
     @DisplayName("Find by id")
@@ -47,7 +46,7 @@ class InMemoryUserRepositoryTest {
         val actual = userRepository.findById(user.id).blockingGet()
 
         // then
-        assertEquals(user, actual)
+        assertThat(user).isEqualTo(actual)
     }
 
     @DisplayName("Find by id not found")
@@ -60,7 +59,7 @@ class InMemoryUserRepositoryTest {
         val actual = userRepository.findById(userId).blockingGet()
 
         // then
-        assertNull(actual)
+        assertThat(actual).isNull()
     }
 
     @DisplayName("Find by email")
@@ -73,7 +72,7 @@ class InMemoryUserRepositoryTest {
         val actual = userRepository.findByEmail(user.email).blockingGet()
 
         // then
-        assertEquals(user, actual)
+        assertThat(user).isEqualTo(actual)
     }
 
     @DisplayName("Find by email not found")
@@ -86,6 +85,6 @@ class InMemoryUserRepositoryTest {
         val actual = userRepository.findByEmail(email).blockingGet()
 
         // then
-        assertNull(actual)
+        assertThat(actual).isNull()
     }
 }
