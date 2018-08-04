@@ -36,7 +36,7 @@ class GenerateReport(
             .map { transactions ->
                 transactions.map { transaction ->
                     Line(
-                        transactionId = transaction.id!!,
+                        transactionId = transaction.id,
                         date = transaction.date,
                         currency1 = transaction.currency1,
                         currency2 = transaction.currency2,

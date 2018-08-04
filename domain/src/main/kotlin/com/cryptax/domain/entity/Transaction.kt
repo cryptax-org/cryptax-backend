@@ -3,7 +3,7 @@ package com.cryptax.domain.entity
 import java.time.ZonedDateTime
 
 data class Transaction(
-    val id: String? = null,
+    val id: String = "DEFAULT",
     val userId: String,
     val source: Source,
     val date: ZonedDateTime,

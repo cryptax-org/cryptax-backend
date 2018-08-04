@@ -3,7 +3,7 @@ package com.cryptax.domain.entity
 import java.util.Arrays
 
 data class User(
-    val id: String? = null,
+    val id: String = "DEFAULT",
     val email: String,
     val password: CharArray,
     val lastName: String,
@@ -27,7 +27,7 @@ data class User(
     }
 
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
+        var result = id.hashCode()
         result = 31 * result + email.hashCode()
         result = 31 * result + Arrays.hashCode(password)
         result = 31 * result + lastName.hashCode()

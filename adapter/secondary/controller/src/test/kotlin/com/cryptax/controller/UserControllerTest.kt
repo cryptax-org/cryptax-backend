@@ -71,11 +71,11 @@ class UserControllerTest {
         assertThat(actualToken).isEqualTo(welcomeToken)
         argumentCaptor<User>().apply {
             then(createUser).should().create(capture())
-            assertNull(firstValue.id)
-            assertEquals(userWeb.email, firstValue.email)
-            assertEquals(password, firstValue.password)
-            assertEquals(userWeb.lastName, firstValue.lastName)
-            assertEquals(userWeb.firstName, firstValue.firstName)
+            assertThat(firstValue.id).isEqualTo("DEFAULT")
+            assertThat(userWeb.email).isEqualTo(firstValue.email)
+            assertThat(password).isEqualTo(firstValue.password)
+            assertThat(userWeb.lastName).isEqualTo(firstValue.lastName)
+            assertThat(userWeb.firstName).isEqualTo(firstValue.firstName)
         }
     }
 
@@ -90,10 +90,10 @@ class UserControllerTest {
         val actual = userController.login(email, password).blockingGet()
 
         // then
-        assertEquals(user.id, actual.id)
-        assertEquals(user.email, actual.email)
-        assertEquals(user.lastName, actual.lastName)
-        assertEquals(user.firstName, actual.firstName)
+        assertThat(user.id).isEqualTo(actual.id)
+        assertThat(user.email).isEqualTo(actual.email)
+        assertThat(user.lastName).isEqualTo(actual.lastName)
+        assertThat(user.firstName).isEqualTo(actual.firstName)
         then(loginUser).should().login(email, password)
     }
 
@@ -107,11 +107,11 @@ class UserControllerTest {
         val actual = userController.findUser(userId).blockingGet()
 
         // then
-        assertNotNull(actual)
-        assertEquals(user.id, actual!!.id)
-        assertEquals(user.email, actual.email)
-        assertEquals(user.lastName, actual.lastName)
-        assertEquals(user.firstName, actual.firstName)
+        assertThat(actual).isNotNull
+        assertThat(user.id).isEqualTo(actual!!.id)
+        assertThat(user.email).isEqualTo(actual.email)
+        assertThat(user.lastName).isEqualTo(actual.lastName)
+        assertThat(user.firstName).isEqualTo(actual.firstName)
         then(findUser).should().findById(userId)
     }
 
@@ -125,7 +125,7 @@ class UserControllerTest {
         val actual = userController.findUser(userId).blockingGet()
 
         // then
-        assertNull(actual)
+        assertThat(actual).isNull()
         then(findUser).should().findById(userId)
     }
 
@@ -140,7 +140,7 @@ class UserControllerTest {
         val actual = userController.allowUser(userId, token).blockingGet()
 
         // then
-        assertTrue(actual)
+        assertThat(actual).isTrue()
         then(validateUser).should().validate(userId, token)
     }
 }

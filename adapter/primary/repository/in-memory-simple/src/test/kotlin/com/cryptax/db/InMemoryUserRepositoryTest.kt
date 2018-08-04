@@ -4,7 +4,6 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -38,21 +37,6 @@ class InMemoryUserRepositoryTest {
         assertEquals(user, actual)
     }
 
-    @DisplayName("Create user with null user id")
-    @Test
-    fun testCreateNullUserId() {
-        // given
-        val user = objectMapper.readValue(this::class.java.getResourceAsStream("/User2.json"), User::class.java)
-
-        // when
-        assertThrows(NullPointerException::class.java) {
-            userRepository.create(user).blockingGet()
-        }
-
-        // then
-        // exception
-    }
-
     @DisplayName("Find by id")
     @Test
     fun testFindById() {
@@ -60,7 +44,7 @@ class InMemoryUserRepositoryTest {
         userRepository.create(user).blockingGet()
 
         // when
-        val actual = userRepository.findById(user.id!!).blockingGet()
+        val actual = userRepository.findById(user.id).blockingGet()
 
         // then
         assertEquals(user, actual)

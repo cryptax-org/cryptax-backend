@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 import java.util.Arrays
 
 data class UserWeb(
-    val id: String? = null,
+    val id: String = "DEFAULT",
     val email: String,
     val password: CharArray? = null,
     val lastName: String,
@@ -43,7 +43,7 @@ data class UserWeb(
     }
 
     override fun hashCode(): Int {
-        var result = id?.hashCode() ?: 0
+        var result = id.hashCode()
         result = 31 * result + email.hashCode()
         result = 31 * result + (password?.let { Arrays.hashCode(it) } ?: 0)
         result = 31 * result + lastName.hashCode()
@@ -63,7 +63,7 @@ data class UserWeb(
 }
 
 data class TransactionWeb(
-    val id: String? = null,
+    val id: String = "DEFAULT",
     val source: Source,
     val date: ZonedDateTime,
     val type: Transaction.Type,

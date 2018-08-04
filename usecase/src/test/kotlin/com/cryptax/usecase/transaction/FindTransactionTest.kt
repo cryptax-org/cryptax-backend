@@ -32,28 +32,28 @@ class FindTransactionTest {
     fun testFindTransaction() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.just(transaction))
+        given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transaction))
 
         // when
-        val actual = findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
+        val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
 
         // then
         assertEquals(transaction, actual)
-        then(transactionRepository).should().get(transaction.id!!)
+        then(transactionRepository).should().get(transaction.id)
     }
 
     @Test
     fun testFindTransactionNotFound() {
         // given
         val transaction = oneTransactionWithId
-        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.empty())
+        given(transactionRepository.get(transaction.id)).willReturn(Maybe.empty())
 
         // when
-        val actual = findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
+        val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
 
         // then
         assertNull(actual)
-        then(transactionRepository).should().get(transaction.id!!)
+        then(transactionRepository).should().get(transaction.id)
     }
 
     @Test
@@ -62,16 +62,16 @@ class FindTransactionTest {
         val transaction = oneTransactionWithId
         val transactionReturned = oneTransactionWithId2
         val expected = "User [${transaction.userId}] tried to update [${transaction.id}], but that transaction is owned by [${transactionReturned.userId}]"
-        given(transactionRepository.get(transaction.id!!)).willReturn(Maybe.just(transactionReturned))
+        given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transactionReturned))
 
         // when
         val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
-            findTransaction.find(transaction.id!!, transaction.userId).blockingGet()
+            findTransaction.find(transaction.id, transaction.userId).blockingGet()
         }
 
         // then
         assertEquals(expected, exception.message)
-        then(transactionRepository).should().get(transaction.id!!)
+        then(transactionRepository).should().get(transaction.id)
     }
 
     @Test

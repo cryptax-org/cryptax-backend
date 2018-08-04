@@ -27,11 +27,11 @@ fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     { userWeb ->
-                        val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, false), appConfig.jwtOptions)
-                        val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id!!, true), appConfig.jwtRefreshOptions)
+                        val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id, false), appConfig.jwtOptions)
+                        val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id, true), appConfig.jwtRefreshOptions)
 
                         val result = JsonObject()
-                            .put("id", userWeb.id!!)
+                            .put("id", userWeb.id)
                             .put("token", token)
                             .put("refreshToken", refreshToken)
                         sendSuccess(result, routingContext.response())

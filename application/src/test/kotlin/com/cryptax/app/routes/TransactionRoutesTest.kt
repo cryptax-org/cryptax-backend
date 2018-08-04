@@ -121,7 +121,6 @@ class TransactionRoutesTest {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
-        val date = ZonedDateTime.now(ZoneId.of("UTC"))
 
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(

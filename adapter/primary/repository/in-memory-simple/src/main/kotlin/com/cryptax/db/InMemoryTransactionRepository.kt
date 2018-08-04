@@ -16,7 +16,7 @@ class InMemoryTransactionRepository : TransactionRepository {
     override fun add(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
             log.debug("Create a transaction $transaction")
-            inMemoryDb[transaction.id!!] = transaction
+            inMemoryDb[transaction.id] = transaction
             emitter.onSuccess(transaction)
         }
     }
@@ -25,7 +25,7 @@ class InMemoryTransactionRepository : TransactionRepository {
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Add transactions")
             transactions.forEach {
-                inMemoryDb[it.id!!] = it
+                inMemoryDb[it.id] = it
             }
             emitter.onSuccess(transactions)
         }
@@ -51,7 +51,7 @@ class InMemoryTransactionRepository : TransactionRepository {
 
     override fun update(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
-            inMemoryDb[transaction.id!!] = transaction
+            inMemoryDb[transaction.id] = transaction
             emitter.onSuccess(transaction)
         }
     }

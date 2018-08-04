@@ -12,17 +12,17 @@ class UpdateTransaction(private val transactionRepository: TransactionRepository
     fun update(transaction: Transaction): Single<Transaction> {
 
         return validateUpdateTransaction(transaction)
-            .flatMap { transactionRepository.get(transaction.id!!).toSingle() }
+            .flatMap { transactionRepository.get(transaction.id).toSingle() }
             .map { transactionDb ->
                 if (transactionDb.userId != transaction.userId) {
-                    throw TransactionUserDoNotMatch(transaction.userId, transaction.id!!, transactionDb.userId)
+                    throw TransactionUserDoNotMatch(transaction.userId, transaction.id, transactionDb.userId)
                 }
                 transactionDb
             }
             .flatMap { transactionRepository.update(transaction) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
-                    is NoSuchElementException -> Single.error(TransactionNotFound(transaction.id!!))
+                    is NoSuchElementException -> Single.error(TransactionNotFound(transaction.id))
                     else -> Single.error(throwable)
                 }
             }

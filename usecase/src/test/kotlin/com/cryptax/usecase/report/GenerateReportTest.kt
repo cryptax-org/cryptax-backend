@@ -47,16 +47,16 @@ class GenerateReportTest {
     @MethodSource("dataProvider")
     fun testGenerate(transactions: List<Transaction>, expected: Report) {
         // given
-        given(userRepository.findById(user.id!!)).willReturn(Maybe.just(user))
-        given(transactionRepository.getAllForUser(user.id!!)).willReturn(Single.just(transactions))
+        given(userRepository.findById(user.id)).willReturn(Maybe.just(user))
+        given(transactionRepository.getAllForUser(user.id)).willReturn(Single.just(transactions))
 
         // when
-        val actual = generateReport.generate(user.id!!).blockingGet()
+        val actual = generateReport.generate(user.id).blockingGet()
 
         // then
         assertThat(actual).isEqualTo(expected)
-        then(userRepository).should().findById(user.id!!)
-        then(transactionRepository).should().getAllForUser(user.id!!)
+        then(userRepository).should().findById(user.id)
+        then(transactionRepository).should().getAllForUser(user.id)
     }
 
     companion object {

@@ -58,7 +58,7 @@ class InMemoryTransactionRepositoryTest {
         transactionRepository.add(transaction1).blockingGet()
 
         // when
-        val actual = transactionRepository.get(transaction1.id!!).blockingGet()
+        val actual = transactionRepository.get(transaction1.id).blockingGet()
 
         // then
         assertEquals(transaction1, actual)

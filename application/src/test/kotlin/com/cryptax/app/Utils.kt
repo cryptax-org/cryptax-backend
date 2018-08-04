@@ -124,8 +124,8 @@ fun initTransaction(): Pair<String, JsonPath> {
     val pair = createUser()
     validateUser(pair)
     val token = getToken()
-    addTransaction(pair.first.id!!, token)
-    return Pair(pair.first.id!!, token)
+    addTransaction(pair.first.id, token)
+    return Pair(pair.first.id, token)
 }
 
 fun setupRestAssured() {

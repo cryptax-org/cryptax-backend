@@ -16,7 +16,7 @@ class InMemoryUserRepository : UserRepository {
     override fun create(user: User): Single<User> {
         return Single.create<User> { emitter ->
             log.debug("Create a user $user")
-            inMemoryDb[user.id!!] = user
+            inMemoryDb[user.id] = user
             emitter.onSuccess(user)
         }
     }
@@ -44,7 +44,7 @@ class InMemoryUserRepository : UserRepository {
     }
 
     override fun updateUser(user: User): User {
-        inMemoryDb[user.id!!] = user
+        inMemoryDb[user.id] = user
         return user
     }
 
