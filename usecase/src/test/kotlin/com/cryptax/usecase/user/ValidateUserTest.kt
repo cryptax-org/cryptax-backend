@@ -71,7 +71,7 @@ class ValidateUserTest {
         // given
         val userId = "id"
         val welcomeToken = "token"
-        given(userRepository.findById(userId)).willThrow { RuntimeException("Error") }
+        given(userRepository.findById(userId)).willReturn(Maybe.error(RuntimeException("Error")))
 
         // when
         val exception = assertThrows<RuntimeException> {
