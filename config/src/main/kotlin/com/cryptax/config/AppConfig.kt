@@ -13,11 +13,13 @@ import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 import io.vertx.kotlin.ext.mail.MailConfig
 import org.kodein.di.Kodein
 
-abstract class AppConfig(private val profile: String = "dev", vertx: Vertx?, externalKodeinModule: Kodein.Module?) {
+abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx?, externalKodeinModule: Kodein.Module?) {
+
+    val profile: String by lazy { profile() }
 
     val properties: PropertiesDto = ObjectMapper(YAMLFactory())
         .registerModule(KotlinModule())
-        .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-${getProfile()}.yml"), PropertiesDto::class.java)
+        .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-$profile.yml"), PropertiesDto::class.java)
 
     private val mailConfig = MailConfig(
         hostname = properties.email.host,
@@ -34,10 +36,11 @@ abstract class AppConfig(private val profile: String = "dev", vertx: Vertx?, ext
     val jwtOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.expiresInMinutes)
     val jwtRefreshOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.refreshExpiresInDays)
 
-    fun getProfile(): String {
+    private fun profile(): String {
+        if (overrideProfile != null) return overrideProfile
         val profileEnv = System.getenv("PROFILE")
-        return profileEnv ?: return profile
+        return profileEnv ?: return "dev"
     }
 }
 
-class DefaultAppConfig(profile: String, vertx: Vertx, kodeinModule: Kodein.Module?) : AppConfig(profile = profile, vertx = vertx, externalKodeinModule = kodeinModule)
+class DefaultAppConfig(vertx: Vertx, overrideProfile: String?, kodeinModule: Kodein.Module?) : AppConfig(vertx = vertx, overrideProfile = overrideProfile, externalKodeinModule = kodeinModule)

@@ -39,4 +39,3 @@ private fun testKodein(): Kodein.Module {
 }
 
 class TestAppConfig : AppConfig("it", null, testKodein())
-

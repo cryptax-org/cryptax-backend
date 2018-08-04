@@ -129,6 +129,7 @@ fun initTransaction(): Pair<String, JsonPath> {
 }
 
 fun setupRestAssured() {
+    System.setProperty("PROFILE", "it")
     System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
     val appConfig = TestAppConfig()
     RestAssured.port = appConfig.properties.server.port

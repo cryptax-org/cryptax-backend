@@ -52,7 +52,7 @@ class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractV
                 log.error("Failed to deploy ${this.javaClass.simpleName}", ar.cause())
                 startFuture.fail(ar.cause())
             } else {
-                log.info("Server starter with profile [${appConfig.getProfile()}] and listening on port [$port]")
+                log.info("Server starter with profile [${appConfig.profile}] and listening on port [$port]")
                 startFuture.complete()
             }
         }

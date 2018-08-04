@@ -30,7 +30,7 @@ object Main {
             when {
                 ar.succeeded() -> {
                     val vertx: Vertx = ar.result()
-                    val appConfig = DefaultAppConfig(profile = "dev", vertx = vertx, kodeinModule = null)
+                    val appConfig = DefaultAppConfig(vertx = vertx, overrideProfile = null, kodeinModule = null)
                     val kodein = Kodein { import(appConfig.kodeinDefaultModule) }
 
                     vertx.deployVerticle(RestVerticle(appConfig, kodein)) { arRest: AsyncResult<String> ->
