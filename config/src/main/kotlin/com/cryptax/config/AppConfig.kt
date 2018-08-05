@@ -13,7 +13,7 @@ import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 import io.vertx.kotlin.ext.mail.MailConfig
 import org.kodein.di.Kodein
 
-abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx?, externalKodeinModule: Kodein.Module?) {
+abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = null, externalKodeinModule: Kodein.Module? = null) {
 
     val profile: String by lazy { profile() }
 
@@ -43,4 +43,4 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx?, ex
     }
 }
 
-class DefaultAppConfig(vertx: Vertx, overrideProfile: String?, kodeinModule: Kodein.Module?) : AppConfig(vertx = vertx, overrideProfile = overrideProfile, externalKodeinModule = kodeinModule)
+class DefaultAppConfig(vertx: Vertx) : AppConfig(null, vertx, null)

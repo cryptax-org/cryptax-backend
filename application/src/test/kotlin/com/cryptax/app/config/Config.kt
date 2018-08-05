@@ -38,4 +38,4 @@ private fun testKodein(): Kodein.Module {
     }
 }
 
-class TestAppConfig : AppConfig("it", null, testKodein())
+class TestAppConfig : AppConfig(overrideProfile = "it", externalKodeinModule = testKodein())
