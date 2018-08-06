@@ -4,8 +4,11 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
+import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.willThrow
 import io.reactivex.Maybe
+import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -32,9 +35,10 @@ class ValidateUserTest {
     fun testValidate() {
         // given
         val userId = "id"
-        val user = User(userId, "", "".toCharArray(), "", "", true)
+        val user = User(userId, "", "".toCharArray(), "", "", false)
         val welcomeToken = "token"
         given(userRepository.findById(userId)).willReturn(Maybe.just(user))
+        given(userRepository.updateUser(any())).willReturn(Single.just(user))
         given(securePassword.generateToken(user)).willReturn(welcomeToken)
 
         // when
@@ -43,8 +47,11 @@ class ValidateUserTest {
         // then
         assertThat(actual).isEqualTo(true)
         then(userRepository).should().findById(userId)
-        then(userRepository).should().updateUser(user)
         then(securePassword).should().generateToken(user)
+        argumentCaptor<User>().apply {
+            then(userRepository).should().updateUser(capture())
+            assertThat(firstValue.allowed).isEqualTo(true)
+        }
     }
 
     @Test

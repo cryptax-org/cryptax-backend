@@ -12,7 +12,7 @@ interface UserRepository {
 
     fun findByEmail(email: String): Maybe<User>
 
-    fun updateUser(user: User): User
+    fun updateUser(user: User): Single<User>
 
     fun ping(): Boolean
 }

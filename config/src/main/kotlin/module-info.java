@@ -32,4 +32,5 @@ module cryptax.config {
     requires vertx.core;
     requires vertx.rx.java2;
     requires java.sql;
+    requires org.jooq;
 }

@@ -43,9 +43,11 @@ class InMemoryUserRepository : UserRepository {
         }
     }
 
-    override fun updateUser(user: User): User {
-        inMemoryDb[user.id] = user
-        return user
+    override fun updateUser(user: User): Single<User> {
+        return Single.create<User> { emitter ->
+            inMemoryDb[user.id] = user
+            emitter.onSuccess(user)
+        }
     }
 
     override fun ping(): Boolean {

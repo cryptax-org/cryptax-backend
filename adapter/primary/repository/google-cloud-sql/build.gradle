@@ -3,6 +3,7 @@ apply plugin: 'java-library'
 ext.moduleName = 'cryptax.db.google'
 
 configurations.all {
+    // FIXME fix warning around jnr-enxio
     exclude module: 'jnr-enxio'
 }
 
@@ -13,8 +14,15 @@ dependencies {
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
         [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.0.10'],
-        [group: 'org.jooq', name: 'jooq', version: '3.11.3'],
-        // TODO clean jaxb-api dependencies
+        [group: 'org.jooq', name: 'jooq', version: jooqVersion],
+        // FIXME clean jaxb-api dependencies
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0']
+    )
+
+    testImplementation(
+        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
+        [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+        [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+        [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
     )
 }

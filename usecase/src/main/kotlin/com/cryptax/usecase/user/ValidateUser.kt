@@ -14,8 +14,8 @@ class ValidateUser(private val userRepository: UserRepository, private val secur
             .subscribeOn(Schedulers.io())
             .filter { user -> securePassword.generateToken(user) == welcomeToken }
             .map { user -> User(id = user.id, email = user.email, firstName = user.firstName, lastName = user.lastName, password = user.password, allowed = true) }
-            .map { user -> userRepository.updateUser(user);true }
-            .toSingle()
+            .map { user: User -> userRepository.updateUser(user).flatMap { Single.just(true) } }
+            .flatMapSingle { it }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(UserNotFoundException(userId))

@@ -39,11 +39,13 @@ import io.vertx.ext.mail.MailConfig
 import io.vertx.reactivex.ext.mail.MailClient
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
+import org.jooq.DSLContext
+import org.jooq.SQLDialect
+import org.jooq.impl.DSL
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
-import java.sql.Connection
 import java.sql.DriverManager
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
@@ -91,7 +93,7 @@ class KodeinConfig(
         }
 
         if (db != null) {
-            bind<Connection>() with singleton { DriverManager.getConnection(db.connectionUrl()) }
+            bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
             bind<UserRepository>() with singleton { GoogleUserRepository(instance()) }
         } else {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }

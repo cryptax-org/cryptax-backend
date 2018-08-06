@@ -8,6 +8,7 @@ buildscript {
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'
+        jooqVersion = '3.11.3'
         kotlinVersion = '1.2.60'
         kodeinVersion = '5.2.0'
         log4j2Version = '2.11.0'
