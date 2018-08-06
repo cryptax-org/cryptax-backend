@@ -8,6 +8,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.Result
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
@@ -90,13 +91,13 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Get all transactions for [$userId]")
-            val record = dslContext
+            val results: Result<Record> = dslContext
                 .selectFrom(table)
                 .where(userIdField.eq(userId))
                 .fetch()
             when {
-                record.size == 0 -> emitter.onSuccess(listOf())
-                else -> emitter.onSuccess(record.map { r -> toTransaction(r) })
+                results.isEmpty() -> emitter.onSuccess(listOf())
+                else -> emitter.onSuccess(results.map { r -> toTransaction(r) })
             }
         }
     }
