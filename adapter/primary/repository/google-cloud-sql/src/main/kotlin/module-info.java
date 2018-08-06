@@ -6,7 +6,6 @@ module cryptax.db.google {
     requires io.reactivex.rxjava2;
     requires java.sql;
     requires google.http.client;
-    requires java.xml.bind;
     requires org.jooq;
     requires org.slf4j;
 }

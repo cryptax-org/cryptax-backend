@@ -4,7 +4,6 @@ ext.moduleName = 'cryptax.db.google'
 
 configurations.all {
     exclude module: 'jnr-enxio'
-    exclude module: 'jaxb-api'
 }
 
 
@@ -15,5 +14,7 @@ dependencies {
         [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
         [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.0.10'],
         [group: 'org.jooq', name: 'jooq', version: '3.11.3'],
+        // TODO clean jaxb-api dependencies
+        [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0']
     )
 }
