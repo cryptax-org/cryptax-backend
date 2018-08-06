@@ -18,6 +18,7 @@ http:
   maxIdleConnections: 50
   keepAliveDuration: 15
 db:
+  mode: google
   url: jdbc:postgresql://google
   name: postgres
   username: postgres

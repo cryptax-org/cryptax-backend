@@ -17,3 +17,12 @@ email:
 http:
   maxIdleConnections: 5
   keepAliveDuration: 5
+db:
+  mode: in-memory
+  url:
+  name:
+  username:
+  password:
+  socketFactory:
+  socketFactoryArg:
+  useSSL:

@@ -54,7 +54,7 @@ import java.util.concurrent.TimeUnit
 class KodeinConfig(
     properties: PropertiesDto,
     mailConfig: MailConfig,
-    db: DbDto?,
+    db: DbDto,
     vertx: Vertx?,
     externalKodeinModule: Kodein.Module?) {
 
@@ -93,13 +93,13 @@ class KodeinConfig(
             builder.build()
         }
 
-        if (db != null) {
+        if (db.mode == "in-memory") {
+            bind<UserRepository>() with singleton { InMemoryUserRepository() }
+            bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
+        } else {
             bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
             bind<UserRepository>() with singleton { GoogleUserRepository(instance()) }
             bind<TransactionRepository>() with singleton { GoogleTransactionRepository(instance()) }
-        } else {
-            bind<UserRepository>() with singleton { InMemoryUserRepository() }
-            bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         }
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }
