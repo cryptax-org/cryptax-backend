@@ -12,6 +12,7 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.db.google.GoogleTransactionRepository
 import com.cryptax.db.google.GoogleUserRepository
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.User
@@ -95,12 +96,12 @@ class KodeinConfig(
         if (db != null) {
             bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
             bind<UserRepository>() with singleton { GoogleUserRepository(instance()) }
+            bind<TransactionRepository>() with singleton { GoogleTransactionRepository(instance()) }
         } else {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
+            bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         }
 
-
-        bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
 

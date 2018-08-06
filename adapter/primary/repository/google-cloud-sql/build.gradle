@@ -15,8 +15,8 @@ dependencies {
         [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
         [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.0.10'],
         [group: 'org.jooq', name: 'jooq', version: jooqVersion],
-        // FIXME clean jaxb-api dependencies
-        [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.0']
+        [group: 'com.github.jnr', name: 'jnr-ffi', version: '2.1.4'],
+        [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
     )
 
     testImplementation(

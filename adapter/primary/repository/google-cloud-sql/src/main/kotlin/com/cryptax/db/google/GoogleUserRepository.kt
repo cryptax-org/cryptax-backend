@@ -17,7 +17,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GoogleUserRepository::class.java)
-        private val userTable = table(name("user"))
+        private val table = table(name("user"))
         private val idField = field(name("id"), SQLDataType.VARCHAR)
         private val emailField = field(name("email"), SQLDataType.VARCHAR)
         private val passwordField = field(name("password"), SQLDataType.VARCHAR)
@@ -28,7 +28,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
 
     init {
         dslContext
-            .createTableIfNotExists(userTable)
+            .createTableIfNotExists(table)
             .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
             .execute()
     }
@@ -37,7 +37,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
         return Single.create<User> { emitter ->
             log.debug("Create a user $user")
             dslContext
-                .insertInto(userTable)
+                .insertInto(table)
                 .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
                 .values(user.id, user.email, user.password.joinToString(separator = ""), user.lastName, user.firstName, user.allowed)
                 .execute()
@@ -48,7 +48,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
     override fun findById(id: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
             val record = dslContext
-                .selectFrom(userTable)
+                .selectFrom(table)
                 .where(idField.eq(id))
                 .fetchOne()
             when (record) {
@@ -61,7 +61,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
     override fun findByEmail(email: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
             val record = dslContext
-                .selectFrom(userTable)
+                .selectFrom(table)
                 .where(emailField.eq(email))
                 .fetchOne()
             when (record) {
@@ -75,7 +75,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
         return Single.create<User> { emitter ->
             log.debug("Update a user $user")
             dslContext
-                .update(userTable)
+                .update(table)
                 .set(emailField, user.email)
                 .set(passwordField, user.password.joinToString(separator = ""))
                 .set(lastNameField, user.lastName)
