@@ -92,13 +92,12 @@ class KodeinConfig(
 
         if (db != null) {
             bind<Connection>() with singleton { DriverManager.getConnection(db.connectionUrl()) }
+            bind<UserRepository>() with singleton { GoogleUserRepository(instance()) }
         } else {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
         }
 
-        bind<UserRepository>() with singleton {
-            GoogleUserRepository(instance())
-        }
+
         bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
