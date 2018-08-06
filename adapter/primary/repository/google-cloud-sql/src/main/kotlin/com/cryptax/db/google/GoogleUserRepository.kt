@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.jooq.Record
 import org.jooq.SQLDialect
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.field
@@ -20,18 +21,18 @@ class GoogleUserRepository(private val connection: Connection) : UserRepository 
         private val log: Logger = LoggerFactory.getLogger(GoogleUserRepository::class.java)
         private val dialect = SQLDialect.POSTGRES
         private val userTable = table(name("user"))
-        private val id = field(name("id"), SQLDataType.VARCHAR)
-        private val email = field(name("email"), SQLDataType.VARCHAR)
-        private val password = field(name("password"), SQLDataType.VARCHAR)
-        private val lastName = field(name("lastName"), SQLDataType.VARCHAR)
-        private val firstName = field(name("firstName"), SQLDataType.VARCHAR)
-        private val allowed = field(name("allowed"), SQLDataType.BOOLEAN)
+        private val idField = field(name("id"), SQLDataType.VARCHAR)
+        private val emailField = field(name("email"), SQLDataType.VARCHAR)
+        private val passwordField = field(name("password"), SQLDataType.VARCHAR)
+        private val lastNameField = field(name("lastName"), SQLDataType.VARCHAR)
+        private val firstNameField = field(name("firstName"), SQLDataType.VARCHAR)
+        private val allowedField = field(name("allowed"), SQLDataType.BOOLEAN)
     }
 
     init {
         DSL.using(connection, dialect)
             .createTableIfNotExists(userTable)
-            .columns(id, email, password, lastName, firstName, allowed)
+            .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
             .execute()
     }
 
@@ -40,17 +41,23 @@ class GoogleUserRepository(private val connection: Connection) : UserRepository 
             log.debug("Create a user $user")
             DSL.using(connection, dialect)
                 .insertInto(userTable)
-                .columns(id, email, password, lastName, firstName, allowed)
+                .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
                 .values(user.id, user.email, user.password.joinToString(separator = ""), user.lastName, user.firstName, user.allowed)
                 .execute()
-
             emitter.onSuccess(user)
         }
     }
 
     override fun findById(id: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
-            emitter.onError(RuntimeException("Not implemented yet"))
+            val record = DSL.using(connection, dialect)
+                .selectFrom(userTable)
+                .where(idField.eq(id))
+                .fetchOne()
+            when (record) {
+                null -> emitter.onComplete()
+                else -> emitter.onSuccess(toUser(record))
+            }
         }
     }
 
@@ -58,21 +65,11 @@ class GoogleUserRepository(private val connection: Connection) : UserRepository 
         return Maybe.create<User> { emitter ->
             val record = DSL.using(connection, dialect)
                 .selectFrom(userTable)
-                .where(field("email").eq(email))
+                .where(emailField.eq(email))
                 .fetchOne()
             when (record) {
                 null -> emitter.onComplete()
-                else -> {
-                    val password = record.get(password, String::class.java)
-                    val user = User(
-                        record.get(id, String::class.java),
-                        record.get(GoogleUserRepository.email, String::class.java),
-                        password.toCharArray(),
-                        record.get(lastName, String::class.java),
-                        record.get(firstName, String::class.java),
-                        record.get(allowed, Boolean::class.java))
-                    emitter.onSuccess(user)
-                }
+                else -> emitter.onSuccess(toUser(record))
             }
         }
     }
@@ -82,6 +79,17 @@ class GoogleUserRepository(private val connection: Connection) : UserRepository 
     }
 
     override fun ping(): Boolean {
-        return false
+        val record = DSL.using(connection, dialect).resultQuery("SELECT 1").fetch()
+        return record.isNotEmpty
+    }
+
+    private fun toUser(record: Record): User {
+        return User(
+            record.get(idField, String::class.java),
+            record.get(emailField, String::class.java),
+            record.get(passwordField, String::class.java).toCharArray(),
+            record.get(lastNameField, String::class.java),
+            record.get(firstNameField, String::class.java),
+            record.get(allowedField, Boolean::class.java))
     }
 }
