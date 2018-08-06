@@ -7,6 +7,7 @@ dependencies {
         project(':usecase'),
         project(':domain'),
         project(':in-memory-db-simple'),
+        project(':google-cloud-sql'),
         project(':id-generator'),
         project(':security'),
         project(':controller'),

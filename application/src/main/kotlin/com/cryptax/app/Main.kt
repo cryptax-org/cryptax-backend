@@ -36,7 +36,7 @@ object Main {
                     vertx.deployVerticle(RestVerticle(appConfig, kodein)) { arRest: AsyncResult<String> ->
                         when {
                             arRest.succeeded() -> log.info("${RestVerticle::class.java.simpleName} deployed")
-                            arRest.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arRest.cause())
+                            arRest.failed() -> log.error("Could not deploy ${RestVerticle::class.java.simpleName}", arRest.cause())
                         }
                     }
                     vertx.deployVerticle(EmailVerticle(appConfig, kodein)) { arEmail: AsyncResult<String> ->

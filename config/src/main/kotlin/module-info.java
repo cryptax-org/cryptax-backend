@@ -7,6 +7,7 @@ module cryptax.config {
     requires cryptax.domain;
     requires cryptax.id;
     requires cryptax.db.simple;
+    requires cryptax.db.google;
     requires cryptax.security;
     requires cryptax.controller;
     requires cryptax.health;
@@ -30,4 +31,5 @@ module cryptax.config {
     requires vertx.mail.client;
     requires vertx.core;
     requires vertx.rx.java2;
+    requires java.sql;
 }

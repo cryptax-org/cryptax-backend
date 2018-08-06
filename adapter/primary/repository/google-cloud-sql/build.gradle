@@ -1,0 +1,19 @@
+apply plugin: 'java-library'
+
+ext.moduleName = 'cryptax.db.google'
+
+configurations.all {
+    exclude module: 'jnr-enxio'
+    exclude module: 'jaxb-api'
+}
+
+
+dependencies {
+    implementation(
+        project(":domain"),
+        [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
+        [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
+        [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: '1.0.10'],
+        [group: 'org.jooq', name: 'jooq', version: '3.11.3'],
+    )
+}

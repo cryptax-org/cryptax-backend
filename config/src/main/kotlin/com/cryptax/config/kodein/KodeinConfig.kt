@@ -4,6 +4,7 @@ import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.cache.CacheService
 import com.cryptax.cache.VertxCacheService
+import com.cryptax.config.dto.DbDto
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
@@ -11,6 +12,7 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.db.google.GoogleUserRepository
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
@@ -41,10 +43,17 @@ import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
+import java.sql.Connection
+import java.sql.DriverManager
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
-class KodeinConfig(properties: PropertiesDto, mailConfig: MailConfig, vertx: Vertx?, externalKodeinModule: Kodein.Module?) {
+class KodeinConfig(
+    properties: PropertiesDto,
+    mailConfig: MailConfig,
+    db: DbDto?,
+    vertx: Vertx?,
+    externalKodeinModule: Kodein.Module?) {
 
     val kodeinModule = Kodein.Module(name = "defaultModule") {
 
@@ -81,7 +90,15 @@ class KodeinConfig(properties: PropertiesDto, mailConfig: MailConfig, vertx: Ver
             builder.build()
         }
 
-        bind<UserRepository>() with singleton { InMemoryUserRepository() }
+        if (db != null) {
+            bind<Connection>() with singleton { DriverManager.getConnection(db.connectionUrl()) }
+        } else {
+            bind<UserRepository>() with singleton { InMemoryUserRepository() }
+        }
+
+        bind<UserRepository>() with singleton {
+            GoogleUserRepository(instance())
+        }
         bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }

@@ -17,3 +17,11 @@ email:
 http:
   maxIdleConnections: 50
   keepAliveDuration: 15
+db:
+  url: jdbc:postgresql://google
+  name: postgres
+  username: postgres
+  password: BsBGlptbQznxIg/StSirKIO/snuXvbjeHNooNJRHrOo=
+  socketFactory: com.google.cloud.sql.postgres.SocketFactory
+  socketFactoryArg: cryptax-212416:us-central1:cryptax-dev
+  useSSL: false

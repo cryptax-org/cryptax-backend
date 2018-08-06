@@ -30,7 +30,7 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
         trustAll = true,
         ssl = true)
 
-    val kodeinDefaultModule = KodeinConfig(properties, mailConfig, vertx, externalKodeinModule).kodeinModule
+    val kodeinDefaultModule = KodeinConfig(properties, mailConfig, properties.db, vertx, externalKodeinModule).kodeinModule
 
     val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = properties.jwt.keyStorePath, password = properties.jwt.password(profile)))
     val jwtOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.expiresInMinutes)
