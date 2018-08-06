@@ -13,8 +13,12 @@ import org.jooq.InsertValuesStep9
 import org.jooq.Record
 import org.jooq.RecordMapper
 import org.jooq.Result
+import org.jooq.ResultQuery
 import org.jooq.SelectConditionStep
 import org.jooq.SelectWhereStep
+import org.jooq.UpdateConditionStep
+import org.jooq.UpdateSetFirstStep
+import org.jooq.UpdateSetMoreStep
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
@@ -83,6 +87,27 @@ class GoogleTransactionRepositoryTest {
     }
 
     @Test
+    fun testAddTransactions() {
+        // given
+        val insertStep = mock(InsertSetStep::class.java) as InsertSetStep<Record>
+        val insertValues = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
+        val insertValues2 = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
+        given(dslContext.insertInto(table)).willReturn(insertStep)
+        given(insertStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(insertValues)
+        given(insertValues.values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)).willReturn(insertValues2)
+
+        // when
+        val actual = googleTransactionRepository.add(listOf(transaction)).blockingGet()
+
+        // then
+        assertThat(actual).hasSize(1)
+        assertThat(actual[0]).isEqualTo(transaction)
+        then(dslContext).should().insertInto(table)
+        then(insertStep).should().columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
+        then(insertValues).should().values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)
+    }
+
+    @Test
     fun testGet() {
         // given
         val transactionId = "id"
@@ -111,28 +136,36 @@ class GoogleTransactionRepositoryTest {
     }
 
     @Test
+    fun testGetNotFound() {
+        // given
+        val transactionId = "id"
+        val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
+        val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
+
+        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(selectStep.where(idField.eq(transactionId))).willReturn(selectConditionStep)
+        given(selectConditionStep.fetchOne()).willReturn(null)
+
+        // when
+        val actual = googleTransactionRepository.get(transactionId).blockingGet()
+
+        // then
+        assertThat(actual).isEqualTo(null)
+    }
+
+    @Test
     fun testGetAllTransactions() {
         // given
         val transactionId = "id"
         val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val result: Result<Record> = mock(Result::class.java) as Result<Record>
-        val record = mock(Record::class.java)
 
         given(dslContext.selectFrom(table)).willReturn(selectStep)
         given(selectStep.where(userIdField.eq(transactionId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetch()).willReturn(result)
-        // FIXME: This is not great
+        given(result.isEmpty()).willReturn(false)
         given(result.map(any<RecordMapper<Record?, Transaction>>())).willReturn(listOf(transaction))
-        given(record.get(idField, String::class.java)).willReturn("id")
-        given(record.get(userIdField, String::class.java)).willReturn("userId")
-        given(record.get(sourceField, String::class.java)).willReturn(Source.MANUAL.name)
-        given(record.get(dateField, OffsetDateTime::class.java)).willReturn(OffsetDateTime.ofInstant(date.toInstant(), zoneId))
-        given(record.get(typeField, String::class.java)).willReturn(Transaction.Type.BUY.name)
-        given(record.get(priceField, Double::class.java)).willReturn(50.0)
-        given(record.get(quantityField, Double::class.java)).willReturn(3.0)
-        given(record.get(currency1Field, String::class.java)).willReturn(Currency.ETH.name)
-        given(record.get(currency2Field, String::class.java)).willReturn(Currency.USD.name)
 
         // when
         val actual = googleTransactionRepository.getAllForUser(transactionId).blockingGet()
@@ -142,90 +175,50 @@ class GoogleTransactionRepositoryTest {
         assertThat(actual[0]).isEqualTo(transaction)
     }
 
-
-/*    @Test
-    fun testFindByIdFail() {
-        // given
-        val userId = "id"
-        val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
-        val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
-
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
-        given(selectStep.where(idField.eq(userId))).willReturn(selectConditionStep)
-        given(selectConditionStep.fetchOne()).willReturn(null)
-
-        // when
-        val actual = googleTransactionRepository.findById(userId).blockingGet()
-
-        // then
-        assertThat(actual).isNull()
-    }*/
-/*
     @Test
-    fun testFindByEmail() {
+    fun testGetAllTransactionsEmpty() {
         // given
-        val expected = User("id", "email", "password".toCharArray(), "last", "first", false)
-        val email = "email"
+        val transactionId = "id"
         val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
-        val record = mock(Record::class.java)
+        val result: Result<Record> = mock(Result::class.java) as Result<Record>
 
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
-        given(selectStep.where(emailField.eq(email))).willReturn(selectConditionStep)
-        given(selectConditionStep.fetchOne()).willReturn(record)
-        given(record.get(idField, String::class.java)).willReturn("id")
-        given(record.get(emailField, String::class.java)).willReturn("email")
-        given(record.get(passwordField, String::class.java)).willReturn("password")
-        given(record.get(lastNameField, String::class.java)).willReturn("last")
-        given(record.get(firstNameField, String::class.java)).willReturn("first")
-        given(record.get(allowedField, Boolean::class.java)).willReturn(false)
+        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(selectStep.where(userIdField.eq(transactionId))).willReturn(selectConditionStep)
+        given(selectConditionStep.fetch()).willReturn(result)
+        given(result.isEmpty()).willReturn(false)
+        given(result.map(any<RecordMapper<Record?, Transaction>>())).willReturn(listOf())
 
         // when
-        val actual = googleTransactionRepository.findByEmail(email).blockingGet()
+        val actual = googleTransactionRepository.getAllForUser(transactionId).blockingGet()
 
         // then
-        assertThat(actual).isEqualTo(expected)
+        assertThat(actual).isEmpty()
     }
 
     @Test
-    fun testFindByEmailFail() {
+    fun testUpdateTransaction() {
         // given
-        val email = "email"
-        val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
-        val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
-
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
-        given(selectStep.where(emailField.eq(email))).willReturn(selectConditionStep)
-        given(selectConditionStep.fetchOne()).willReturn(null)
-
-        // when
-        val actual = googleTransactionRepository.findByEmail(email).blockingGet()
-
-        // then
-        assertThat(actual).isNull()
-    }
-
-    @Test
-    fun testUpdateUser() {
-        // given
-        val user = User("id", "email", "password".toCharArray(), "last", "first", false)
         val updateStep = mock(UpdateSetFirstStep::class.java) as UpdateSetFirstStep<Record>
         val updateStepMore = mock(UpdateSetMoreStep::class.java) as UpdateSetMoreStep<Record>
         val lastUpdate = mock(UpdateConditionStep::class.java) as UpdateConditionStep<Record>
 
-        given(dslContext.update(userTable)).willReturn(updateStep)
-        given(updateStep.set(emailField, user.email)).willReturn(updateStepMore)
-        given(updateStepMore.set(passwordField, user.password.joinToString(separator = ""))).willReturn(updateStepMore)
-        given(updateStepMore.set(lastNameField, user.lastName)).willReturn(updateStepMore)
-        given(updateStepMore.set(firstNameField, user.firstName)).willReturn(updateStepMore)
-        given(updateStepMore.set(allowedField, user.allowed)).willReturn(updateStepMore)
-        given(updateStepMore.where(idField.eq(user.id))).willReturn(lastUpdate)
+        given(dslContext.update(table)).willReturn(updateStep)
+        given(updateStep.set(userIdField, transaction.userId)).willReturn(updateStepMore)
+        given(updateStepMore.set(sourceField, transaction.source.name)).willReturn(updateStepMore)
+        given(updateStepMore.set(dateField, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId))).willReturn(updateStepMore)
+        given(updateStepMore.set(typeField, transaction.type.name)).willReturn(updateStepMore)
+        given(updateStepMore.set(priceField, transaction.price)).willReturn(updateStepMore)
+        given(updateStepMore.set(quantityField, transaction.quantity)).willReturn(updateStepMore)
+        given(updateStepMore.set(currency1Field, transaction.currency1.name)).willReturn(updateStepMore)
+        given(updateStepMore.set(currency2Field, transaction.currency2.name)).willReturn(updateStepMore)
+        given(updateStepMore.where(idField.eq(transaction.id))).willReturn(lastUpdate)
 
         // when
-        val actual = googleTransactionRepository.updateUser(user).blockingGet()
+        val actual = googleTransactionRepository.update(transaction).blockingGet()
 
         // then
-        assertThat(actual).isEqualTo(user)
+        assertThat(actual).isEqualTo(transaction)
     }
 
     @Test
@@ -242,5 +235,5 @@ class GoogleTransactionRepositoryTest {
 
         // then
         assertThat(actual).isFalse()
-    }*/
+    }
 }
