@@ -39,7 +39,7 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
     private fun profile(): String {
         if (overrideProfile != null) return overrideProfile
         val profileEnv = System.getenv("PROFILE")
-        return profileEnv ?: return "dev"
+        return profileEnv ?: return "local"
     }
 }
 
