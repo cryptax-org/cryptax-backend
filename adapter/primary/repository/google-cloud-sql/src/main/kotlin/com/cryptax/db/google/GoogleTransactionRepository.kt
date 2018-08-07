@@ -62,8 +62,8 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
                     transaction.type.name,
                     transaction.price,
                     transaction.quantity,
-                    transaction.currency1.name,
-                    transaction.currency2.name)
+                    transaction.currency1.code,
+                    transaction.currency2.code)
                 .execute()
             emitter.onSuccess(transaction)
         }
@@ -119,8 +119,8 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
                 .set(typeField, transaction.type.name)
                 .set(priceField, transaction.price)
                 .set(quantityField, transaction.quantity)
-                .set(currency1Field, transaction.currency1.name)
-                .set(currency2Field, transaction.currency2.name)
+                .set(currency1Field, transaction.currency1.code)
+                .set(currency2Field, transaction.currency2.code)
                 .where(idField.eq(transaction.id))
                 .execute()
             emitter.onSuccess(transaction)

@@ -35,9 +35,7 @@ enum class Currency constructor(val code: String, val fullName: String, val symb
             // TODO find a better way to handle code change
             val str = if (code == "BQX") "ETHOS" else code
             return values()
-                .find { currency ->
-                    currency.code == str
-                } ?: UNKNOWN
+                .find { currency -> currency.code == str } ?: UNKNOWN
         }
     }
 }
