@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.User
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.CreateTableAsStep
 import org.jooq.CreateTableColumnStep
+import org.jooq.CreateTableConstraintStep
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.InsertValuesStep6
@@ -47,8 +48,10 @@ class GoogleUserRepositoryTest {
         dslContext = mock(DSLContext::class.java)
         val tableStep = mock(CreateTableAsStep::class.java) as CreateTableAsStep<Record>
         val columnStep = mock(CreateTableColumnStep::class.java)
+        val constraintStep = mock(CreateTableConstraintStep::class.java)
         given(dslContext.createTableIfNotExists(userTable)).willReturn(tableStep)
         given(tableStep.columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)).willReturn(columnStep)
+        given(columnStep.constraints(DSL.constraint("PK_USER").primaryKey(idField))).willReturn(constraintStep)
         googleUserRepository = GoogleUserRepository(dslContext)
     }
 

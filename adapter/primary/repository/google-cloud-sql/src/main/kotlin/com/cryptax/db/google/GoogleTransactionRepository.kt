@@ -9,6 +9,7 @@ import io.reactivex.Single
 import org.jooq.DSLContext
 import org.jooq.Record
 import org.jooq.Result
+import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
@@ -23,22 +24,27 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GoogleTransactionRepository::class.java)
         private val zoneId = ZoneId.of("UTC")
-        private val table = table(name("transaction"))
+        private val tableTransaction = table(name("transaction"))
+        private val tableUser = table(name("user"))
         private val idField = field(name("id"), SQLDataType.VARCHAR)
-        private val userIdField = field(name("userId"), SQLDataType.VARCHAR)
-        private val sourceField = field(name("source"), SQLDataType.VARCHAR)
-        private val dateField = field(name("date"), SQLDataType.OFFSETDATETIME)
-        private val typeField = field(name("type"), SQLDataType.VARCHAR)
-        private val priceField = field(name("price"), SQLDataType.DOUBLE)
-        private val quantityField = field(name("quantity"), SQLDataType.DOUBLE)
-        private val currency1Field = field(name("currency1"), SQLDataType.VARCHAR)
-        private val currency2Field = field(name("currency2"), SQLDataType.VARCHAR)
+        private val userIdField = field(name("userId"), SQLDataType.VARCHAR.nullable(false))
+        private val sourceField = field(name("source"), SQLDataType.VARCHAR.nullable(false))
+        private val dateField = field(name("date"), SQLDataType.OFFSETDATETIME.nullable(false))
+        private val typeField = field(name("type"), SQLDataType.VARCHAR.nullable(false))
+        private val priceField = field(name("price"), SQLDataType.DOUBLE.nullable(false))
+        private val quantityField = field(name("quantity"), SQLDataType.DOUBLE.nullable(false))
+        private val currency1Field = field(name("currency1"), SQLDataType.VARCHAR.nullable(false))
+        private val currency2Field = field(name("currency2"), SQLDataType.VARCHAR.nullable(false))
     }
 
     init {
         dslContext
-            .createTableIfNotExists(table)
+            .createTableIfNotExists(tableTransaction)
             .columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
+            .constraints(
+                constraint("PK_TRANSACTION").primaryKey(idField),
+                constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR))
+            )
             .execute()
     }
 
@@ -46,7 +52,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
         return Single.create<Transaction> { emitter ->
             log.debug("Create a transaction $transaction")
             dslContext
-                .insertInto(table)
+                .insertInto(tableTransaction)
                 .columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
                 .values(
                     transaction.id,
@@ -78,7 +84,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
         return Maybe.create<Transaction> { emitter ->
             log.debug("Get a transaction by id [$id]")
             val record = dslContext
-                .selectFrom(table)
+                .selectFrom(tableTransaction)
                 .where(idField.eq(id))
                 .fetchOne()
             when (record) {
@@ -92,7 +98,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Get all transactions for [$userId]")
             val results: Result<Record> = dslContext
-                .selectFrom(table)
+                .selectFrom(tableTransaction)
                 .where(userIdField.eq(userId))
                 .fetch()
             when {
@@ -106,7 +112,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
         return Single.create<Transaction> { emitter ->
             log.debug("Update one transaction [${transaction.id}]")
             dslContext
-                .update(table)
+                .update(tableTransaction)
                 .set(userIdField, transaction.userId)
                 .set(sourceField, transaction.source.name)
                 .set(dateField, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId))

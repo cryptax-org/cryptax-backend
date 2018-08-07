@@ -6,6 +6,7 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import org.jooq.DSLContext
 import org.jooq.Record
+import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
@@ -19,17 +20,18 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
         private val log: Logger = LoggerFactory.getLogger(GoogleUserRepository::class.java)
         private val table = table(name("user"))
         private val idField = field(name("id"), SQLDataType.VARCHAR)
-        private val emailField = field(name("email"), SQLDataType.VARCHAR)
-        private val passwordField = field(name("password"), SQLDataType.VARCHAR)
-        private val lastNameField = field(name("lastName"), SQLDataType.VARCHAR)
-        private val firstNameField = field(name("firstName"), SQLDataType.VARCHAR)
-        private val allowedField = field(name("allowed"), SQLDataType.BOOLEAN)
+        private val emailField = field(name("email"), SQLDataType.VARCHAR.nullable(false))
+        private val passwordField = field(name("password"), SQLDataType.VARCHAR.nullable(false))
+        private val lastNameField = field(name("lastName"), SQLDataType.VARCHAR.nullable(false))
+        private val firstNameField = field(name("firstName"), SQLDataType.VARCHAR.nullable(false))
+        private val allowedField = field(name("allowed"), SQLDataType.BOOLEAN.nullable(false))
     }
 
     init {
         dslContext
             .createTableIfNotExists(table)
             .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
+            .constraints(constraint("PK_USER").primaryKey(idField))
             .execute()
     }
 

@@ -7,6 +7,7 @@ import com.nhaarman.mockitokotlin2.any
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.CreateTableAsStep
 import org.jooq.CreateTableColumnStep
+import org.jooq.CreateTableConstraintStep
 import org.jooq.DSLContext
 import org.jooq.InsertSetStep
 import org.jooq.InsertValuesStep9
@@ -19,6 +20,7 @@ import org.jooq.SelectWhereStep
 import org.jooq.UpdateConditionStep
 import org.jooq.UpdateSetFirstStep
 import org.jooq.UpdateSetMoreStep
+import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
 import org.jooq.impl.DSL.table
@@ -39,7 +41,8 @@ class GoogleTransactionRepositoryTest {
 
     // TODO extract that data from base code
     private val zoneId = ZoneId.of("UTC")
-    private val table = table(name("transaction"))
+    private val tableTransaction = table(name("transaction"))
+    private val tableUser = table(name("user"))
     private val idField = field(name("id"), SQLDataType.VARCHAR)
     private val userIdField = field(name("userId"), SQLDataType.VARCHAR)
     private val sourceField = field(name("source"), SQLDataType.VARCHAR)
@@ -61,8 +64,10 @@ class GoogleTransactionRepositoryTest {
         dslContext = mock(DSLContext::class.java)
         val tableStep = mock(CreateTableAsStep::class.java) as CreateTableAsStep<Record>
         val columnStep = mock(CreateTableColumnStep::class.java)
-        given(dslContext.createTableIfNotExists(table)).willReturn(tableStep)
+        val constraintStep = mock(CreateTableConstraintStep::class.java)
+        given(dslContext.createTableIfNotExists(tableTransaction)).willReturn(tableStep)
         given(tableStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(columnStep)
+        given(columnStep.constraints( constraint("PK_TRANSACTION").primaryKey(idField), constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR)))).willReturn(constraintStep)
         googleTransactionRepository = GoogleTransactionRepository(dslContext)
     }
 
@@ -72,7 +77,7 @@ class GoogleTransactionRepositoryTest {
         val insertStep = mock(InsertSetStep::class.java) as InsertSetStep<Record>
         val insertValues = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
         val insertValues2 = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
-        given(dslContext.insertInto(table)).willReturn(insertStep)
+        given(dslContext.insertInto(tableTransaction)).willReturn(insertStep)
         given(insertStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(insertValues)
         given(insertValues.values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)).willReturn(insertValues2)
 
@@ -81,7 +86,7 @@ class GoogleTransactionRepositoryTest {
 
         // then
         assertThat(actual).isNotNull
-        then(dslContext).should().insertInto(table)
+        then(dslContext).should().insertInto(tableTransaction)
         then(insertStep).should().columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
         then(insertValues).should().values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)
     }
@@ -92,7 +97,7 @@ class GoogleTransactionRepositoryTest {
         val insertStep = mock(InsertSetStep::class.java) as InsertSetStep<Record>
         val insertValues = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
         val insertValues2 = mock(InsertValuesStep9::class.java) as InsertValuesStep9<Record, String, String, String, OffsetDateTime, String, Double, Double, String, String>
-        given(dslContext.insertInto(table)).willReturn(insertStep)
+        given(dslContext.insertInto(tableTransaction)).willReturn(insertStep)
         given(insertStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(insertValues)
         given(insertValues.values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)).willReturn(insertValues2)
 
@@ -102,7 +107,7 @@ class GoogleTransactionRepositoryTest {
         // then
         assertThat(actual).hasSize(1)
         assertThat(actual[0]).isEqualTo(transaction)
-        then(dslContext).should().insertInto(table)
+        then(dslContext).should().insertInto(tableTransaction)
         then(insertStep).should().columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
         then(insertValues).should().values("id", "userId", Source.MANUAL.name, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId), Transaction.Type.BUY.name, 50.0, 3.0, Currency.ETH.name, Currency.USD.name)
     }
@@ -115,7 +120,7 @@ class GoogleTransactionRepositoryTest {
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val record = mock(Record::class.java)
 
-        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableTransaction)).willReturn(selectStep)
         given(selectStep.where(idField.eq(transactionId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(record)
         given(record.get(idField, String::class.java)).willReturn("id")
@@ -142,7 +147,7 @@ class GoogleTransactionRepositoryTest {
         val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
 
-        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableTransaction)).willReturn(selectStep)
         given(selectStep.where(idField.eq(transactionId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(null)
 
@@ -161,7 +166,7 @@ class GoogleTransactionRepositoryTest {
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val result: Result<Record> = mock(Result::class.java) as Result<Record>
 
-        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableTransaction)).willReturn(selectStep)
         given(selectStep.where(userIdField.eq(transactionId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetch()).willReturn(result)
         given(result.isEmpty()).willReturn(false)
@@ -183,7 +188,7 @@ class GoogleTransactionRepositoryTest {
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val result: Result<Record> = mock(Result::class.java) as Result<Record>
 
-        given(dslContext.selectFrom(table)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableTransaction)).willReturn(selectStep)
         given(selectStep.where(userIdField.eq(transactionId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetch()).willReturn(result)
         given(result.isEmpty()).willReturn(false)
@@ -203,7 +208,7 @@ class GoogleTransactionRepositoryTest {
         val updateStepMore = mock(UpdateSetMoreStep::class.java) as UpdateSetMoreStep<Record>
         val lastUpdate = mock(UpdateConditionStep::class.java) as UpdateConditionStep<Record>
 
-        given(dslContext.update(table)).willReturn(updateStep)
+        given(dslContext.update(tableTransaction)).willReturn(updateStep)
         given(updateStep.set(userIdField, transaction.userId)).willReturn(updateStepMore)
         given(updateStepMore.set(sourceField, transaction.source.name)).willReturn(updateStepMore)
         given(updateStepMore.set(dateField, OffsetDateTime.ofInstant(transaction.date.toInstant(), zoneId))).willReturn(updateStepMore)
