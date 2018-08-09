@@ -1,16 +1,16 @@
-package com.cryptax.db.google
+package com.cryptax.db.postgres
 
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.currency1Field
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.currency2Field
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.dateField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.idField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.priceField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.quantityField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.sourceField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.tableTransaction
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.typeField
-import com.cryptax.db.google.GoogleTransactionRepository.Companion.userIdField
-import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.currency1Field
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.currency2Field
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.dateField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.idField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.priceField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.quantityField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.sourceField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.tableTransaction
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.typeField
+import com.cryptax.db.postgres.PostgresTransactionRepository.Companion.userIdField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
@@ -47,15 +47,14 @@ import java.time.ZonedDateTime
 
 @Suppress("UNCHECKED_CAST")
 @DisplayName("Google transaction repository test")
-class GoogleTransactionRepositoryTest {
+class PostgresTransactionRepositoryTest {
 
-    // TODO extract that data from base code
     private val zoneId = ZoneId.of("UTC")
     private val date = ZonedDateTime.now(zoneId)
     private val transaction = Transaction("id", "userId", Source.MANUAL, date, Transaction.Type.BUY, 50.0, 3.0, Currency.ETH, Currency.USD)
 
     private lateinit var dslContext: DSLContext
-    private lateinit var googleTransactionRepository: GoogleTransactionRepository
+    private lateinit var googleTransactionRepository: PostgresTransactionRepository
 
     @BeforeEach
     fun beforeEach() {
@@ -66,7 +65,7 @@ class GoogleTransactionRepositoryTest {
         given(dslContext.createTableIfNotExists(tableTransaction)).willReturn(tableStep)
         given(tableStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(columnStep)
         given(columnStep.constraints(constraint("PK_TRANSACTION").primaryKey(idField), constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR)))).willReturn(constraintStep)
-        googleTransactionRepository = GoogleTransactionRepository(dslContext)
+        googleTransactionRepository = PostgresTransactionRepository(dslContext)
     }
 
     @Test

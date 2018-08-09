@@ -1,11 +1,10 @@
 apply plugin: 'java-library'
 
-ext.moduleName = 'cryptax.db.google'
+ext.moduleName = 'cryptax.db.postgres'
 
-configurations.all {
-    // FIXME fix warning around jnr-enxio
+/*configurations.all {
     exclude module: 'jnr-enxio'
-}
+}*/
 
 
 dependencies {
@@ -13,9 +12,8 @@ dependencies {
         project(":domain"),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
-        [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: googleCloudSqlVersion],
         [group: 'org.jooq', name: 'jooq', version: jooqVersion],
-        [group: 'com.github.jnr', name: 'jnr-ffi', version: '2.1.4'],
+        //[group: 'com.github.jnr', name: 'jnr-ffi', version: '2.1.4'],
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
     )
 

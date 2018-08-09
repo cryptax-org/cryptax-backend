@@ -12,8 +12,8 @@ import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
-import com.cryptax.db.google.GoogleTransactionRepository
-import com.cryptax.db.google.GoogleUserRepository
+import com.cryptax.db.postgres.PostgresTransactionRepository
+import com.cryptax.db.postgres.PostgresUserRepository
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
@@ -98,8 +98,8 @@ class KodeinConfig(
             bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         } else {
             bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
-            bind<UserRepository>() with singleton { GoogleUserRepository(instance()) }
-            bind<TransactionRepository>() with singleton { GoogleTransactionRepository(instance()) }
+            bind<UserRepository>() with singleton { PostgresUserRepository(instance()) }
+            bind<TransactionRepository>() with singleton { PostgresTransactionRepository(instance()) }
         }
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }

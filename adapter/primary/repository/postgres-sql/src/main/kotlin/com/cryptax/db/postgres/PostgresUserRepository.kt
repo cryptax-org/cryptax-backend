@@ -1,4 +1,4 @@
-package com.cryptax.db.google
+package com.cryptax.db.postgres
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
@@ -16,10 +16,10 @@ import org.jooq.impl.SQLDataType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository {
+class PostgresUserRepository(private val dslContext: DSLContext) : UserRepository {
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(GoogleUserRepository::class.java)
+        private val log: Logger = LoggerFactory.getLogger(PostgresUserRepository::class.java)
         val tableUser: Table<Record> = table(name("user"))
         val idField: Field<String> = field(name("id"), SQLDataType.VARCHAR)
         val emailField: Field<String> = field(name("email"), SQLDataType.VARCHAR.nullable(false))

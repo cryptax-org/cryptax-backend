@@ -1,12 +1,12 @@
-package com.cryptax.db.google
+package com.cryptax.db.postgres
 
-import com.cryptax.db.google.GoogleUserRepository.Companion.allowedField
-import com.cryptax.db.google.GoogleUserRepository.Companion.emailField
-import com.cryptax.db.google.GoogleUserRepository.Companion.firstNameField
-import com.cryptax.db.google.GoogleUserRepository.Companion.idField
-import com.cryptax.db.google.GoogleUserRepository.Companion.lastNameField
-import com.cryptax.db.google.GoogleUserRepository.Companion.passwordField
-import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.allowedField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.emailField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.firstNameField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.idField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.lastNameField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.passwordField
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.User
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.CreateTableAsStep
@@ -33,10 +33,10 @@ import org.mockito.Mockito.mock
 
 @Suppress("UNCHECKED_CAST")
 @DisplayName("Google user repository test")
-class GoogleUserRepositoryTest {
+class PostgresUserRepositoryTest {
 
     private lateinit var dslContext: DSLContext
-    private lateinit var googleUserRepository: GoogleUserRepository
+    private lateinit var googleUserRepository: PostgresUserRepository
 
     @BeforeEach
     fun beforeEach() {
@@ -47,7 +47,7 @@ class GoogleUserRepositoryTest {
         given(dslContext.createTableIfNotExists(tableUser)).willReturn(tableStep)
         given(tableStep.columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)).willReturn(columnStep)
         given(columnStep.constraints(DSL.constraint("PK_USER").primaryKey(idField))).willReturn(constraintStep)
-        googleUserRepository = GoogleUserRepository(dslContext)
+        googleUserRepository = PostgresUserRepository(dslContext)
     }
 
     @Test

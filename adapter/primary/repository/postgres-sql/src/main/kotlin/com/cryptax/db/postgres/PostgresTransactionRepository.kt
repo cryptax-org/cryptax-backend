@@ -1,6 +1,6 @@
-package com.cryptax.db.google
+package com.cryptax.db.postgres
 
-import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
+import com.cryptax.db.postgres.PostgresUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
@@ -23,9 +23,9 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class GoogleTransactionRepository(private val dslContext: DSLContext) : TransactionRepository {
+class PostgresTransactionRepository(private val dslContext: DSLContext) : TransactionRepository {
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(GoogleTransactionRepository::class.java)
+        private val log: Logger = LoggerFactory.getLogger(PostgresTransactionRepository::class.java)
         private val zoneId = ZoneId.of("UTC")
         val tableTransaction: Table<Record> = table(name("transaction"))
         val idField: Field<String> = field(name("id"), SQLDataType.VARCHAR)

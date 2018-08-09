@@ -7,7 +7,7 @@ module cryptax.config {
     requires cryptax.domain;
     requires cryptax.id;
     requires cryptax.db.simple;
-    requires cryptax.db.google;
+    requires cryptax.db.postgres;
     requires cryptax.security;
     requires cryptax.controller;
     requires cryptax.health;
