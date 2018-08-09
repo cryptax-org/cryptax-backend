@@ -105,9 +105,7 @@ class KodeinConfig(
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
 
-        bind<com.cryptax.domain.port.PriceService>() with singleton {
-            PriceService(client = instance(), objectMapper = instance(), cache = instance())
-        }
+        bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(client = instance(), objectMapper = instance(), cache = instance()) }
 
         if (vertx != null) {
             // Vertx dependencies

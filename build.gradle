@@ -3,6 +3,7 @@ buildscript {
         projectName = rootProject.name
 
         assertJVersion = '3.10.0'
+        commonsCodecVersion = '1.11'
         disruptorVersion = '3.4.2'
         dropwizardVersion = '4.0.2'
         junitVersion = '5.2.0'
@@ -70,6 +71,8 @@ subprojects {
             force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
             force "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
             force "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+            force "commons-codec:commons-codec:$commonsCodecVersion"
+
         }
     }
 

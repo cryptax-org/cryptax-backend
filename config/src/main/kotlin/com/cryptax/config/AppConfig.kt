@@ -21,6 +21,12 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
         .registerModule(KotlinModule())
         .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-$profile.yml"), PropertiesDto::class.java)
 
+    init {
+        if (properties.db.mode == "google") {
+            System.setProperty("cloudSql.socketFactory.credentialFactory", "com.cryptax.config.gcp.CryptaxCredentialFactory")
+        }
+    }
+
     private val mailConfig = MailConfig(
         hostname = properties.email.host,
         port = properties.email.port,

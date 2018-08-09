@@ -33,4 +33,10 @@ module cryptax.config {
     requires vertx.rx.java2;
     requires java.sql;
     requires org.jooq;
+    requires google.api.client;
+    requires google.api.services.sqladmin.v1beta4.rev56;
+    requires google.auth.library.oauth2.http;
+    requires google.cloud.storage;
+    requires google.oauth.client;
+    requires jdbc.socket.factory.core;
 }

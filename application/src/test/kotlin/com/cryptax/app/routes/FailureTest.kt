@@ -55,9 +55,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(401)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isEqualTo("Unauthorized")
+                    testContext.verify {
+                        assertThat(body.getString("error")).isEqualTo("Unauthorized")
+                        testContext.completeNow()
+                    }
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -74,9 +76,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -95,9 +99,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(401)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -116,9 +122,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -137,9 +145,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -158,9 +168,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isEqualTo("id")
+                    testContext.verify {
+                        assertThat(body.getString("error")).isEqualTo("id")
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -170,7 +182,7 @@ class FailureTest {
     fun testNotHandledException(vertx: Vertx, testContext: VertxTestContext) {
         router.route()
             .handler {
-                (it as RoutingContextImpl).fail(RuntimeException("id"))
+                (it as RoutingContextImpl).fail(RuntimeException())
             }
             .failureHandler(failureHandler)
 
@@ -179,9 +191,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(500)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isEqualTo("id")
+                    testContext.verify {
+                        assertThat(body.getString("error")).isEqualTo("Something went wrong")
+                        testContext.completeNow()
+                    }
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -200,9 +214,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -222,9 +238,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(500)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isNotNull()
+                    testContext.verify {
+                        assertThat(body.getString("error")).isNotNull()
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
@@ -244,9 +262,11 @@ class FailureTest {
                 assertThat(resp.statusCode()).isEqualTo(400)
                 resp.bodyHandler {
                     val body = JsonObject(it)
-                    assertThat(body.getString("error")).isEqualTo("Bas request")
+                    testContext.verify {
+                        assertThat(body.getString("error")).isEqualTo("Bad request")
+                    }
+                    testContext.completeNow()
                 }
-                testContext.completeNow()
             }
         }
     }
