@@ -1,5 +1,6 @@
 package com.cryptax.db.google
 
+import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
@@ -7,8 +8,10 @@ import com.cryptax.domain.port.TransactionRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.Record
 import org.jooq.Result
+import org.jooq.Table
 import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
@@ -24,17 +27,16 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GoogleTransactionRepository::class.java)
         private val zoneId = ZoneId.of("UTC")
-        private val tableTransaction = table(name("transaction"))
-        private val tableUser = table(name("user"))
-        private val idField = field(name("id"), SQLDataType.VARCHAR)
-        private val userIdField = field(name("userId"), SQLDataType.VARCHAR.nullable(false))
-        private val sourceField = field(name("source"), SQLDataType.VARCHAR.nullable(false))
-        private val dateField = field(name("date"), SQLDataType.OFFSETDATETIME.nullable(false))
-        private val typeField = field(name("type"), SQLDataType.VARCHAR.nullable(false))
-        private val priceField = field(name("price"), SQLDataType.DOUBLE.nullable(false))
-        private val quantityField = field(name("quantity"), SQLDataType.DOUBLE.nullable(false))
-        private val currency1Field = field(name("currency1"), SQLDataType.VARCHAR.nullable(false))
-        private val currency2Field = field(name("currency2"), SQLDataType.VARCHAR.nullable(false))
+        val tableTransaction: Table<Record> = table(name("transaction"))
+        val idField: Field<String> = field(name("id"), SQLDataType.VARCHAR)
+        val userIdField: Field<String> = field(name("userId"), SQLDataType.VARCHAR.nullable(false))
+        val sourceField: Field<String> = field(name("source"), SQLDataType.VARCHAR.nullable(false))
+        val dateField: Field<OffsetDateTime> = field(name("date"), SQLDataType.OFFSETDATETIME.nullable(false))
+        val typeField: Field<String> = field(name("type"), SQLDataType.VARCHAR.nullable(false))
+        val priceField: Field<Double> = field(name("price"), SQLDataType.DOUBLE.nullable(false))
+        val quantityField: Field<Double> = field(name("quantity"), SQLDataType.DOUBLE.nullable(false))
+        val currency1Field: Field<String> = field(name("currency1"), SQLDataType.VARCHAR.nullable(false))
+        val currency2Field: Field<String> = field(name("currency2"), SQLDataType.VARCHAR.nullable(false))
     }
 
     init {
@@ -43,8 +45,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
             .columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)
             .constraints(
                 constraint("PK_TRANSACTION").primaryKey(idField),
-                constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR))
-            )
+                constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR)))
             .execute()
     }
 
@@ -72,10 +73,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Add transactions")
-            transactions.forEach { transaction ->
-                // TODO this looks a bit ugly
-                add(transaction).blockingGet()
-            }
+            transactions.forEach { transaction -> add(transaction).blockingGet() }
             emitter.onSuccess(transactions)
         }
     }
@@ -83,10 +81,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     override fun get(id: String): Maybe<Transaction> {
         return Maybe.create<Transaction> { emitter ->
             log.debug("Get a transaction by id [$id]")
-            val record = dslContext
-                .selectFrom(tableTransaction)
-                .where(idField.eq(id))
-                .fetchOne()
+            val record = dslContext.selectFrom(tableTransaction).where(idField.eq(id)).fetchOne()
             when (record) {
                 null -> emitter.onComplete()
                 else -> emitter.onSuccess(toTransaction(record))
@@ -97,10 +92,7 @@ class GoogleTransactionRepository(private val dslContext: DSLContext) : Transact
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Get all transactions for [$userId]")
-            val results: Result<Record> = dslContext
-                .selectFrom(tableTransaction)
-                .where(userIdField.eq(userId))
-                .fetch()
+            val results: Result<Record> = dslContext.selectFrom(tableTransaction).where(userIdField.eq(userId)).fetch()
             when {
                 results.isEmpty() -> emitter.onSuccess(listOf())
                 else -> emitter.onSuccess(results.map { r -> toTransaction(r) })

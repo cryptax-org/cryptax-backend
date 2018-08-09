@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d{ABSOLUTE}{UTC} [%t] %-5level %logger{-1} - %msg%n}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <AsyncLogger name="org.jooq.tools.LoggerListener" level="info">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
+        <AsyncLogger name="com.hazelcast.internal.partition.InternalPartitionService" level="info">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
+        <AsyncLogger name="io.netty" level="info">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
+        <AsyncLogger name="io.vertx.ext.mail" level="info">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
+        <AsyncLogger name="io.vertx.ext.jwt.JWT" level="warn">
+            <AppenderRef ref="Console" />
+        </AsyncLogger>
+        <AsyncRoot level="warn">
+            <AppenderRef ref="Console" />
+        </AsyncRoot>
+    </Loggers>
+</Configuration>

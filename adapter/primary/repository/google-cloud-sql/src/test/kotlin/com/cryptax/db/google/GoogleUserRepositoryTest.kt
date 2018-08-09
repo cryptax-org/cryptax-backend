@@ -1,5 +1,12 @@
 package com.cryptax.db.google
 
+import com.cryptax.db.google.GoogleUserRepository.Companion.allowedField
+import com.cryptax.db.google.GoogleUserRepository.Companion.emailField
+import com.cryptax.db.google.GoogleUserRepository.Companion.firstNameField
+import com.cryptax.db.google.GoogleUserRepository.Companion.idField
+import com.cryptax.db.google.GoogleUserRepository.Companion.lastNameField
+import com.cryptax.db.google.GoogleUserRepository.Companion.passwordField
+import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.User
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.CreateTableAsStep
@@ -17,9 +24,6 @@ import org.jooq.UpdateConditionStep
 import org.jooq.UpdateSetFirstStep
 import org.jooq.UpdateSetMoreStep
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.name
-import org.jooq.impl.DSL.table
-import org.jooq.impl.SQLDataType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -31,15 +35,6 @@ import org.mockito.Mockito.mock
 @DisplayName("Google user repository test")
 class GoogleUserRepositoryTest {
 
-    // TODO extract that data from base code
-    private val userTable = table(name("user"))
-    private val idField = DSL.field(name("id"), SQLDataType.VARCHAR)
-    private val emailField = DSL.field(name("email"), SQLDataType.VARCHAR)
-    private val passwordField = DSL.field(name("password"), SQLDataType.VARCHAR)
-    private val lastNameField = DSL.field(name("lastName"), SQLDataType.VARCHAR)
-    private val firstNameField = DSL.field(name("firstName"), SQLDataType.VARCHAR)
-    private val allowedField = DSL.field(name("allowed"), SQLDataType.BOOLEAN)
-
     private lateinit var dslContext: DSLContext
     private lateinit var googleUserRepository: GoogleUserRepository
 
@@ -49,7 +44,7 @@ class GoogleUserRepositoryTest {
         val tableStep = mock(CreateTableAsStep::class.java) as CreateTableAsStep<Record>
         val columnStep = mock(CreateTableColumnStep::class.java)
         val constraintStep = mock(CreateTableConstraintStep::class.java)
-        given(dslContext.createTableIfNotExists(userTable)).willReturn(tableStep)
+        given(dslContext.createTableIfNotExists(tableUser)).willReturn(tableStep)
         given(tableStep.columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)).willReturn(columnStep)
         given(columnStep.constraints(DSL.constraint("PK_USER").primaryKey(idField))).willReturn(constraintStep)
         googleUserRepository = GoogleUserRepository(dslContext)
@@ -62,7 +57,7 @@ class GoogleUserRepositoryTest {
         val insertStep = mock(InsertSetStep::class.java) as InsertSetStep<Record>
         val insertValues = mock(InsertValuesStep6::class.java) as InsertValuesStep6<Record, String, String, String, String, String, Boolean>
         val insertValues2 = mock(InsertValuesStep6::class.java) as InsertValuesStep6<Record, String, String, String, String, String, Boolean>
-        given(dslContext.insertInto(userTable)).willReturn(insertStep)
+        given(dslContext.insertInto(tableUser)).willReturn(insertStep)
         given(insertStep.columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)).willReturn(insertValues)
         given(insertValues.values("id", "email", "password", "last", "first", false)).willReturn(insertValues2)
 
@@ -71,7 +66,7 @@ class GoogleUserRepositoryTest {
 
         // then
         assertThat(actual).isNotNull
-        then(dslContext).should().insertInto(userTable)
+        then(dslContext).should().insertInto(tableUser)
         then(insertStep).should().columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
         then(insertValues).should().values("id", "email", "password", "last", "first", false)
     }
@@ -85,7 +80,7 @@ class GoogleUserRepositoryTest {
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val record = mock(Record::class.java)
 
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableUser)).willReturn(selectStep)
         given(selectStep.where(idField.eq(userId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(record)
         given(record.get(idField, String::class.java)).willReturn("id")
@@ -109,7 +104,7 @@ class GoogleUserRepositoryTest {
         val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
 
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableUser)).willReturn(selectStep)
         given(selectStep.where(idField.eq(userId))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(null)
 
@@ -129,7 +124,7 @@ class GoogleUserRepositoryTest {
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
         val record = mock(Record::class.java)
 
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableUser)).willReturn(selectStep)
         given(selectStep.where(emailField.eq(email))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(record)
         given(record.get(idField, String::class.java)).willReturn("id")
@@ -153,7 +148,7 @@ class GoogleUserRepositoryTest {
         val selectStep = mock(SelectWhereStep::class.java) as SelectWhereStep<Record>
         val selectConditionStep = mock(SelectConditionStep::class.java) as SelectConditionStep<Record>
 
-        given(dslContext.selectFrom(userTable)).willReturn(selectStep)
+        given(dslContext.selectFrom(tableUser)).willReturn(selectStep)
         given(selectStep.where(emailField.eq(email))).willReturn(selectConditionStep)
         given(selectConditionStep.fetchOne()).willReturn(null)
 
@@ -172,7 +167,7 @@ class GoogleUserRepositoryTest {
         val updateStepMore = mock(UpdateSetMoreStep::class.java) as UpdateSetMoreStep<Record>
         val lastUpdate = mock(UpdateConditionStep::class.java) as UpdateConditionStep<Record>
 
-        given(dslContext.update(userTable)).willReturn(updateStep)
+        given(dslContext.update(tableUser)).willReturn(updateStep)
         given(updateStep.set(emailField, user.email)).willReturn(updateStepMore)
         given(updateStepMore.set(passwordField, user.password.joinToString(separator = ""))).willReturn(updateStepMore)
         given(updateStepMore.set(lastNameField, user.lastName)).willReturn(updateStepMore)

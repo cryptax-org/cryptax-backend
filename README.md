@@ -60,7 +60,3 @@ docker-compose build && docker-compose up
 ```
 keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret -keyalg EC -keysize 521 -alias ES512 -keypass secret -sigalg SHA512withECDSA -dname "CN=,OU=,O=,L=,ST=,C=" -validity 360
 ```
-
-### Google Cloud
-
-To be able to run the app with Google Cloud, your environment needs to configured as described [here](https://cloud.google.com/docs/authentication/production)

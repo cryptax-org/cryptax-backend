@@ -5,7 +5,9 @@ import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.jooq.DSLContext
+import org.jooq.Field
 import org.jooq.Record
+import org.jooq.Table
 import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
@@ -18,18 +20,18 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GoogleUserRepository::class.java)
-        private val table = table(name("user"))
-        private val idField = field(name("id"), SQLDataType.VARCHAR)
-        private val emailField = field(name("email"), SQLDataType.VARCHAR.nullable(false))
-        private val passwordField = field(name("password"), SQLDataType.VARCHAR.nullable(false))
-        private val lastNameField = field(name("lastName"), SQLDataType.VARCHAR.nullable(false))
-        private val firstNameField = field(name("firstName"), SQLDataType.VARCHAR.nullable(false))
-        private val allowedField = field(name("allowed"), SQLDataType.BOOLEAN.nullable(false))
+        val tableUser: Table<Record> = table(name("user"))
+        val idField: Field<String> = field(name("id"), SQLDataType.VARCHAR)
+        val emailField: Field<String> = field(name("email"), SQLDataType.VARCHAR.nullable(false))
+        val passwordField: Field<String> = field(name("password"), SQLDataType.VARCHAR.nullable(false))
+        val lastNameField: Field<String> = field(name("lastName"), SQLDataType.VARCHAR.nullable(false))
+        val firstNameField: Field<String> = field(name("firstName"), SQLDataType.VARCHAR.nullable(false))
+        val allowedField: Field<Boolean> = field(name("allowed"), SQLDataType.BOOLEAN.nullable(false))
     }
 
     init {
         dslContext
-            .createTableIfNotExists(table)
+            .createTableIfNotExists(tableUser)
             .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
             .constraints(constraint("PK_USER").primaryKey(idField))
             .execute()
@@ -39,7 +41,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
         return Single.create<User> { emitter ->
             log.debug("Create a user $user")
             dslContext
-                .insertInto(table)
+                .insertInto(tableUser)
                 .columns(idField, emailField, passwordField, lastNameField, firstNameField, allowedField)
                 .values(user.id, user.email, user.password.joinToString(separator = ""), user.lastName, user.firstName, user.allowed)
                 .execute()
@@ -50,7 +52,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
     override fun findById(id: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
             val record = dslContext
-                .selectFrom(table)
+                .selectFrom(tableUser)
                 .where(idField.eq(id))
                 .fetchOne()
             when (record) {
@@ -63,7 +65,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
     override fun findByEmail(email: String): Maybe<User> {
         return Maybe.create<User> { emitter ->
             val record = dslContext
-                .selectFrom(table)
+                .selectFrom(tableUser)
                 .where(emailField.eq(email))
                 .fetchOne()
             when (record) {
@@ -77,7 +79,7 @@ class GoogleUserRepository(private val dslContext: DSLContext) : UserRepository 
         return Single.create<User> { emitter ->
             log.debug("Update a user $user")
             dslContext
-                .update(table)
+                .update(tableUser)
                 .set(emailField, user.email)
                 .set(passwordField, user.password.joinToString(separator = ""))
                 .set(lastNameField, user.lastName)

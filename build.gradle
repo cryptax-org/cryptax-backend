@@ -6,6 +6,7 @@ buildscript {
         commonsCodecVersion = '1.11'
         disruptorVersion = '3.4.2'
         dropwizardVersion = '4.0.2'
+        googleCloudSqlVersion = '1.0.10'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'
@@ -72,7 +73,6 @@ subprojects {
             force "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
             force "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
             force "commons-codec:commons-codec:$commonsCodecVersion"
-
         }
     }
 

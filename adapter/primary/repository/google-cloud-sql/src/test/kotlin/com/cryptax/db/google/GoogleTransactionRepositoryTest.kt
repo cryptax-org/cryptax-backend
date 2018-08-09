@@ -1,5 +1,16 @@
 package com.cryptax.db.google
 
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.currency1Field
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.currency2Field
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.dateField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.idField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.priceField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.quantityField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.sourceField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.tableTransaction
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.typeField
+import com.cryptax.db.google.GoogleTransactionRepository.Companion.userIdField
+import com.cryptax.db.google.GoogleUserRepository.Companion.tableUser
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
@@ -23,7 +34,6 @@ import org.jooq.UpdateSetMoreStep
 import org.jooq.impl.DSL.constraint
 import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.name
-import org.jooq.impl.DSL.table
 import org.jooq.impl.SQLDataType
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -41,18 +51,6 @@ class GoogleTransactionRepositoryTest {
 
     // TODO extract that data from base code
     private val zoneId = ZoneId.of("UTC")
-    private val tableTransaction = table(name("transaction"))
-    private val tableUser = table(name("user"))
-    private val idField = field(name("id"), SQLDataType.VARCHAR)
-    private val userIdField = field(name("userId"), SQLDataType.VARCHAR)
-    private val sourceField = field(name("source"), SQLDataType.VARCHAR)
-    private val dateField = field(name("date"), SQLDataType.OFFSETDATETIME)
-    private val typeField = field(name("type"), SQLDataType.VARCHAR)
-    private val priceField = field(name("price"), SQLDataType.DOUBLE)
-    private val quantityField = field(name("quantity"), SQLDataType.DOUBLE)
-    private val currency1Field = field(name("currency1"), SQLDataType.VARCHAR)
-    private val currency2Field = field(name("currency2"), SQLDataType.VARCHAR)
-
     private val date = ZonedDateTime.now(zoneId)
     private val transaction = Transaction("id", "userId", Source.MANUAL, date, Transaction.Type.BUY, 50.0, 3.0, Currency.ETH, Currency.USD)
 
@@ -67,7 +65,7 @@ class GoogleTransactionRepositoryTest {
         val constraintStep = mock(CreateTableConstraintStep::class.java)
         given(dslContext.createTableIfNotExists(tableTransaction)).willReturn(tableStep)
         given(tableStep.columns(idField, userIdField, sourceField, dateField, typeField, priceField, quantityField, currency1Field, currency2Field)).willReturn(columnStep)
-        given(columnStep.constraints( constraint("PK_TRANSACTION").primaryKey(idField), constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR)))).willReturn(constraintStep)
+        given(columnStep.constraints(constraint("PK_TRANSACTION").primaryKey(idField), constraint("FK_USER_ID_TRANSACTION").foreignKey(userIdField).references(tableUser, field(name("id"), SQLDataType.VARCHAR)))).willReturn(constraintStep)
         googleTransactionRepository = GoogleTransactionRepository(dslContext)
     }
 
