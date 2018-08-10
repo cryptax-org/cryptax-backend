@@ -2,18 +2,12 @@ apply plugin: 'java-library'
 
 ext.moduleName = 'cryptax.db.postgres'
 
-/*configurations.all {
-    exclude module: 'jnr-enxio'
-}*/
-
-
 dependencies {
     implementation(
         project(":domain"),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'org.postgresql', name: 'postgresql', version: '42.2.2'],
         [group: 'org.jooq', name: 'jooq', version: jooqVersion],
-        //[group: 'com.github.jnr', name: 'jnr-ffi', version: '2.1.4'],
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
     )
 

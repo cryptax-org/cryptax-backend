@@ -39,4 +39,5 @@ module cryptax.config {
     requires google.cloud.storage;
     requires google.oauth.client;
     requires jdbc.socket.factory.core;
+    requires org.apache.commons.io;
 }
