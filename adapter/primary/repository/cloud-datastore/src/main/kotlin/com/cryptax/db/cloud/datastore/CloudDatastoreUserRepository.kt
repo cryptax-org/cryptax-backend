@@ -6,7 +6,6 @@ import com.google.cloud.datastore.Datastore
 import com.google.cloud.datastore.DatastoreException
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Query
-import com.google.cloud.datastore.QueryResults
 import com.google.cloud.datastore.StructuredQuery
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -45,7 +44,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
                 .setKind(kind)
                 .setFilter(StructuredQuery.PropertyFilter.eq("email", email))
                 .build()
-            val queryResults: QueryResults<Entity> = datastore.run(query)
+            val queryResults = datastore.run(query)
             when (queryResults.hasNext()) {
                 false -> emitter.onComplete()
                 true -> emitter.onSuccess(toUser(queryResults.next()))
