@@ -82,6 +82,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
     }
 
     override fun ping(): Boolean {
+        log.debug("Ping transaction repository")
         return try {
             datastore.run(Query.newGqlQueryBuilder("SELECT userId FROM $kind LIMIT 1").setAllowLiteral(true).build())
             true

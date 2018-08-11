@@ -62,6 +62,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
     }
 
     override fun ping(): Boolean {
+        log.debug("Ping user repository")
         return try {
             datastore.run(Query.newGqlQueryBuilder("SELECT email FROM $kind LIMIT 1").setAllowLiteral(true).build())
             true
