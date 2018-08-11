@@ -10,7 +10,7 @@ dependencies {
     implementation(
         project(":domain"),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
-        [group: 'com.google.cloud', name: 'google-cloud-datastore', version: '1.38.0'],
+        [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
     )
 
 /*    testImplementation(

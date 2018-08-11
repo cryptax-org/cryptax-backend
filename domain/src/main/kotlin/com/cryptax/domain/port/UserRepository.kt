@@ -4,7 +4,7 @@ import com.cryptax.domain.entity.User
 import io.reactivex.Maybe
 import io.reactivex.Single
 
-interface UserRepository {
+interface UserRepository : Pingable {
 
     fun create(user: User): Single<User>
 
@@ -13,6 +13,4 @@ interface UserRepository {
     fun findByEmail(email: String): Maybe<User>
 
     fun updateUser(user: User): Single<User>
-
-    fun ping(): Boolean
 }

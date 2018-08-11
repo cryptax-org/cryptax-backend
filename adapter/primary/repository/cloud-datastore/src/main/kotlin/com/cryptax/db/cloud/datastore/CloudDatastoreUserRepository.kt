@@ -3,8 +3,8 @@ package com.cryptax.db.cloud.datastore
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
 import com.google.cloud.datastore.Datastore
+import com.google.cloud.datastore.DatastoreException
 import com.google.cloud.datastore.Entity
-import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Query
 import com.google.cloud.datastore.QueryResults
 import com.google.cloud.datastore.StructuredQuery
@@ -13,7 +13,7 @@ import io.reactivex.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class CloudDatastoreUserRepository(private val datastore: Datastore) : UserRepository {
+class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, CloudDatastore(datastore) {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(CloudDatastoreUserRepository::class.java)
@@ -23,10 +23,7 @@ class CloudDatastoreUserRepository(private val datastore: Datastore) : UserRepos
     override fun create(user: User): Single<User> {
         return Single.create<User> { emitter ->
             log.debug("Create a user $user")
-            val entity = toEntity(
-                datastore.newKeyFactory().setKind(kind).newKey(user.id),
-                user)
-            datastore.put(entity)
+            datastore.put(toEntity(user))
             emitter.onSuccess(user)
         }
     }
@@ -59,18 +56,23 @@ class CloudDatastoreUserRepository(private val datastore: Datastore) : UserRepos
     override fun updateUser(user: User): Single<User> {
         return Single.create<User> { emitter ->
             log.debug("Update a user $user")
-            datastore.update(toEntity(datastore.newKeyFactory().setKind(kind).newKey(user.id), user))
+            datastore.update(toEntity(user))
             emitter.onSuccess(user)
         }
     }
 
     override fun ping(): Boolean {
-        // FIXME to implement
-        return false
+        return try {
+            datastore.run(Query.newGqlQueryBuilder("SELECT email FROM $kind LIMIT 1").setAllowLiteral(true).build())
+            true
+        } catch (e: DatastoreException) {
+            log.error("Could not ping Google Cloud", e)
+            false
+        }
     }
 
-    private fun toEntity(key: Key, user: User): Entity {
-        return Entity.newBuilder(key)
+    private fun toEntity(user: User): Entity {
+        return Entity.newBuilder(datastore.newKeyFactory().setKind(kind).newKey(user.id))
             .set("email", user.email)
             .set("password", user.password.joinToString(separator = ""))
             .set("lastName", user.lastName)

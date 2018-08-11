@@ -7,6 +7,7 @@ buildscript {
         commonsCodecVersion = '1.11'
         disruptorVersion = '3.4.2'
         dropwizardVersion = '4.0.2'
+        googleCloudDatastoreVersion = '1.38.0'
         googleCloudSqlVersion = '1.0.10'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'

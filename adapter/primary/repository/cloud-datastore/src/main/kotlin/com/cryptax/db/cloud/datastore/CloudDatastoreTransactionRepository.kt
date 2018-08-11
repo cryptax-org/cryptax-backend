@@ -6,6 +6,7 @@ import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.port.TransactionRepository
 import com.google.cloud.Timestamp
 import com.google.cloud.datastore.Datastore
+import com.google.cloud.datastore.DatastoreException
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Query
@@ -17,7 +18,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
 
-class CloudDatastoreTransactionRepository(private val datastore: Datastore) : TransactionRepository {
+class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRepository, CloudDatastore(datastore) {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(CloudDatastoreTransactionRepository::class.java)
@@ -28,10 +29,7 @@ class CloudDatastoreTransactionRepository(private val datastore: Datastore) : Tr
     override fun add(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
             log.debug("Create a transaction $transaction")
-            val entity = toEntity(
-                key(transaction.id),
-                transaction)
-            datastore.put(entity)
+            datastore.put(toEntity(transaction))
             emitter.onSuccess(transaction)
         }
     }
@@ -39,12 +37,7 @@ class CloudDatastoreTransactionRepository(private val datastore: Datastore) : Tr
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
         return Single.create<List<Transaction>> { emitter ->
             log.debug("Add transactions")
-            val entities = transactions.map { transaction ->
-                toEntity(
-                    key(transaction.id),
-                    transaction)
-            }
-                .toTypedArray()
+            val entities = transactions.map { transaction -> toEntity(transaction) }.toTypedArray()
             datastore.put(*entities)
             emitter.onSuccess(transactions)
         }
@@ -83,22 +76,27 @@ class CloudDatastoreTransactionRepository(private val datastore: Datastore) : Tr
     override fun update(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
             log.debug("Update one transaction [${transaction.id}]")
-            datastore.update(toEntity(key(transaction.id), transaction))
+            datastore.update(toEntity(transaction))
             emitter.onSuccess(transaction)
         }
     }
 
     override fun ping(): Boolean {
-        // FIXME to implement
-        return false
+        return try {
+            datastore.run(Query.newGqlQueryBuilder("SELECT userId FROM $kind LIMIT 1").setAllowLiteral(true).build())
+            true
+        } catch (e: DatastoreException) {
+            log.error("Could not ping Google Cloud", e)
+            false
+        }
     }
 
     private fun key(id: String): Key {
         return datastore.newKeyFactory().setKind(kind).newKey(id)
     }
 
-    private fun toEntity(key: Key, transaction: Transaction): Entity {
-        return Entity.newBuilder(key)
+    private fun toEntity(transaction: Transaction): Entity {
+        return Entity.newBuilder(key(transaction.id))
             .set("userId", transaction.userId)
             .set("source", transaction.source.name)
             .set("date", Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
