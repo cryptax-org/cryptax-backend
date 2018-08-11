@@ -61,7 +61,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
                 .setKind(kind)
                 .setFilter(StructuredQuery.PropertyFilter.eq("userId", userId))
                 .build()
-            val queryResults: QueryResults<Entity> = datastore.run(query)
+            val queryResults = datastore.run(query)
             val result = mutableListOf<Transaction>()
             while (queryResults.hasNext()) {
                 result.add(toTransaction(queryResults.next()))
