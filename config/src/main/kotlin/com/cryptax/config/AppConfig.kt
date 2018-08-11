@@ -1,10 +1,12 @@
 package com.cryptax.config
 
 import com.cryptax.config.dto.PropertiesDto
+import com.cryptax.config.gcp.GcpConfig
 import com.cryptax.config.kodein.KodeinConfig
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
 import io.vertx.ext.mail.StartTLSOptions
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
@@ -21,10 +23,13 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
         .registerModule(KotlinModule())
         .readValue(AppConfig::class.java.classLoader.getResourceAsStream("config-$profile.yml"), PropertiesDto::class.java)
 
+    var datastoreOptions: DatastoreOptions? = null
+
     init {
-        if (properties.db.mode == "google") {
-            System.setProperty("cloudSql.socketFactory.credentialFactory", "com.cryptax.config.gcp.CryptaxCredentialFactory")
-        }
+        datastoreOptions = if (properties.db.mode == "cloud-datastore")
+            GcpConfig(properties.db.projectId!!).datastoreOptions()
+        else
+            null
     }
 
     private val mailConfig = MailConfig(
@@ -36,7 +41,7 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
         trustAll = true,
         ssl = true)
 
-    val kodeinDefaultModule = KodeinConfig(properties, mailConfig, properties.db, vertx, externalKodeinModule).kodeinModule
+    val kodeinDefaultModule = KodeinConfig(properties, mailConfig, properties.db, vertx, datastoreOptions, externalKodeinModule).kodeinModule
 
     val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = properties.jwt.keyStorePath, password = properties.jwt.password(profile)))
     val jwtOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.expiresInMinutes)

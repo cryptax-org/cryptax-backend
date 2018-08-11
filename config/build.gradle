@@ -2,16 +2,11 @@ apply plugin: 'java-library'
 
 ext.moduleName = 'cryptax.config'
 
-configurations.all {
-    exclude module: 'jnr-enxio'
-}
-
 dependencies {
     implementation(
         project(':usecase'),
         project(':domain'),
         project(':in-memory-db-simple'),
-        project(':postgres-sql'),
         project(':cloud-datastore'),
         project(':id-generator'),
         project(':security'),
@@ -32,11 +27,7 @@ dependencies {
         [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
         [group: 'org.kodein.di', name: 'kodein-di-generic-jvm', version: kodeinVersion],
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
-        [group: 'org.jooq', name: 'jooq', version: jooqVersion],
-        [group: 'com.google.cloud', name: 'google-cloud-storage', version: googleCloudDatastoreVersion],
         [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
-        [group: 'com.google.cloud.sql', name: 'jdbc-socket-factory-core', version: googleCloudSqlVersion],
-        [group: 'com.google.cloud.sql', name: 'postgres-socket-factory', version: googleCloudSqlVersion],
         [group: 'com.google.auth', name: 'google-auth-library-appengine', version: '0.10.0'],
         [group: 'commons-io', name: 'commons-io', version: commonsIoVersion],
     )

@@ -6,7 +6,6 @@ import com.cryptax.cache.CacheService
 import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.dto.DbDto
 import com.cryptax.config.dto.PropertiesDto
-import com.cryptax.config.gcp.GcpConfig
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -36,7 +35,6 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.cloud.datastore.Datastore
 import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
@@ -56,6 +54,7 @@ class KodeinConfig(
     mailConfig: MailConfig,
     db: DbDto,
     vertx: Vertx?,
+    datastoreOptions: DatastoreOptions?,
     externalKodeinModule: Kodein.Module?) {
 
     val kodeinModule = Kodein.Module(name = "defaultModule") {
@@ -96,18 +95,10 @@ class KodeinConfig(
         if (db.mode == "in-memory") {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
             bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
-        } else {
-            bind<Datastore>() with singleton {
-                val options = DatastoreOptions.newBuilder()
-                    .setProjectId("cryptax-212416")
-                    .setCredentials(GoogleCredentials.fromStream(GcpConfig.googleCredentials().byteInputStream())).build()
-                options.service
-            }
+        } else if (db.mode == "cloud-datastore") {
+            bind<Datastore>() with singleton { datastoreOptions!!.service }
             bind<UserRepository>() with singleton { CloudDatastoreUserRepository(instance()) }
             bind<TransactionRepository>() with singleton { CloudDatastoreTransactionRepository(instance()) }
-            /*bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
-            bind<UserRepository>() with singleton { PostgresUserRepository(instance()) }
-            bind<TransactionRepository>() with singleton { PostgresTransactionRepository(instance()) }*/
         }
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }

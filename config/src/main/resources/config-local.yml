@@ -19,10 +19,4 @@ http:
   keepAliveDuration: 5
 db:
   mode: in-memory
-  url:
-  name:
-  username:
-  password:
-  socketFactory:
-  socketFactoryArg:
-  useSSL:
+  projectId:
