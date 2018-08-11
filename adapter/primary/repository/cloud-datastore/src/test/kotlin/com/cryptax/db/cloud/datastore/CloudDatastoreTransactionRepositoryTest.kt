@@ -179,6 +179,23 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
+    fun testGetNotFound() {
+        // given
+        val keyFactory = KeyFactory("cryptax-212416")
+        val transactionId = "id"
+        given(datastore.newKeyFactory()).willReturn(keyFactory)
+        given(datastore.get(any<Key>())).willReturn(null)
+
+        // when
+        val actual = repo.get(transactionId).blockingGet()
+
+        // then
+        then(datastore).should().newKeyFactory()
+        then(datastore).should().get(any<Key>())
+        assertThat(actual).isNull()
+    }
+
+    @Test
     fun testGetAllForUser() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
