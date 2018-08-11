@@ -17,6 +17,5 @@ dependencies {
     testImplementation(
         [group: 'io.vertx', name: 'vertx-auth-jwt', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
     )
 }

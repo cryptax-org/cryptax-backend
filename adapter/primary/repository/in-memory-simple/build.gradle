@@ -12,6 +12,5 @@ dependencies {
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion],
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
     )
 }

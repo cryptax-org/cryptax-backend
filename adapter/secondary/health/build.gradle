@@ -13,6 +13,5 @@ dependencies {
     testImplementation(
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
         [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
     )
 }

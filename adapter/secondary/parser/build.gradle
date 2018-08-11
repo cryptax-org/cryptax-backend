@@ -7,7 +7,4 @@ dependencies {
         project(':domain'),
         [group: 'com.opencsv', name: 'opencsv', version: '4.2']
     )
-    testImplementation(
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
-    )
 }

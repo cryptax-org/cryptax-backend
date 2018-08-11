@@ -9,6 +9,5 @@ dependencies {
     )
     testImplementation(
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
     )
 }

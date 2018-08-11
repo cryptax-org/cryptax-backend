@@ -7,6 +7,7 @@ import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.dto.DbDto
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
+import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
@@ -73,6 +74,7 @@ class KodeinConfig(
         bind() from singleton { UserController(instance(), instance(), instance(), instance()) }
         bind() from singleton { TransactionController(instance(), instance(), instance()) }
         bind() from singleton { ReportController(instance()) }
+        bind() from singleton { CurrencyController() }
 
         // Health
         bind() from singleton {

@@ -30,14 +30,22 @@ object Failure {
                 .end(JsonObject().put("error", "Unauthorized").encodePrettily())
         } else {
             // The framework should guarantee that we have a failure
-            val throwable: Throwable = event.failure()
+            val throwable: Throwable? = event.failure()
             when (throwable) {
                 is ValidationException -> handleValidationException(response, throwable)
                 is CompositeException -> handleRxException(response, throwable)
                 is CryptaxException -> handlerCryptaxException(response, throwable)
+                null -> notHandledNoException(response)
                 else -> notHandledException(response, throwable)
             }
         }
+    }
+
+    private fun notHandledNoException(response: HttpServerResponse) {
+        log.error("Failure but no exception. Should the devs handle it?")
+        response
+            .setStatusCode(500)
+            .end(JsonObject().put("error", "Something went wrong").encodePrettily())
     }
 
     private fun notHandledException(response: HttpServerResponse, throwable: Throwable) {

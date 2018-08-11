@@ -38,7 +38,6 @@ dependencies {
         project(':id-generator'),
         [group: 'io.vertx', name: 'vertx-web-client', version: vertxVersion],
         [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
-        [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
         [group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion],
         [group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion],
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],

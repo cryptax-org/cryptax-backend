@@ -2,6 +2,7 @@ package com.cryptax.app.routes
 
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.config.AppConfig
+import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
@@ -28,6 +29,7 @@ object Routes {
                     userController: UserController,
                     transactionController: TransactionController,
                     reportController: ReportController,
+                    currencyController: CurrencyController,
                     healthCheckRegistry: HealthCheckRegistry) {
 
         val jwtProvider = JWTAuth.create(vertx, appConfig.jwtAuthOptions)
@@ -40,6 +42,7 @@ object Routes {
         handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler, userController)
         handleTransactionRoutes(router, jwtAuthHandler, vertxScheduler, transactionController)
         handleReportRoutes(router, jwtAuthHandler, vertxScheduler, reportController)
+        handleCurrenciesRoutes(router, jwtAuthHandler, vertxScheduler, currencyController)
         handleHealthRoutes(router, vertxScheduler, healthCheckRegistry)
 
         // Exception handler
