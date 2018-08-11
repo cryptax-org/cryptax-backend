@@ -19,17 +19,15 @@ fun handleCurrenciesRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertx
                 .getAllCurrencies()
                 .subscribeOn(Schedulers.io())
                 .observeOn(vertxScheduler)
-                .subscribe(
-                    { currencies ->
-                        run {
-                            val result = currencies
-                                .filter { currency -> currency != Currency.UNKNOWN }
-                                .sortedBy { currency -> currency.code }
-                                .map { currency -> JsonObject().put("code", currency.code).put("name", currency.fullName).put("symbol", currency.symbol).put("type", currency.type.name.toLowerCase()) }
-                            sendSuccess(JsonArray(result), routingContext.response())
-                        }
-                    },
-                    { error -> routingContext.fail(error) })
+                .subscribe { currencies ->
+                    run {
+                        val result = currencies
+                            .filter { currency -> currency != Currency.UNKNOWN }
+                            .sortedBy { currency -> currency.code }
+                            .map { currency -> JsonObject().put("code", currency.code).put("name", currency.fullName).put("symbol", currency.symbol).put("type", currency.type.name.toLowerCase()) }
+                        sendSuccess(JsonArray(result), routingContext.response())
+                    }
+                }
         }
         .failureHandler(failureHandler)
 }
