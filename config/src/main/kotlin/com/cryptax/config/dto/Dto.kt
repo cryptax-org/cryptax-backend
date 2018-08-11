@@ -15,14 +15,14 @@ data class JwtDto(
 
     fun password(profile: String? = null): String {
         if (profile == "it") return password
-        return decryptPassword(password)
+        return decrypt(password)
     }
 }
 
 data class EmailDto(val host: String, val port: Int, val username: String, private var password: String, val from: String) {
     fun password(profile: String? = null): String {
         if (profile == "it") return password
-        return decryptPassword(password)
+        return decrypt(password)
     }
 }
 
@@ -31,7 +31,7 @@ data class HttpDto(val maxIdleConnections: Int, val keepAliveDuration: Long)
 data class DbDto(val mode: String, val url: String?, val name: String?, val username: String?, private val password: String?, val socketFactory: String?, val socketFactoryArg: String?, val useSSL: Boolean?) {
 
     private fun password(): String {
-        return decryptPassword(password!!)
+        return decrypt(password!!)
     }
 
     fun connectionUrl(): String {
@@ -51,7 +51,7 @@ data class GoogleCredentialsDto(
     val auth_provider_x509_cert_url: String,
     val client_x509_cert_url: String)
 
-fun decryptPassword(password: String): String {
+fun decrypt(password: String): String {
     val stringEncryptor = StandardPBEStringEncryptor()
     val runtimeMxBean = ManagementFactory.getRuntimeMXBean()
     val argument = runtimeMxBean.inputArguments.find { s -> s.contains("jasypt.encryptor.password") } ?: throw RuntimeException("jasypt.encryptor.password not found")

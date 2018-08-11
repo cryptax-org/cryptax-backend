@@ -6,14 +6,15 @@ import com.cryptax.cache.CacheService
 import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.dto.DbDto
 import com.cryptax.config.dto.PropertiesDto
+import com.cryptax.config.gcp.GcpConfig
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
-import com.cryptax.db.postgres.PostgresTransactionRepository
-import com.cryptax.db.postgres.PostgresUserRepository
+import com.cryptax.db.cloud.datastore.CloudDatastoreTransactionRepository
+import com.cryptax.db.cloud.datastore.CloudDatastoreUserRepository
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
@@ -35,19 +36,18 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.auth.oauth2.GoogleCredentials
+import com.google.cloud.datastore.Datastore
+import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
 import io.vertx.ext.mail.MailConfig
 import io.vertx.reactivex.ext.mail.MailClient
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
-import org.jooq.DSLContext
-import org.jooq.SQLDialect
-import org.jooq.impl.DSL
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
-import java.sql.DriverManager
 import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
@@ -97,9 +97,17 @@ class KodeinConfig(
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
             bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
         } else {
-            bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
+            bind<Datastore>() with singleton {
+                val options = DatastoreOptions.newBuilder()
+                    .setProjectId("cryptax-212416")
+                    .setCredentials(GoogleCredentials.fromStream(GcpConfig.googleCredentials().byteInputStream())).build()
+                options.service
+            }
+            bind<UserRepository>() with singleton { CloudDatastoreUserRepository(instance()) }
+            bind<TransactionRepository>() with singleton { CloudDatastoreTransactionRepository(instance()) }
+            /*bind<DSLContext>() with singleton { DSL.using(DriverManager.getConnection(db.connectionUrl()), SQLDialect.POSTGRES) }
             bind<UserRepository>() with singleton { PostgresUserRepository(instance()) }
-            bind<TransactionRepository>() with singleton { PostgresTransactionRepository(instance()) }
+            bind<TransactionRepository>() with singleton { PostgresTransactionRepository(instance()) }*/
         }
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }

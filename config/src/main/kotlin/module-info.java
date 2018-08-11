@@ -40,4 +40,6 @@ module cryptax.config {
     requires google.oauth.client;
     requires jdbc.socket.factory.core;
     requires org.apache.commons.io;
+    requires google.cloud.datastore;
+    requires cryptax.db.cloud.datastore;
 }

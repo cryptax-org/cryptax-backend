@@ -67,6 +67,7 @@ subprojects {
     configurations.all {
         exclude module: 'kotlin-stdlib-jdk7'
         exclude module: 'slf4j-ext'
+        exclude module: 'grpc-context'
 
         resolutionStrategy {
             force "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
