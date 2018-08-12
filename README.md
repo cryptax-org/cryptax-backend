@@ -31,7 +31,7 @@ java -Djasypt.encryptor.password=yourMasterPassword -Xdebug -Xrunjdwp:server=y,t
 
 ### Jasypt
 
-Password are encrypted with Jasypt. To encrypt your password, use that command:
+Password are encrypted with Jasypt. To encrypt your password, just use that command:
 
 ```
 java -cp jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input=dbPassword password=yourMasterPassword algorithm=PBEWithMD5AndDES
