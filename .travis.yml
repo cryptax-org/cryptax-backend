@@ -28,5 +28,5 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
   - if [[ "$TRAVIS_BRANCH" == "develop" ]]; then
       docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD;
-      docker push cryptaxapp/cryptax-backend:latest
+      docker push cryptaxapp/cryptax-backend:latest;
     fi
