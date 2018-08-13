@@ -20,3 +20,4 @@ http:
 db:
   mode: in-memory
   projectId:
+  credentials:

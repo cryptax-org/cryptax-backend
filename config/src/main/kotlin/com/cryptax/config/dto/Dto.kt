@@ -28,7 +28,11 @@ data class EmailDto(val host: String, val port: Int, val username: String, priva
 
 data class HttpDto(val maxIdleConnections: Int, val keepAliveDuration: Long)
 
-data class DbDto(val mode: String, val projectId: String?)
+data class DbDto(val mode: String, val projectId: String?, private val credentials: String?) {
+    fun credentials(): String {
+        return decrypt(credentials!!)
+    }
+}
 
 fun decrypt(password: String): String {
     val stringEncryptor = StandardPBEStringEncryptor()

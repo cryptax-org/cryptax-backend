@@ -27,7 +27,7 @@ abstract class AppConfig(private val overrideProfile: String?, vertx: Vertx? = n
 
     init {
         datastoreOptions = if (properties.db.mode == "cloud-datastore")
-            GcpConfig(properties.db.projectId!!).datastoreOptions()
+            GcpConfig(properties.db).datastoreOptions()
         else
             null
     }
