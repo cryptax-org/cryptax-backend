@@ -2,7 +2,8 @@ version: '3.3'
 services:
   backend:
     build: .
-    image: cryptaxapp/cryptax-backend
+    container_name: backend
+    hostname: cryptax
     ports:
       - '8080:8080'
     environment:
