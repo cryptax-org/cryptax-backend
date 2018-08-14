@@ -7,7 +7,7 @@ ARG COMMIT_ID
 
 LABEL com.cryptax.build-date=$BUILD_DATE \
       com.cryptax.name="Cryptax Backend" \
-      com.cryptax.commit-id=$COMMIT_ID \
+      com.cryptax.commit-id=$COMMIT_ID
 
 ## Build the app
 COPY . /tmp/cryptax
