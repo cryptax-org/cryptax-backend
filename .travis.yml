@@ -22,7 +22,8 @@ jdk:
 before_script:
   - chmod +x gradlew
 script:
-  - docker-compose build
+  - docker build --label $TRAVIS_BRANCH --tag cryptaxapp/cryptax-backend:$TRAVIS_BRANCH-latest .
+#  - docker-compose build
 #  - ./gradlew clean build testReport jacocoRootReport
 after_success:
 #  - bash <(curl -s https://codecov.io/bash)
