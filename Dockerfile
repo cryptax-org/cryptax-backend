@@ -5,7 +5,7 @@ MAINTAINER Carl-Philipp Harmant <cp.harmant@gmail.com>
 ## Build the app
 COPY . /tmp/cryptax
 WORKDIR /tmp/cryptax
-RUN   chmod +x run.sh && \
+RUN   chmod +x scripts/run.sh && \
       chmod +x gradlew && \
 #      ./gradlew clean build && \
       ./gradlew clean build -x test && \
