@@ -14,7 +14,7 @@ COPY . /tmp/cryptax
 WORKDIR /tmp/cryptax
 RUN   chmod +x scripts/run.sh && \
       chmod +x gradlew && \
-      ./gradlew clean build && \
+      ./gradlew clean build -x test && \
       mv build/cryptax-backend-1.0.0.jar /opt && \
       mv scripts/run.sh /opt && \
       rm -rf /tmp/* && \
