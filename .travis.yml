@@ -9,6 +9,8 @@ sudo: required
 services:
   - docker
 
+install: true
+
 language: java
 jdk:
   - openjdk10
