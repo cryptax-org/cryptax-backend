@@ -1,11 +1,4 @@
-env:
-  - DOCKER_COMPOSE_VERSION=1.21.2
-
 before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
   - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
   - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   - sudo apt-get update
@@ -22,8 +15,7 @@ jdk:
 before_script:
   - chmod +x gradlew
 script:
-  - docker build --label $TRAVIS_BRANCH --tag cryptaxapp/cryptax-backend:$TRAVIS_BRANCH-latest .
-#  - docker-compose build
+  - docker build --label $TRAVIS_COMMIT --tag cryptaxapp/cryptax-backend:$TRAVIS_BRANCH-latest .
 #  - ./gradlew clean build testReport jacocoRootReport
 after_success:
 #  - bash <(curl -s https://codecov.io/bash)
