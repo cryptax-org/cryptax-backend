@@ -23,7 +23,7 @@ before_script:
   - chmod +x gradlew
 script:
   - docker-compose build
-  - ./gradlew clean build testReport jacocoRootReport
+#  - ./gradlew clean build testReport jacocoRootReport
 after_success:
   - bash <(curl -s https://codecov.io/bash)
   - ./scripts/travis-push-image.sh
