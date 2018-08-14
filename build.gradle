@@ -39,12 +39,13 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '1.0.0'
+    version = '0.0.6-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
 
     repositories {
+        mavenCentral()
         jcenter()
     }
 

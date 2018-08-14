@@ -1,11 +1,12 @@
 version: '3.3'
 services:
   backend:
-    build: .
+    build:
+      context: .
+      args:
+        PROFILE: ${PROFILE}
+        JASYPT_PASSWORD: ${JASYPT_PASSWORD}
     container_name: backend
     hostname: cryptax
     ports:
       - '8080:8080'
-    environment:
-        - PROFILE=${PROFILE}
-        - JASYPT_PASSWORD=${JASYPT_PASSWORD}

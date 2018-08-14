@@ -44,6 +44,7 @@ object Routes {
         handleReportRoutes(router, jwtAuthHandler, vertxScheduler, reportController)
         handleCurrenciesRoutes(router, jwtAuthHandler, vertxScheduler, currencyController)
         handleHealthRoutes(router, vertxScheduler, healthCheckRegistry)
+        handleInfoRoutes(router)
 
         // Exception handler
         router.exceptionHandler { throwable ->

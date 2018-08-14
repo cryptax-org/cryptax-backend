@@ -9,6 +9,8 @@ sudo: required
 services:
   - docker
 
+install: true
+
 language: java
 jdk:
   - openjdk10
@@ -19,4 +21,3 @@ script:
   - ./gradlew clean build testReport jacocoRootReport
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - ./scripts/travis-push-image.sh
