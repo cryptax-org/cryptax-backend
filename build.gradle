@@ -40,7 +40,7 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '0.0.8-SNAPSHOT'
+    version = '0.0.9-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
@@ -48,9 +48,6 @@ subprojects {
     repositories {
         mavenCentral()
         jcenter()
-        maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
-        }
     }
 
     compileJava {
@@ -143,7 +140,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = "0.8.2-SNAPSHOT"
+        toolVersion = "0.8.2"
     }
 }
 
