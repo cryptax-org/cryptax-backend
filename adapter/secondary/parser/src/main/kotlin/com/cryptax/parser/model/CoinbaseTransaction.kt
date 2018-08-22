@@ -13,10 +13,10 @@ data class CoinbaseTransaction(
     val usdPrice: Double,
     val usdAmount: Double) {
 
-    fun toTransaction(userId: String, source: Source): Transaction {
+    fun toTransaction(userId: String): Transaction {
         return Transaction(
             userId = userId,
-            source = source,
+            source = Source.COINBASE.name.toLowerCase(),
             date = date,
             type = Transaction.Type.valueOf(transactionType.toUpperCase()),
             price = usdPrice,

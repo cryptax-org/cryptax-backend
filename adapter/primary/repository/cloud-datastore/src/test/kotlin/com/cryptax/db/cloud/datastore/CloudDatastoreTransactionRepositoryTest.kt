@@ -47,7 +47,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -66,7 +66,7 @@ class CloudDatastoreTransactionRepositoryTest {
             then(datastore).should().put(capture())
             assertThat(firstValue.key.name).isEqualTo(transaction.id)
             assertThat(firstValue.getString("userId")).isEqualTo(transaction.userId)
-            assertThat(firstValue.getString("source")).isEqualTo(transaction.source.name)
+            assertThat(firstValue.getString("source")).isEqualTo(transaction.source)
             assertThat(firstValue.getTimestamp("date")).isEqualTo(Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
             assertThat(firstValue.getString("type")).isEqualTo(transaction.type.name)
             assertThat(firstValue.getDouble("price")).isEqualTo(transaction.price)
@@ -83,7 +83,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction1 = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -93,7 +93,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction2 = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -114,7 +114,7 @@ class CloudDatastoreTransactionRepositoryTest {
             then(datastore).should().put(capture(), capture())
             assertThat(firstValue.key.name).isEqualTo(transaction1.id)
             assertThat(firstValue.getString("userId")).isEqualTo(transaction1.userId)
-            assertThat(firstValue.getString("source")).isEqualTo(transaction1.source.name)
+            assertThat(firstValue.getString("source")).isEqualTo(transaction1.source)
             assertThat(firstValue.getTimestamp("date")).isEqualTo(Timestamp.ofTimeSecondsAndNanos(transaction1.date.toInstant().epochSecond, transaction1.date.toInstant().nano))
             assertThat(firstValue.getString("type")).isEqualTo(transaction1.type.name)
             assertThat(firstValue.getDouble("price")).isEqualTo(transaction1.price)
@@ -124,7 +124,7 @@ class CloudDatastoreTransactionRepositoryTest {
 
             assertThat(secondValue.key.name).isEqualTo(transaction1.id)
             assertThat(secondValue.getString("userId")).isEqualTo(transaction2.userId)
-            assertThat(secondValue.getString("source")).isEqualTo(transaction2.source.name)
+            assertThat(secondValue.getString("source")).isEqualTo(transaction2.source)
             assertThat(secondValue.getTimestamp("date")).isEqualTo(Timestamp.ofTimeSecondsAndNanos(transaction2.date.toInstant().epochSecond, transaction2.date.toInstant().nano))
             assertThat(secondValue.getString("type")).isEqualTo(transaction2.type.name)
             assertThat(secondValue.getDouble("price")).isEqualTo(transaction2.price)
@@ -141,7 +141,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transactionId = "id"
         val transaction = Transaction(id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(ZoneId.of("UTC")),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -150,7 +150,7 @@ class CloudDatastoreTransactionRepositoryTest {
             currency2 = Currency.BTC)
         val entity = Entity.newBuilder(keyFactory.setKind("Transaction").newKey(transactionId))
             .set("userId", transaction.userId)
-            .set("source", transaction.source.name)
+            .set("source", transaction.source)
             .set("date", Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
             .set("type", transaction.type.name)
             .set("price", transaction.price)
@@ -202,7 +202,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transactionId = "id"
         val transaction = Transaction(id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(ZoneId.of("UTC")),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -211,7 +211,7 @@ class CloudDatastoreTransactionRepositoryTest {
             currency2 = Currency.BTC)
         val entity = Entity.newBuilder(keyFactory.setKind("Transaction").newKey(transactionId))
             .set("userId", transaction.userId)
-            .set("source", transaction.source.name)
+            .set("source", transaction.source)
             .set("date", Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
             .set("type", transaction.type.name)
             .set("price", transaction.price)
@@ -254,7 +254,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -273,7 +273,7 @@ class CloudDatastoreTransactionRepositoryTest {
             then(datastore).should().update(capture())
             assertThat(firstValue.key.name).isEqualTo(transaction.id)
             assertThat(firstValue.getString("userId")).isEqualTo(transaction.userId)
-            assertThat(firstValue.getString("source")).isEqualTo(transaction.source.name)
+            assertThat(firstValue.getString("source")).isEqualTo(transaction.source )
             assertThat(firstValue.getTimestamp("date")).isEqualTo(Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
             assertThat(firstValue.getString("type")).isEqualTo(transaction.type.name)
             assertThat(firstValue.getDouble("price")).isEqualTo(transaction.price)

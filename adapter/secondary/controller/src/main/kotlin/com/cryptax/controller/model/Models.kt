@@ -64,7 +64,7 @@ data class UserWeb(
 
 data class TransactionWeb(
     val id: String = "DEFAULT",
-    val source: Source,
+    val source: String,
     val date: ZonedDateTime,
     val type: Transaction.Type,
     val price: Double,

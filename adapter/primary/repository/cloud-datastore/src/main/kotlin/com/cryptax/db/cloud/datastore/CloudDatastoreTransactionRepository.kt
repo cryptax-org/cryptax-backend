@@ -99,7 +99,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
     private fun toEntity(transaction: Transaction): Entity {
         return Entity.newBuilder(key(transaction.id))
             .set("userId", transaction.userId)
-            .set("source", transaction.source.name)
+            .set("source", transaction.source)
             .set("date", Timestamp.ofTimeSecondsAndNanos(transaction.date.toInstant().epochSecond, transaction.date.toInstant().nano))
             .set("type", transaction.type.name)
             .set("price", transaction.price)
@@ -114,7 +114,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
         return Transaction(
             id = entity.key.name,
             userId = entity.getString("userId"),
-            source = Source.valueOf(entity.getString("source")),
+            source = entity.getString("source"),
             date = date.toInstant().atZone(zoneId),
             type = Transaction.Type.valueOf(entity.getString("type")),
             price = entity.getDouble("price"),

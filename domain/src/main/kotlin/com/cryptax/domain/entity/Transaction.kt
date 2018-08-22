@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 data class Transaction(
     val id: String = "DEFAULT",
     val userId: String,
-    val source: Source,
+    val source: String,
     val date: ZonedDateTime,
     val type: Type,
     val price: Double,

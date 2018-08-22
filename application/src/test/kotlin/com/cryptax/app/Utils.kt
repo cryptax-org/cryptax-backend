@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter
 
 val user: UserWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
 val transaction: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
+val transaction2: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction2.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
 val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
@@ -68,7 +69,7 @@ fun validateUser(pair: Pair<User, String>) {
     // @formatter:on
 }
 
-private fun getToken(): JsonPath {
+fun getToken(): JsonPath {
     // @formatter:off
     return  given().
                 log().ifValidationFails().

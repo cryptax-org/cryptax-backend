@@ -16,11 +16,11 @@ data class BinanceTransaction(
     val fee: Double,
     val feeCoin: Currency) {
 
-    fun toTransaction(userId: String, source: Source): Transaction {
+    fun toTransaction(userId: String): Transaction {
         val market = extractCurrencies(market)
         return Transaction(
             userId = userId,
-            source = source,
+            source = Source.BINANCE.name.toLowerCase(),
             date = date,
             type = Transaction.Type.valueOf(type),
             price = price,

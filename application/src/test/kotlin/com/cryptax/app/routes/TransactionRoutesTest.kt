@@ -1,15 +1,8 @@
 package com.cryptax.app.routes
 
-import com.cryptax.app.addTransaction
+import com.cryptax.app.*
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.kodein
-import com.cryptax.app.formatter
-import com.cryptax.app.initTransaction
-import com.cryptax.app.setupRestAssured
-import com.cryptax.app.transaction
-import com.cryptax.app.transactionsBinance
-import com.cryptax.app.transactionsCoinbase
-import com.cryptax.app.transactionsCoinbase2
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
@@ -53,6 +46,36 @@ class TransactionRoutesTest {
     @DisplayName("Add a transaction")
     fun addTransaction(testContext: VertxTestContext) {
         initTransaction()
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Add a transaction with custom source")
+    fun addTransactionWithCustomSource(testContext: VertxTestContext) {
+        val pair = createUser()
+        validateUser(pair)
+        val token = getToken()
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            body(transaction2).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        post("/users/${pair.first.id}/transactions").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200).
+            assertThat().body("id", notNullValue()).
+            assertThat().body("userId", nullValue()).
+            assertThat().body("date", equalTo(transaction.date.format(formatter))).
+            assertThat().body("type", equalTo(transaction.type.name.toLowerCase())).
+            assertThat().body("price", equalTo(10.0f)).
+            assertThat().body("quantity", equalTo(2.0f)).
+            assertThat().body("currency1", equalTo(transaction.currency1.toString())).
+            assertThat().body("currency2", equalTo(transaction.currency2.toString())).
+        extract().
+            body().jsonPath()
+        // @formatter:on
         testContext.completeNow()
     }
 
@@ -124,7 +147,7 @@ class TransactionRoutesTest {
 
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
-            source = Source.MANUAL,
+            source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.SELL,
             price = 20.0,

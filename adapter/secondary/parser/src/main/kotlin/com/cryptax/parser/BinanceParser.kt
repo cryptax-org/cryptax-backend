@@ -34,7 +34,7 @@ class BinanceParser(delimiter: Char = ',') : Parser(
                     fee = line[6].toDouble(),
                     feeCoin = Currency.findCurrency(line[7]))
             }
-            .map { it.toTransaction(userId, source) }
+            .map { it.toTransaction(userId) }
     }
 }
 

@@ -33,6 +33,6 @@ class CoinbaseParser(delimiter: Char = ',') : Parser(
                     usdAmount = line[5].toDouble())
             }
             .filter { coinbaseTransaction -> "buy" == coinbaseTransaction.transactionType.toLowerCase() || "sell" == coinbaseTransaction.transactionType.toLowerCase() }
-            .map { it.toTransaction(userId, source) }
+            .map { it.toTransaction(userId) }
     }
 }

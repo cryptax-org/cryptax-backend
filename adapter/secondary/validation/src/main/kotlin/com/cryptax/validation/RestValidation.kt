@@ -108,10 +108,7 @@ private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHand
 private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "quantity", "currency1", "currency2")) {
 
     override fun checkBodyFieldsValueType(body: JsonObject) {
-        val source = body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
-        if (source != Source.MANUAL.toString().toLowerCase()) {
-            throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [$source]")
-        }
+        body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
         try {
             val date = body.getValue("date") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [date] should be a String")
             ZonedDateTime.parse(date)

@@ -1,6 +1,5 @@
 package com.cryptax.validation
 
-import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.csvContentTypeValidation
@@ -21,11 +20,7 @@ import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeUnit
 
@@ -219,30 +214,32 @@ class RestValidationTest {
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
 
-    @DisplayName("☹ Check transaction body validation wrong source")
+    @DisplayName("😀 Check transaction body validation wrong source")
     @Test
     fun testTransactionBodyValidationWrongSource(vertx: Vertx, testContext: VertxTestContext) {
         val userId = "randomId"
         val transaction = JsonObject()
             .put("source", "MANUAL2")
             .put("date", "2011-12-03T10:15:30Z")
-            .put("type", "BUY")
+            .put("type", "sell")
             .put("price", 10.0)
             .put("quantity", 5.0)
             .put("currency1", "BTC")
             .put("currency2", "ETH")
+
         router.get("/users/:userId/transactions")
             .handler {
                 it.body = transaction.toBuffer()
+                it.setUser(JWTUser(JsonObject().put("id", userId), ""))
                 it.next()
             }
             .handler(transactionBodyValidation)
-            .failureHandler(verifyFailureHandler(testContext, "Object field [source] should be '${Source.MANUAL.toString().toLowerCase()}', was [MANUAL2]"))
+            .handler(verifySuccessHandler(testContext))
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
     }
 
-    @DisplayName("☹ Check transaction body validation wrong source")
+    @DisplayName("☹ Check transaction body validation wrong source type")
     @Test
     fun testTransactionBodyValidationWrongSource2(vertx: Vertx, testContext: VertxTestContext) {
         val userId = "randomId"

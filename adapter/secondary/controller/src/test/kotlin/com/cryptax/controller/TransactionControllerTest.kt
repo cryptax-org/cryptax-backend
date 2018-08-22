@@ -34,7 +34,7 @@ class TransactionControllerTest {
     private val transactionReturn = Transaction(
         id = transactionId,
         userId = userId,
-        source = Source.MANUAL,
+        source = Source.MANUAL.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
@@ -42,7 +42,7 @@ class TransactionControllerTest {
         currency1 = Currency.BTC,
         currency2 = Currency.ETH)
     private val transactionWeb = TransactionWeb(
-        source = Source.MANUAL,
+        source = Source.MANUAL.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
