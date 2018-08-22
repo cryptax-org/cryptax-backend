@@ -9,13 +9,6 @@ private val version: String by lazy { currentVersion() }
 private val createdAt: String by lazy { createdAt() }
 
 fun handleInfoRoutes(router: Router) {
-    router.get("/derp")
-        .handler { routingContext ->
-            val info = JsonObject().put("version", version).put("createdAt", createdAt)
-            sendSuccess(info, routingContext.response())
-        }
-        .failureHandler(Failure.failureHandler)
-
     router.get("/info")
         .handler { routingContext ->
             val info = JsonObject().put("version", version).put("createdAt", createdAt)

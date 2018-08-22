@@ -9,8 +9,7 @@ import io.restassured.http.ContentType
 import io.vertx.core.Vertx
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.hasKey
+import org.hamcrest.Matchers.notNullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -21,8 +20,8 @@ import java.util.concurrent.TimeUnit
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(VertxExtension::class)
-@DisplayName("Health routes integration tests")
-class HealthRoutesTest {
+@DisplayName("Info routes integration tests")
+class InfoRoutesTest {
 
     @BeforeAll
     internal fun beforeAll() {
@@ -36,19 +35,17 @@ class HealthRoutesTest {
     }
 
     @Test
-    @DisplayName("Get health")
+    @DisplayName("Get info")
     fun testHealth(testContext: VertxTestContext) {
         // @formatter:off
         given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
-        get("/health").
+        get("/info").
         then().
             log().ifValidationFails().
-            assertThat().body("transactionRepository.healthy", equalTo(true)).
-            assertThat().body("transactionRepository", hasKey("timestamp")).
-            assertThat().body("userRepository.healthy", equalTo(true)).
-            assertThat().body("userRepository", hasKey("timestamp")).
+            assertThat().body("version", notNullValue()).
+            assertThat().body("createdAt", notNullValue()).
             assertThat().statusCode(200)
         // @formatter:on
 
