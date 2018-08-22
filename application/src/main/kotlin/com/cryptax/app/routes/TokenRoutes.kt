@@ -12,7 +12,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 
-fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler, userController: UserController) {
+fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: Routes.JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler, userController: UserController) {
 
     // Get token with user credentials
     router.post("/token")

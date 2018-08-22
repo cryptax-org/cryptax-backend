@@ -1,4 +1,4 @@
-package com.cryptax.app.metrics
+package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
@@ -8,12 +8,8 @@ import io.vertx.core.json.JsonObject
 import io.vertx.ext.dropwizard.MetricsService
 import io.vertx.ext.web.Router
 
-object Metrics {
+object MetricsRoutes {
     fun setupMetrics(metricsService: MetricsService, vertx: Vertx, router: Router) {
-        router.get("/")
-            .handler { routingContext -> routingContext.response().end() }
-            .failureHandler(failureHandler)
-
         router.get("/ping")
             .handler { routingContext ->
                 sendSuccess(JsonObject().put("result", "pong"), routingContext.response())

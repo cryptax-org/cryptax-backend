@@ -6,15 +6,20 @@ import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
+import io.vertx.core.AsyncResult
+import io.vertx.core.Handler
 import io.vertx.core.Vertx
 import io.vertx.core.http.HttpServerResponse
 import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.core.logging.LoggerFactory
+import io.vertx.ext.auth.User
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.BodyHandler
 import io.vertx.ext.web.handler.LoggerFormat
+import io.vertx.ext.web.handler.impl.HttpStatusException
+import io.vertx.ext.web.handler.impl.JWTAuthHandlerImpl
 import io.vertx.ext.web.handler.impl.LoggerHandlerImpl
 import io.vertx.reactivex.RxHelper
 
@@ -46,6 +51,10 @@ object Routes {
         handleHealthRoutes(router, vertxScheduler, healthCheckRegistry)
         handleInfoRoutes(router)
 
+        router.get("/")
+            .handler { routingContext -> routingContext.response().end() }
+            .failureHandler(Failure.failureHandler)
+
         // Exception handler
         router.exceptionHandler { throwable ->
             log.error("Unrecoverable exception while processing a request", throwable)
@@ -67,5 +76,28 @@ object Routes {
     fun HttpServerResponse.addContentTypeJson(): HttpServerResponse {
         this.putHeader("content-type", "application/json")
         return this
+    }
+
+    private class JWTAuthHandlerCustom(authProvider: JWTAuth) : JWTAuthHandlerImpl(authProvider, null) {
+
+        override fun authorize(user: User, handler: Handler<AsyncResult<Void>>) {
+            val isRefresh = user.principal().getBoolean("isRefresh")
+            if (isRefresh) {
+                throw HttpStatusException(401)
+            }
+            super.authorize(user, handler)
+        }
+    }
+
+    class JWTRefreshAuthHandlerCustom(authProvider: JWTAuth) : JWTAuthHandlerImpl(authProvider, null) {
+
+        override fun authorize(user: User, handler: Handler<AsyncResult<Void>>) {
+            val isRefresh = user.principal().getBoolean("isRefresh")
+            if (isRefresh) {
+                super.authorize(user, handler)
+                return
+            }
+            throw HttpStatusException(401)
+        }
     }
 }

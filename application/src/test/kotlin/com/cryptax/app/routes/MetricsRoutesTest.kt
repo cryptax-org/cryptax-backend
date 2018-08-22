@@ -1,4 +1,4 @@
-package com.cryptax.app.metrics
+package com.cryptax.app.routes
 
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.kodein
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(VertxExtension::class)
 @DisplayName("Metrics routes integration tests")
-class MetricsTest {
+class MetricsRoutesTest {
 
     lateinit var vertx: Vertx
 

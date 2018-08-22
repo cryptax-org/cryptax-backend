@@ -1,7 +1,7 @@
 package com.cryptax.app.verticle
 
 import com.codahale.metrics.health.HealthCheckRegistry
-import com.cryptax.app.metrics.Metrics
+import com.cryptax.app.routes.MetricsRoutes
 import com.cryptax.app.routes.Routes
 import com.cryptax.config.AppConfig
 import com.cryptax.controller.CurrencyController
@@ -40,7 +40,7 @@ class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractV
         // Create router
         val router = Router.router(vertx)
         Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, reportController, currencyController, healthCheckRegistry)
-        Metrics.setupMetrics(metricsService, vertx, router)
+        MetricsRoutes.setupMetrics(metricsService, vertx, router)
         router.route().handler(CorsHandler.create("*").allowedMethods(setOf(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS)))
 
         // Server options
