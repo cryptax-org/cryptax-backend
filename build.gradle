@@ -13,7 +13,7 @@ buildscript {
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'
         jooqVersion = '3.11.3'
-        kotlinVersion = '1.2.60'
+        kotlinVersion = '1.2.61'
         kodeinVersion = '5.2.0'
         log4j2Version = '2.11.0'
         mockitoVersion = '2.19.0'
@@ -22,11 +22,12 @@ buildscript {
         restAssuredVersion = '3.1.0'
         rxjava2Version = '2.1.17'
         slf4jVersion = '1.8.0-beta2'
-        vertxVersion = '3.5.2'
+        vertxVersion = '3.5.3'
     }
 
     repositories {
         mavenCentral()
+
     }
 
     dependencies {
@@ -39,7 +40,7 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '0.0.7-SNAPSHOT'
+    version = '0.0.8-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
@@ -47,6 +48,9 @@ subprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
 
     compileJava {
@@ -136,6 +140,10 @@ subprojects {
             csv.setEnabled(false)
             html.setEnabled(true)
         }
+    }
+
+    jacoco {
+        toolVersion = "0.8.2-SNAPSHOT"
     }
 }
 
