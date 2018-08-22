@@ -1,23 +1,10 @@
-before_install:
-  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-  - sudo apt-get update
-  - sudo apt-get -y install docker-ce
-
-sudo: required
-
-services:
-  - docker
-
 install: true
-
 language: java
 jdk:
   - openjdk10
 before_script:
   - chmod +x gradlew
 script:
-  - ./scripts/create-docker-image.sh
   - ./gradlew clean build testReport jacocoRootReport
 after_success:
   - bash <(curl -s https://codecov.io/bash)
