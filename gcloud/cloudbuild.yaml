@@ -9,5 +9,5 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest']
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['app', 'deploy', 'gcloud/app.yaml', '--image-url', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest', '--stop-previous-version']
+  args: ['app', 'deploy', 'gcloud/app.yaml', '--image-url', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest', '--version', '$BRANCH_NAME']
 timeout: 1200s
