@@ -9,7 +9,7 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest']
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['app', 'deploy', '--image-url', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest']
+  args: ['app', 'deploy', 'app.yaml', '--image-url', 'gcr.io/$PROJECT_ID/backend:$BRANCH_NAME-latest']
 #- name: 'gcr.io/cloud-builders/kubectl'
 #  args: ['apply', '-f', 'https://raw.githubusercontent.com/cryptax-org/cryptax-backend/$BRANCH_NAME/gcloud/deployment-$BRANCH_NAME.yaml', '--record']
 #  env:
