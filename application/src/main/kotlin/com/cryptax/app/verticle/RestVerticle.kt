@@ -40,7 +40,7 @@ class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractV
         // Create router
         val router = Router.router(vertx)
         router.route().handler(
-            CorsHandler.create("*")
+            CorsHandler.create(appConfig.properties.server.allowOrigin)
                 .allowedMethods(setOf(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS))
                 .allowedHeaders(setOf("Accept", "Content-Type")))
         Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, reportController, currencyController, healthCheckRegistry)

@@ -4,7 +4,7 @@ import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import java.lang.management.ManagementFactory
 
 data class PropertiesDto(val server: ServerDto, val jwt: JwtDto, val email: EmailDto, val http: HttpDto, val db: DbDto)
-data class ServerDto(val domain: String, val port: Int)
+data class ServerDto(val domain: String, val port: Int, val allowOrigin: String)
 data class JwtDto(
     val keyStorePath: String,
     private var password: String,

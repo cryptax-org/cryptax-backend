@@ -1,6 +1,7 @@
 server:
   domain: 0.0.0.0
   port: 8080
+  allowOrigin:
 jwt:
   keyStorePath: keystore.jceks
   password: cXHv1i/uP9ozQ/nA76cLvst5LBCuGYwQj2gH8xGno+Q=
