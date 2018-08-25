@@ -2,6 +2,7 @@ package com.cryptax.app
 
 import com.cryptax.app.verticle.EmailVerticle
 import com.cryptax.app.verticle.RestVerticle
+import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
 import io.vertx.core.AsyncResult
 import io.vertx.core.Vertx
@@ -17,6 +18,7 @@ object Main {
     init {
         System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
         System.setProperty("hazelcast.logging.type", "log4j2")
+        System.setProperty("log4j.configurationFile", "log4j2-" + AppConfig.profile() + ".xml")
     }
 
     private val log: Logger = LoggerFactory.getLogger(Main::class.java)
