@@ -1,5 +1,11 @@
 runtime: custom
 env: flex
+threadsafe: true
+automatic_scaling:
+    min_num_instances: 1
+    max_num_instances: 20
+    cpu_utilization:
+        target_utilization: 0.5
 resources:
     cpu: 1
     memory_gb: 0.6

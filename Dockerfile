@@ -17,7 +17,7 @@ RUN   chmod +x scripts/run.sh && \
       mv build/cryptax-backend.jar /opt && \
       mv scripts/run.sh /opt && \
       rm -rf /tmp/* && \
-      rm -rf ~/.gradle
+      rm -rf ~/.gradle/*
 
 WORKDIR /opt
 
