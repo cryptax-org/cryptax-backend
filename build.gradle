@@ -40,7 +40,7 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '0.0.18-SNAPSHOT'
+    version = '0.0.19-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
