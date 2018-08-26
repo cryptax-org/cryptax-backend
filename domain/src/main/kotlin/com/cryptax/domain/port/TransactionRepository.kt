@@ -15,4 +15,6 @@ interface TransactionRepository : Pingable {
     fun getAllForUser(userId: String): Single<List<Transaction>>
 
     fun update(transaction: Transaction): Single<Transaction>
+
+    fun delete(id: String): Single<Unit>
 }

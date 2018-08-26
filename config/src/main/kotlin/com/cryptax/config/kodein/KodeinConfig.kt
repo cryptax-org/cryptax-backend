@@ -29,6 +29,7 @@ import com.cryptax.price.PriceService
 import com.cryptax.security.SecurePassword
 import com.cryptax.usecase.report.GenerateReport
 import com.cryptax.usecase.transaction.AddTransaction
+import com.cryptax.usecase.transaction.DeleteTransaction
 import com.cryptax.usecase.transaction.FindTransaction
 import com.cryptax.usecase.transaction.UpdateTransaction
 import com.cryptax.usecase.user.CreateUser
@@ -68,11 +69,12 @@ class KodeinConfig(
         bind() from singleton { AddTransaction(instance(), instance(), instance()) }
         bind() from singleton { UpdateTransaction(instance()) }
         bind() from singleton { FindTransaction(instance()) }
+        bind() from singleton { DeleteTransaction(instance()) }
         bind() from singleton { GenerateReport(instance(), instance(), instance()) }
 
         // Controllers
         bind() from singleton { UserController(instance(), instance(), instance(), instance()) }
-        bind() from singleton { TransactionController(instance(), instance(), instance()) }
+        bind() from singleton { TransactionController(instance(), instance(), instance(), instance()) }
         bind() from singleton { ReportController(instance()) }
         bind() from singleton { CurrencyController() }
 

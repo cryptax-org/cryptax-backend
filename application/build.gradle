@@ -88,7 +88,7 @@ task copyJarToRoot {
         def outputJar = "$outputDirectory/$projectName" + ".jar"
 
         currentJar.renameTo(outputJar)
-        println("Move $jarName to $outputDirectory")
+        println("Move $jarName to $outputDirectory/$projectName" + ".jar")
     }
 }
 

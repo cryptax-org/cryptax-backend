@@ -3,6 +3,7 @@ package com.cryptax.app.routes
 import com.cryptax.app.routes.Routes.addContentTypeJson
 import com.cryptax.domain.exception.CryptaxException
 import com.cryptax.domain.exception.LoginException
+import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
@@ -34,7 +35,7 @@ object Failure {
             when (throwable) {
                 is ValidationException -> handleValidationException(response, throwable)
                 is CompositeException -> handleRxException(response, throwable)
-                is CryptaxException -> handlerCryptaxException(response, throwable)
+                is CryptaxException -> handleCryptaxException(response, throwable)
                 null -> notHandledNoException(response)
                 else -> notHandledException(response, throwable)
             }
@@ -58,19 +59,20 @@ object Failure {
     private fun handleRxException(response: HttpServerResponse, exception: CompositeException) {
         val cryptaxException = exception.exceptions.find { throwable -> throwable is CryptaxException }
         if (cryptaxException != null) {
-            handlerCryptaxException(response, cryptaxException as CryptaxException)
+            handleCryptaxException(response, cryptaxException as CryptaxException)
         } else {
             notHandledException(response, exception)
         }
     }
 
-    private fun handlerCryptaxException(response: HttpServerResponse, exception: CryptaxException) {
+    private fun handleCryptaxException(response: HttpServerResponse, exception: CryptaxException) {
         when (exception) {
             is LoginException -> handleLoginException(response, exception)
             is UserNotFoundException -> handleUserNotFoundException(response, exception)
             is UserAlreadyExistsException -> handleUserUserAlreadyExistsException(response, exception)
             is UserValidationException -> handleUserTransactionValidationException(response, exception)
             is TransactionValidationException -> handleUserTransactionValidationException(response, exception)
+            is TransactionNotFound -> handleTransactionNotFoundException(response, exception)
         }
     }
 
@@ -107,5 +109,12 @@ object Failure {
         response
             .setStatusCode(400)
             .end(JsonObject().put("error", "${exception.message}").encodePrettily())
+    }
+
+    private fun handleTransactionNotFoundException(response: HttpServerResponse, exception: TransactionNotFound) {
+        log.warn("Transaction not found [${exception.message}]")
+        response
+            .setStatusCode(404)
+            .end()
     }
 }

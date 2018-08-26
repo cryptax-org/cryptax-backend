@@ -45,7 +45,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
 
     override fun get(id: String): Maybe<Transaction> {
         return Maybe.create<Transaction> { emitter ->
-            log.debug("Get a transaction by id [$id]")
+            log.debug("Get a transaction by id $id")
             val entity = datastore.get(key(id))
             when (entity) {
                 null -> emitter.onComplete()
@@ -56,7 +56,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
 
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
         return Single.create<List<Transaction>> { emitter ->
-            log.debug("Get all transactions for [$userId]")
+            log.debug("Get all transactions for $userId")
             val query = Query.newEntityQueryBuilder()
                 .setKind(kind)
                 .setFilter(StructuredQuery.PropertyFilter.eq("userId", userId))
@@ -75,9 +75,17 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
 
     override fun update(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
-            log.debug("Update one transaction [${transaction.id}]")
+            log.debug("Update one transaction ${transaction.id}")
             datastore.update(toEntity(transaction))
             emitter.onSuccess(transaction)
+        }
+    }
+
+    override fun delete(id: String): Single<Unit> {
+        return Single.create<Unit> { emitter ->
+            log.debug("Delete one transaction $id")
+            datastore.delete(key(id))
+            emitter.onSuccess(Unit)
         }
     }
 

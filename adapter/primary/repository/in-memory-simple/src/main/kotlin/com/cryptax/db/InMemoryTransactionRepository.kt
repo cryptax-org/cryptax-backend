@@ -56,6 +56,13 @@ class InMemoryTransactionRepository : TransactionRepository {
         }
     }
 
+    override fun delete(id: String): Single<Unit> {
+        return Single.create<Unit> { emitter ->
+            inMemoryDb.remove(id)
+            emitter.onSuccess(Unit)
+        }
+    }
+
     override fun ping(): Boolean {
         return true
     }

@@ -64,6 +64,27 @@ class FailureTest {
         }
     }
 
+    @DisplayName("Not handled exception")
+    @Test
+    fun testNotHandled(vertx: Vertx, testContext: VertxTestContext) {
+        router.route()
+            .handler { context -> (context as RoutingContextImpl).fail(500) }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(500)
+                resp.bodyHandler {
+                    val body = JsonObject(it)
+                    testContext.verify {
+                        assertThat(body.getString("error")).isEqualTo("Something went wrong")
+                        testContext.completeNow()
+                    }
+                }
+            }
+        }
+    }
+
     @DisplayName("Validation exception test")
     @Test
     fun testValidationException(vertx: Vertx, testContext: VertxTestContext) {

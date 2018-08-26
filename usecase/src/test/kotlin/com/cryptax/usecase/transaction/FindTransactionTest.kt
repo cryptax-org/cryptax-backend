@@ -1,5 +1,6 @@
 package com.cryptax.usecase.transaction
 
+import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.Utils.oneTransactionWithId
@@ -37,7 +38,7 @@ class FindTransactionTest {
         val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
 
         // then
-        assertThat(transaction).isEqualTo(actual)
+        assertThat(actual).isEqualTo(transaction)
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -45,13 +46,16 @@ class FindTransactionTest {
     fun testFindTransactionNotFound() {
         // given
         val transaction = oneTransactionWithId
+        val expected = transaction.id
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.empty())
 
         // when
-        val actual = findTransaction.find(transaction.id, transaction.userId).blockingGet()
+        val exception = assertThrows(TransactionNotFound::class.java) {
+            findTransaction.find(transaction.id, transaction.userId).blockingGet()
+        }
 
         // then
-        assertThat(actual).isNull()
+        assertThat(expected).isEqualTo(exception.message)
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -69,7 +73,7 @@ class FindTransactionTest {
         }
 
         // then
-        assertThat(expected).isEqualTo(exception.message)
+        assertThat(exception.message).isEqualTo(expected)
         then(transactionRepository).should().get(transaction.id)
     }
 
@@ -83,7 +87,7 @@ class FindTransactionTest {
         val actual = findTransaction.findAllForUser(transactions[0].userId).blockingGet()
 
         // then
-        assertThat(transactions).isEqualTo(actual)
+        assertThat(actual).isEqualTo(transactions)
         then(transactionRepository).should().getAllForUser(transactions[0].userId)
     }
 }

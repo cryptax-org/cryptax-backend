@@ -1,8 +1,19 @@
 package com.cryptax.app.routes
 
-import com.cryptax.app.*
+import com.cryptax.app.addTransaction
 import com.cryptax.app.config.TestAppConfig
 import com.cryptax.app.config.kodein
+import com.cryptax.app.createUser
+import com.cryptax.app.formatter
+import com.cryptax.app.getToken
+import com.cryptax.app.initTransaction
+import com.cryptax.app.setupRestAssured
+import com.cryptax.app.transaction
+import com.cryptax.app.transaction2
+import com.cryptax.app.transactionsBinance
+import com.cryptax.app.transactionsCoinbase
+import com.cryptax.app.transactionsCoinbase2
+import com.cryptax.app.validateUser
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Currency
@@ -114,7 +125,7 @@ class TransactionRoutesTest {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
-        val transactionId = com.cryptax.app.addTransaction(userId, token).getString("id")
+        val transactionId = addTransaction(userId, token).getString("id")
 
         // @formatter:off
         given().
@@ -133,6 +144,27 @@ class TransactionRoutesTest {
             assertThat().body("currency1", equalTo(transaction.currency1.toString())).
             assertThat().body("currency2", equalTo(transaction.currency2.toString())).
             assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Get one transaction not found for a user")
+    fun getOneTransactionNotFound(testContext: VertxTestContext) {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+
+        // @formatter:off
+        given().
+            body(transaction).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        get("/users/$userId/transactions/ehjlwqhjeklqjewqkle").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(404)
         // @formatter:on
 
         testContext.completeNow()
@@ -262,6 +294,48 @@ class TransactionRoutesTest {
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
             assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
             assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Delete one transaction for a user")
+    fun deleteOneTransaction(testContext: VertxTestContext) {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+
+        val transactionId = addTransaction(userId, token).getString("id")
+
+        // @formatter:off
+        given().
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        delete("/users/$userId/transactions/$transactionId").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Delete one transaction not found for a user")
+    fun deleteOneTransactionNotFound(testContext: VertxTestContext) {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+
+        // @formatter:off
+        given().
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        delete("/users/$userId/transactions/eweeqewqeq").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(404)
         // @formatter:on
 
         testContext.completeNow()

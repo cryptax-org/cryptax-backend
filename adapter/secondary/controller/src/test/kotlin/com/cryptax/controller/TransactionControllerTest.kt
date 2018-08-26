@@ -5,6 +5,7 @@ import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.usecase.transaction.AddTransaction
+import com.cryptax.usecase.transaction.DeleteTransaction
 import com.cryptax.usecase.transaction.FindTransaction
 import com.cryptax.usecase.transaction.UpdateTransaction
 import com.nhaarman.mockitokotlin2.any
@@ -58,6 +59,8 @@ class TransactionControllerTest {
     lateinit var updateTransaction: UpdateTransaction
     @Mock
     lateinit var findTransaction: FindTransaction
+    @Mock
+    lateinit var deleteTransaction: DeleteTransaction
     @InjectMocks
     lateinit var transactionController: TransactionController
 
@@ -180,5 +183,21 @@ class TransactionControllerTest {
         // then
         assertThat(actual.message).isEqualTo("Source [MANUAL] not handled")
         then(addTransaction).shouldHaveZeroInteractions()
+    }
+
+    @Test
+    fun testDeleteTransaction() {
+        // given
+        val transactionId = "randomId"
+        val userId = "userId"
+        given(deleteTransaction.delete(transactionId, userId)).willReturn(Single.just(Unit))
+
+        // when
+        val actual = transactionController.deleteTransaction(transactionId, userId).blockingGet()
+
+        // then
+        assertThat(actual).isNotNull
+        assertThat(actual).isEqualTo(Unit)
+        then(deleteTransaction).should().delete(transactionId, userId)
     }
 }

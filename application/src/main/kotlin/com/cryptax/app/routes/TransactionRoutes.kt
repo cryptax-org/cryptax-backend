@@ -5,8 +5,9 @@ import com.cryptax.app.routes.Routes.sendSuccess
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Source
-import com.cryptax.validation.RestValidation
 import com.cryptax.validation.RestValidation.csvContentTypeValidation
+import com.cryptax.validation.RestValidation.deleteTransactionValidation
+import com.cryptax.validation.RestValidation.getTransactionValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
 import com.cryptax.validation.RestValidation.uploadCsvValidation
@@ -73,8 +74,7 @@ fun handleTransactionRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vert
     router.get("/users/:userId/transactions/:transactionId")
         .handler(jsonContentTypeValidation)
         .handler(jwtAuthHandler)
-        .handler(bodyHandler)
-        .handler(RestValidation.getTransactionValidation)
+        .handler(getTransactionValidation)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
             val transactionId = routingContext.request().getParam("transactionId")
@@ -106,6 +106,23 @@ fun handleTransactionRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vert
                 .observeOn(vertxScheduler)
                 .subscribe(
                     { transactionsWeb -> sendSuccess(JsonObject.mapFrom(transactionsWeb), routingContext.response()) },
+                    { error -> routingContext.fail(error) })
+        }
+        .failureHandler(failureHandler)
+
+    // Update transaction with JWT token
+    router.delete("/users/:userId/transactions/:transactionId")
+        .handler(jsonContentTypeValidation)
+        .handler(jwtAuthHandler)
+        .handler(deleteTransactionValidation)
+        .handler { routingContext ->
+            val userId = routingContext.request().getParam("userId")
+            val transactionId = routingContext.request().getParam("transactionId")
+            transactionController.deleteTransaction(transactionId, userId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { _ -> routingContext.response().end() },
                     { error -> routingContext.fail(error) })
         }
         .failureHandler(failureHandler)

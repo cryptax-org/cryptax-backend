@@ -284,6 +284,34 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
+    fun testDelete() {
+        // given
+        val keyFactory = KeyFactory("cryptax-212416")
+        val transaction = Transaction(
+            id = "id",
+            userId = "userId",
+            source = Source.MANUAL.name.toLowerCase(),
+            date = ZonedDateTime.now(),
+            type = Transaction.Type.BUY,
+            price = 10.0,
+            quantity = 4.0,
+            currency1 = Currency.ETH,
+            currency2 = Currency.BTC)
+        given(datastore.newKeyFactory()).willReturn(keyFactory)
+
+        // when
+        val actual = repo.delete(transaction.id).blockingGet()
+
+        // then
+        assertThat(actual).isEqualTo(Unit)
+        then(datastore).should().newKeyFactory()
+        argumentCaptor<Key>().apply {
+            then(datastore).should().delete(capture())
+            assertThat(firstValue.name).isEqualTo(transaction.id)
+        }
+    }
+
+    @Test
     fun testPing() {
         // when
         val actual = repo.ping()

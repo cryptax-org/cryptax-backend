@@ -20,6 +20,8 @@ object RestValidation {
         .addCustomValidatorFunction(userIdPathParamValidation)
     val getTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
         .addCustomValidatorFunction(userIdPathParamValidation)
+    val deleteTransactionValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler.create()
+        .addCustomValidatorFunction(userIdPathParamValidation)
 
     val loginValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
         .create()

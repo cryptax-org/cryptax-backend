@@ -90,4 +90,18 @@ class InMemoryTransactionRepositoryTest {
         // then
         assertThat(transaction2).isEqualTo(actual)
     }
+
+    @DisplayName("Delete a transaction")
+    @Test
+    fun testDeleteTransaction() {
+        // given
+        transactionRepository.add(transaction1).blockingGet()
+
+        // when
+        transactionRepository.delete(transaction1.id).blockingGet()
+        val actual = transactionRepository.get(transaction1.id).blockingGet()
+
+        // then
+        assertThat(actual).isNull()
+    }
 }
