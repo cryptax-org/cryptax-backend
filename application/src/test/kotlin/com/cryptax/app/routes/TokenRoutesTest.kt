@@ -77,7 +77,6 @@ class TokenRoutesTest {
         post("/token").
         then().
             log().ifValidationFails().
-            assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
         // @formatter:on
 

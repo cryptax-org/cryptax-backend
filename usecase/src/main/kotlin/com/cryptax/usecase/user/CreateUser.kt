@@ -2,6 +2,7 @@ package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException
+import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
@@ -12,13 +13,15 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.Arrays
 
-private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
-
 class CreateUser(
     private val repository: UserRepository,
     private val securePassword: SecurePassword,
     private val idGenerator: IdGenerator,
     private val emailService: EmailService) {
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
+    }
 
     fun create(user: User): Single<Pair<User, String>> {
         log.info("Usecase, create a user $user")
@@ -44,5 +47,19 @@ class CreateUser(
             .map { u -> Pair(u, securePassword.generateToken(u)) }
             .doOnSuccess { pair -> emailService.welcomeEmail(pair.first, pair.second) }
             .onErrorResumeNext { t: Throwable -> Single.error(t) }
+    }
+
+    fun sendWelcomeEmail(email: String): Single<Unit> {
+        log.info("Usecase, send welcome email again to $email")
+        return repository.findByEmail(email)
+            .toSingle()
+            .map { u -> Pair(u, securePassword.generateToken(u)) }
+            .map { pair -> emailService.welcomeEmail(pair.first, pair.second) }
+            .onErrorResumeNext { throwable ->
+                when (throwable) {
+                    is NoSuchElementException -> Single.error(UserNotFoundException(email))
+                    else -> Single.error(throwable)
+                }
+            }
     }
 }

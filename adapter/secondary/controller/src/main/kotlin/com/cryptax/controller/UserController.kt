@@ -34,4 +34,8 @@ class UserController(
     fun allowUser(userId: String, token: String): Single<Boolean> {
         return validateUser.validate(userId, token)
     }
+
+    fun sendWelcomeEmail(userId: String) : Single<Unit> {
+        return createUser.sendWelcomeEmail(userId)
+    }
 }

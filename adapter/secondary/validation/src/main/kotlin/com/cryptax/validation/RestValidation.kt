@@ -37,6 +37,10 @@ object RestValidation {
         .addPathParam("userId", ParameterType.GENERIC_STRING)
         .addQueryParam("token", ParameterType.GENERIC_STRING, true)
 
+    val sendWelcomeEmailValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
+        .create()
+        .addPathParam("email", ParameterType.GENERIC_STRING)
+
     val uploadCsvValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
         .create()
         .addPathParam("userId", ParameterType.GENERIC_STRING)

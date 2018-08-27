@@ -53,7 +53,7 @@ class UserRoutesTest {
         val token = initUserAndGetToken()
 
         // @formatter:off
-         given().
+        given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
@@ -78,7 +78,7 @@ class UserRoutesTest {
         val token = initUserAndGetToken()
 
         // @formatter:off
-         given().
+        given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("refreshToken")}")).
@@ -87,6 +87,42 @@ class UserRoutesTest {
             log().ifValidationFails().
             assertThat().body("error", equalTo("Unauthorized")).
             assertThat().statusCode(401)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Send welcome email")
+    fun sendWelcomeEmail(testContext: VertxTestContext) {
+        // given
+        val pair = createUser()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+        get("/users/email/${pair.first.email}").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Send welcome email, user not found")
+    fun sendWelcomeEmailUserNotFound(testContext: VertxTestContext) {
+        // given
+        val email = "whatever"
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+        get("/users/email/$email").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400)
         // @formatter:on
 
         testContext.completeNow()

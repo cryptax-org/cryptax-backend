@@ -87,21 +87,21 @@ object Failure {
         log.warn("Unauthorized request for user [${exception.email}] and with description [${exception.description}]")
         response
             .setStatusCode(401)
-            .end(JsonObject().put("error", "Unauthorized").encodePrettily())
+            .end()
     }
 
     private fun handleUserNotFoundException(response: HttpServerResponse, exception: UserNotFoundException) {
         log.warn("User not found [${exception.message}]")
         response
             .setStatusCode(400)
-            .end(JsonObject().put("error", "Bad request").encodePrettily())
+            .end()
     }
 
     private fun handleUserUserAlreadyExistsException(response: HttpServerResponse, exception: UserAlreadyExistsException) {
         log.warn("User already exists [${exception.message}]")
         response
             .setStatusCode(400)
-            .end(JsonObject().put("error", "Bad request").encodePrettily())
+            .end()
     }
 
     private fun handleUserTransactionValidationException(response: HttpServerResponse, exception: com.cryptax.domain.exception.ValidationException) {

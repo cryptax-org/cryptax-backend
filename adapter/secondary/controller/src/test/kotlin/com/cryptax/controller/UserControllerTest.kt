@@ -139,4 +139,18 @@ class UserControllerTest {
         assertThat(actual).isTrue()
         then(validateUser).should().validate(userId, token)
     }
+
+    @Test
+    fun testSendWelcomeEmail() {
+        // given
+        val userId = "userId"
+        given(createUser.sendWelcomeEmail(userId)).willReturn(Single.just(Unit))
+
+        // when
+        val actual = userController.sendWelcomeEmail(userId).blockingGet()
+
+        // then
+        assertThat(actual).isEqualTo(Unit)
+        then(createUser).should().sendWelcomeEmail(userId)
+    }
 }

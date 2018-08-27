@@ -8,6 +8,7 @@ import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
+import com.cryptax.validation.RestValidation.sendWelcomeEmailValidation
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
@@ -52,6 +53,21 @@ fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSchedu
                         val result = JsonObject.mapFrom(user)
                         sendSuccess(result, routingContext.response())
                     },
+                    { error -> routingContext.fail(error) })
+        }
+        .failureHandler(failureHandler)
+
+    // Resend welcome email containing the welcome token
+    router.get("/users/email/:email")
+        .handler(sendWelcomeEmailValidation)
+        .handler { routingContext ->
+            val email = routingContext.request().getParam("email")
+            userController
+                .sendWelcomeEmail(email)
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { _ -> routingContext.response().setStatusCode(200).end() },
                     { error -> routingContext.fail(error) })
         }
         .failureHandler(failureHandler)

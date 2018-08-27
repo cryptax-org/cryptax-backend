@@ -118,13 +118,7 @@ class FailureTest {
         vertx.createHttpClient().getNow(port, host, "/") { resp ->
             testContext.verify {
                 assertThat(resp.statusCode()).isEqualTo(401)
-                resp.bodyHandler {
-                    val body = JsonObject(it)
-                    testContext.verify {
-                        assertThat(body.getString("error")).isNotNull()
-                    }
-                    testContext.completeNow()
-                }
+                testContext.completeNow()
             }
         }
     }
@@ -141,13 +135,7 @@ class FailureTest {
         vertx.createHttpClient().getNow(port, host, "/") { resp ->
             testContext.verify {
                 assertThat(resp.statusCode()).isEqualTo(400)
-                resp.bodyHandler {
-                    val body = JsonObject(it)
-                    testContext.verify {
-                        assertThat(body.getString("error")).isNotNull()
-                    }
-                    testContext.completeNow()
-                }
+                testContext.completeNow()
             }
         }
     }
@@ -164,13 +152,7 @@ class FailureTest {
         vertx.createHttpClient().getNow(port, host, "/") { resp ->
             testContext.verify {
                 assertThat(resp.statusCode()).isEqualTo(400)
-                resp.bodyHandler {
-                    val body = JsonObject(it)
-                    testContext.verify {
-                        assertThat(body.getString("error")).isNotNull()
-                    }
-                    testContext.completeNow()
-                }
+                testContext.completeNow()
             }
         }
     }
@@ -281,13 +263,7 @@ class FailureTest {
         vertx.createHttpClient().getNow(port, host, "/") { resp ->
             testContext.verify {
                 assertThat(resp.statusCode()).isEqualTo(400)
-                resp.bodyHandler {
-                    val body = JsonObject(it)
-                    testContext.verify {
-                        assertThat(body.getString("error")).isEqualTo("Bad request")
-                    }
-                    testContext.completeNow()
-                }
+                testContext.completeNow()
             }
         }
     }

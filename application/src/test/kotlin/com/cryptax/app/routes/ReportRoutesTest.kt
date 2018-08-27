@@ -47,7 +47,7 @@ class ReportRoutesTest {
         val token = result.second
 
         // @formatter:off
-         given().
+        given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
             queryParam("debug", false).
@@ -92,7 +92,7 @@ class ReportRoutesTest {
         val token = result.second
 
         // @formatter:off
-         given().
+        given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).

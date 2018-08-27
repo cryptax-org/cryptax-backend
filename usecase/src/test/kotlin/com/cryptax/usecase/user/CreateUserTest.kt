@@ -2,6 +2,7 @@ package com.cryptax.usecase.user
 
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.exception.UserAlreadyExistsException
+import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.SecurePassword
@@ -12,7 +13,6 @@ import com.nhaarman.mockitokotlin2.eq
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -59,7 +59,7 @@ class CreateUserTest {
         val actual = createUser.create(user).blockingGet()
 
         //then
-        assertNotNull(actual)
+        assertThat(actual).isNotNull
         user.password.forEach { assert(it == '\u0000') }
         then(userRepository).should().findByEmail(user.email)
         then(idGenerator).should().generate()
@@ -109,6 +109,41 @@ class CreateUserTest {
         assertThat(exception.message).isEqualTo(user.email)
         then(userRepository).shouldHaveNoMoreInteractions()
         then(idGenerator).shouldHaveZeroInteractions()
+        then(securePassword).shouldHaveZeroInteractions()
+        then(emailService).shouldHaveZeroInteractions()
+    }
+
+    @Test
+    @DisplayName("Send welcome email")
+    fun testSendEmail() {
+        //given
+        given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
+        given(securePassword.generateToken(user)).willReturn(token)
+
+        //when
+        val actual = createUser.sendWelcomeEmail(user.email).blockingGet()
+
+        //then
+        assertThat(actual).isEqualTo(Unit)
+        then(userRepository).should().findByEmail(user.email)
+        then(securePassword).should().generateToken(user)
+        then(emailService).should().welcomeEmail(user, token)
+    }
+
+    @Test
+    @DisplayName("Send welcome email, user not found")
+    fun testSendEmailUserNotFound() {
+        //given
+        given(userRepository.findByEmail(user.email)).willReturn(Maybe.empty())
+
+        //when
+        val exception = assertThrows(UserNotFoundException::class.java) {
+            createUser.sendWelcomeEmail(user.email).blockingGet()
+        }
+
+        //then
+        assertThat(exception.message).isEqualTo(user.email)
+        then(userRepository).should().findByEmail(user.email)
         then(securePassword).shouldHaveZeroInteractions()
         then(emailService).shouldHaveZeroInteractions()
     }
