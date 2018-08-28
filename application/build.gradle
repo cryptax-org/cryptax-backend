@@ -82,7 +82,7 @@ test {
 task copyJarToRoot {
     doLast {
         def jarName = projectName + "-" + version + ".jar"
-        def outputDirectory = "${rootDir}/build/"
+        def outputDirectory = "${rootDir}/build"
 
         def currentJar = file("${buildDir}/libs/$jarName")
         def outputJar = "$outputDirectory/$projectName" + ".jar"
