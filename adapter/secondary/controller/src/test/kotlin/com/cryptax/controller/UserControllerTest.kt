@@ -1,10 +1,12 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.UserWeb
+import com.cryptax.domain.entity.ResetPassword
 import com.cryptax.domain.entity.User
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
+import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
@@ -19,6 +21,7 @@ import org.mockito.BDDMockito.then
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import java.time.ZonedDateTime
 
 @DisplayName("User controller")
 @ExtendWith(MockitoExtension::class)
@@ -46,6 +49,8 @@ class UserControllerTest {
     lateinit var findUser: FindUser
     @Mock
     lateinit var loginUser: LoginUser
+    @Mock
+    lateinit var resetUserPassword: ResetUserPassword
     @InjectMocks
     lateinit var userController: UserController
 
@@ -152,5 +157,20 @@ class UserControllerTest {
         // then
         assertThat(actual).isEqualTo(Unit)
         then(createUser).should().sendWelcomeEmail(userId)
+    }
+
+    @Test
+    fun testInitiatePasswordReset() {
+        // given
+        val email = "email@email.com"
+        val resetPassword = ResetPassword("", "", ZonedDateTime.now())
+        given(resetUserPassword.initiatePasswordReset(email)).willReturn(Single.just(resetPassword))
+
+        // when
+        val actual = resetUserPassword.initiatePasswordReset(email).blockingGet()
+
+        // then
+        assertThat(actual).isEqualTo(resetPassword)
+        then(resetUserPassword).should().initiatePasswordReset(email)
     }
 }

@@ -3,6 +3,7 @@ package com.cryptax.app.routes
 import com.cryptax.app.routes.Routes.addContentTypeJson
 import com.cryptax.domain.exception.CryptaxException
 import com.cryptax.domain.exception.LoginException
+import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
@@ -73,7 +74,15 @@ object Failure {
             is UserValidationException -> handleUserTransactionValidationException(response, exception)
             is TransactionValidationException -> handleUserTransactionValidationException(response, exception)
             is TransactionNotFound -> handleTransactionNotFoundException(response, exception)
+            is ResetPasswordException -> handleResetPasswordException(response, exception)
         }
+    }
+
+    private fun handleResetPasswordException(response: HttpServerResponse, exception: ResetPasswordException) {
+        log.warn("Invalid reset password token [${exception.message}]")
+        response
+            .setStatusCode(400)
+            .end()
     }
 
     private fun handleValidationException(response: HttpServerResponse, exception: ValidationException) {

@@ -23,3 +23,5 @@ class TransactionUserDoNotMatch(transactionUserId: String, transactionId: String
     : CryptaxException("User [$transactionUserId] tried to update [$transactionId], but that transaction is owned by [$transactionUserIdFound]")
 
 class ReportException(message: String) : CryptaxException(message)
+
+class ResetPasswordException(message: String) : CryptaxException(message)

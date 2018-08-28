@@ -45,6 +45,7 @@ class InMemoryUserRepository : UserRepository {
 
     override fun updateUser(user: User): Single<User> {
         return Single.create<User> { emitter ->
+            log.debug("Update user $user")
             inMemoryDb[user.id] = user
             emitter.onSuccess(user)
         }

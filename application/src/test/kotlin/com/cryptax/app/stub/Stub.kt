@@ -2,6 +2,7 @@ package com.cryptax.app.stub
 
 import com.cryptax.cache.CacheService
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.ResetPassword
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.PriceService
@@ -10,6 +11,8 @@ import java.time.ZonedDateTime
 
 class EmailServiceStub : EmailService {
     override fun welcomeEmail(user: User, token: String) {}
+    override fun resetPasswordEmail(email: String, resetPassword: ResetPassword) {}
+    override fun resetPasswordConfirmationEmail(email: String) {}
 }
 
 class CacheServiceStub : CacheService {

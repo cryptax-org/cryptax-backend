@@ -7,9 +7,11 @@ import io.reactivex.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private val log: Logger = LoggerFactory.getLogger(InMemoryTransactionRepository::class.java)
-
 class InMemoryTransactionRepository : TransactionRepository {
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(InMemoryTransactionRepository::class.java)
+    }
 
     private val inMemoryDb = HashMap<String, Transaction>()
 

@@ -11,17 +11,22 @@ import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
+import com.cryptax.db.InMemoryResetPasswordRepository
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.db.cloud.datastore.CloudDatastoreResetPasswordRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreTransactionRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreUserRepository
 import com.cryptax.domain.entity.Currency
+import com.cryptax.domain.entity.ResetPassword
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
+import com.cryptax.domain.port.ResetPasswordRepository
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
 import com.cryptax.email.VertxEmailService
+import com.cryptax.health.ResetPasswordRepositoryHealthCheck
 import com.cryptax.health.TransactionRepositoryHealthCheck
 import com.cryptax.health.UserRepositoryHealthCheck
 import com.cryptax.id.JugIdGenerator
@@ -35,6 +40,7 @@ import com.cryptax.usecase.transaction.UpdateTransaction
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
+import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.datastore.Datastore
@@ -66,6 +72,7 @@ class KodeinConfig(
         bind() from singleton { FindUser(instance()) }
         bind() from singleton { ValidateUser(instance(), instance()) }
         bind() from singleton { LoginUser(instance(), instance()) }
+        bind() from singleton { ResetUserPassword(instance(), instance(), instance(), instance(), instance()) }
         bind() from singleton { AddTransaction(instance(), instance(), instance()) }
         bind() from singleton { UpdateTransaction(instance()) }
         bind() from singleton { FindTransaction(instance()) }
@@ -73,7 +80,7 @@ class KodeinConfig(
         bind() from singleton { GenerateReport(instance(), instance(), instance()) }
 
         // Controllers
-        bind() from singleton { UserController(instance(), instance(), instance(), instance()) }
+        bind() from singleton { UserController(instance(), instance(), instance(), instance(), instance()) }
         bind() from singleton { TransactionController(instance(), instance(), instance(), instance()) }
         bind() from singleton { ReportController(instance()) }
         bind() from singleton { CurrencyController() }
@@ -83,10 +90,12 @@ class KodeinConfig(
             val healthCheckRegistry = HealthCheckRegistry()
             healthCheckRegistry.register("userRepository", instance("userRepositoryCheck"))
             healthCheckRegistry.register("transactionRepository", instance("transactionRepositoryCheck"))
+            healthCheckRegistry.register("resetPasswordRepository", instance("resetPasswordRepositoryCheck"))
             healthCheckRegistry
         }
         bind<HealthCheck>("userRepositoryCheck") with singleton { UserRepositoryHealthCheck(instance()) }
         bind<HealthCheck>("transactionRepositoryCheck") with singleton { TransactionRepositoryHealthCheck(instance()) }
+        bind<HealthCheck>("resetPasswordRepositoryCheck") with singleton { ResetPasswordRepositoryHealthCheck(instance()) }
 
         // Other
         bind<ObjectMapper>() with singleton { JacksonConfig.objectMapper }
@@ -99,10 +108,12 @@ class KodeinConfig(
         if (db.mode == "in-memory") {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
             bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
+            bind<ResetPasswordRepository>() with singleton { InMemoryResetPasswordRepository() }
         } else if (db.mode == "cloud-datastore") {
             bind<Datastore>() with singleton { datastoreOptions!!.service }
             bind<UserRepository>() with singleton { CloudDatastoreUserRepository(instance()) }
             bind<TransactionRepository>() with singleton { CloudDatastoreTransactionRepository(instance()) }
+            bind<ResetPasswordRepository>() with singleton { CloudDatastoreResetPasswordRepository(instance()) }
         }
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }
@@ -120,6 +131,8 @@ class KodeinConfig(
             bind<EmailService>() with singleton {
                 object : EmailService {
                     override fun welcomeEmail(user: User, token: String) {}
+                    override fun resetPasswordEmail(email: String, resetPassword: ResetPassword) {}
+                    override fun resetPasswordConfirmationEmail(email: String) {}
                 }
             }
             bind<CacheService>() with singleton {

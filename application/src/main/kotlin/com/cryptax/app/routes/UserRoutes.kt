@@ -6,9 +6,10 @@ import com.cryptax.controller.UserController
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.validation.RestValidation.allowUserValidation
 import com.cryptax.validation.RestValidation.createUserValidation
+import com.cryptax.validation.RestValidation.emailPathValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
-import com.cryptax.validation.RestValidation.sendWelcomeEmailValidation
+import com.cryptax.validation.RestValidation.resetPasswordValidation
 import io.reactivex.Scheduler
 import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
@@ -43,7 +44,7 @@ fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSchedu
         .handler(getUserValidation)
         .handler { routingContext ->
             val userId = routingContext.request().getParam("userId")
-            // Previous validation 'insure' (95%) the user exists
+            // Previous validation 'insure' the user exists
             userController
                 .findUser(userId)
                 .subscribeOn(Schedulers.io())
@@ -59,7 +60,7 @@ fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSchedu
 
     // Resend welcome email containing the welcome token
     router.get("/users/email/:email")
-        .handler(sendWelcomeEmailValidation)
+        .handler(emailPathValidation)
         .handler { routingContext ->
             val email = routingContext.request().getParam("email")
             userController
@@ -88,6 +89,41 @@ fun handleUserRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vertxSchedu
                             .setStatusCode(if (isAllowed) 200 else 400)
                             .end()
                     },
+                    { error -> routingContext.fail(error) })
+        }
+        .failureHandler(failureHandler)
+
+    // Initiate reset password
+    router.get("/users/email/:email/reset")
+        .handler(emailPathValidation)
+        .handler { routingContext ->
+            val email = routingContext.request().getParam("email")
+            userController
+                .initiatePasswordReset(email)
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { resetPassword ->
+                        val result = JsonObject.mapFrom(resetPassword)
+                        sendSuccess(result, routingContext.response())
+                    },
+                    { error -> routingContext.fail(error) })
+        }
+        .failureHandler(failureHandler)
+
+    // Reset password
+    router.put("/users/password")
+        .handler(jsonContentTypeValidation)
+        .handler(bodyHandler)
+        .handler(resetPasswordValidation)
+        .handler { routingContext ->
+            val body = routingContext.body.toJsonObject()
+            userController
+                .resetPassword(body.getString("email"), body.getString("password").toCharArray(), body.getString("token"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(vertxScheduler)
+                .subscribe(
+                    { _ -> routingContext.response().setStatusCode(200).end() },
                     { error -> routingContext.fail(error) })
         }
         .failureHandler(failureHandler)

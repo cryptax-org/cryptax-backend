@@ -6,6 +6,7 @@ import com.cryptax.validation.RestValidation.csvContentTypeValidation
 import com.cryptax.validation.RestValidation.getUserValidation
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
+import com.cryptax.validation.RestValidation.resetPasswordValidation
 import com.cryptax.validation.RestValidation.transactionBodyValidation
 import com.cryptax.validation.RestValidation.uploadCsvValidation
 import io.vertx.core.Handler
@@ -20,7 +21,11 @@ import io.vertx.ext.web.api.validation.ValidationException
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.concurrent.TimeUnit
 
@@ -549,6 +554,66 @@ class RestValidationTest {
             .failureHandler(verifyFailureHandler(testContext, "Invalid delimiter [&]"))
 
         vertx.createHttpClient().getNow(port, host, "/users/$userId/transactions", responseHandler(testContext))
+    }
+
+    @DisplayName("😀 Reset password validation")
+    @Test
+    fun testResetPassword(vertx: Vertx, testContext: VertxTestContext) {
+        val resetPassword = JsonObject().put("email", "email@email.com").put("password", "123").put("token", "gfhiowhfgwkejg")
+        router.get("/users/password")
+            .handler {
+                it.body = resetPassword.toBuffer()
+                it.next()
+            }
+            .handler(resetPasswordValidation)
+            .handler(verifySuccessHandler(testContext))
+
+        vertx.createHttpClient().getNow(port, host, "/users/password", responseHandler(testContext))
+    }
+
+    @DisplayName("☹ Reset password validation, fail1")
+    @Test
+    fun testResetPasswordEmailFail(vertx: Vertx, testContext: VertxTestContext) {
+        val resetPassword = JsonObject().put("email", 0).put("password", "123").put("token", "gfhiowhfgwkejg")
+        router.get("/users/password")
+            .handler {
+                it.body = resetPassword.toBuffer()
+                it.next()
+            }
+            .handler(resetPasswordValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Object field [email] should be a String"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/password", responseHandler(testContext))
+    }
+
+    @DisplayName("☹ Reset password validation, fail2")
+    @Test
+    fun testResetPasswordPasswordFail(vertx: Vertx, testContext: VertxTestContext) {
+        val resetPassword = JsonObject().put("email", "fwefwef").put("password", 0).put("token", "gfhiowhfgwkejg")
+        router.get("/users/password")
+            .handler {
+                it.body = resetPassword.toBuffer()
+                it.next()
+            }
+            .handler(resetPasswordValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Object field [password] should be a String"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/password", responseHandler(testContext))
+    }
+
+    @DisplayName("☹ Reset password validation, fail3")
+    @Test
+    fun testResetPasswordTokenFail(vertx: Vertx, testContext: VertxTestContext) {
+        val resetPassword = JsonObject().put("email", "fwefwef").put("password", "123").put("token", 0)
+        router.get("/users/password")
+            .handler {
+                it.body = resetPassword.toBuffer()
+                it.next()
+            }
+            .handler(resetPasswordValidation)
+            .failureHandler(verifyFailureHandler(testContext, "Object field [token] should be a String"))
+
+        vertx.createHttpClient().getNow(port, host, "/users/password", responseHandler(testContext))
     }
 
     private fun verifySuccessHandler(testContext: VertxTestContext): Handler<RoutingContext> = Handler {

@@ -37,9 +37,11 @@ object RestValidation {
         .addPathParam("userId", ParameterType.GENERIC_STRING)
         .addQueryParam("token", ParameterType.GENERIC_STRING, true)
 
-    val sendWelcomeEmailValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
+    val emailPathValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
         .create()
         .addPathParam("email", ParameterType.GENERIC_STRING)
+
+    val resetPasswordValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandlerResetPassword()
 
     val uploadCsvValidation: HTTPRequestValidationHandler = HTTPRequestValidationHandler
         .create()
@@ -111,7 +113,7 @@ private class HTTPRequestValidationHandlerCreateUser : HTTPRequestValidationHand
     }
 }
 
-private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "quantity", "currency1", "currency2")) {
+private class HTTPRequestValidationHandlerTransaction : HTTPRequestValidationHandlerCustom(listOf("source", "date", "type", "price", "quantity", "currency1", "currency2")) {
 
     override fun checkBodyFieldsValueType(body: JsonObject) {
         body.getValue("source") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [source] should be a String")
@@ -126,6 +128,14 @@ private open class HTTPRequestValidationHandlerTransaction : HTTPRequestValidati
         if (type != Transaction.Type.BUY.toString().toLowerCase() && type != Transaction.Type.SELL.toString().toLowerCase()) {
             throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [type] should be '${Transaction.Type.BUY.toString().toLowerCase()}' or '${Transaction.Type.SELL.toString().toLowerCase()}'")
         }
+    }
+}
+
+private class HTTPRequestValidationHandlerResetPassword : HTTPRequestValidationHandlerCustom(listOf("email", "password", "token")) {
+    override fun checkBodyFieldsValueType(body: JsonObject) {
+        body.getValue("email") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [email] should be a String")
+        body.getValue("password") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [password] should be a String")
+        body.getValue("token") as? String ?: throw ValidationException.ValidationExceptionFactory.generateInvalidJsonBodyException("Object field [token] should be a String")
     }
 }
 

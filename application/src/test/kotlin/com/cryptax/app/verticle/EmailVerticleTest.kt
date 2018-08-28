@@ -42,7 +42,7 @@ class EmailVerticleTest {
     }
 
     @Test
-    fun testEmailVerticle(vertx: Vertx, testContext: VertxTestContext) {
+    fun testWelcomeEmail(vertx: Vertx, testContext: VertxTestContext) {
         // given
         val message = JsonObject()
             .put("subject", "Welcome to Cryptax")
@@ -60,6 +60,50 @@ class EmailVerticleTest {
         }
 
         // when
-        vertx.eventBus().publish("cryptax.email", message)
+        vertx.eventBus().publish("cryptax.email.welcome", message)
+    }
+
+    @Test
+    fun testResetPasswordEmail(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val message = JsonObject()
+            .put("subject", "Welcome to Cryptax")
+            .put("to", "email@email.com")
+            .put("html", "Here is your token: 12345")
+        given(mailClient.rxSendMail(any())).will { invocation ->
+            val mailMessage: MailMessage = invocation.getArgument<MailMessage>(0)
+            // then
+            assertThat(mailMessage.from).isEqualTo("webmaster.stock@yahoo.com")
+            assertThat(mailMessage.to).isEqualTo(listOf("email@email.com"))
+            assertThat(mailMessage.subject).isEqualTo("Welcome to Cryptax")
+            assertThat(mailMessage.html).isEqualTo("Here is your token: 12345")
+            testContext.completeNow()
+            Single.just(MailResult())
+        }
+
+        // when
+        vertx.eventBus().publish("cryptax.email.reset.password", message)
+    }
+
+    @Test
+    fun testChangePasswordEmail(vertx: Vertx, testContext: VertxTestContext) {
+        // given
+        val message = JsonObject()
+            .put("subject", "Welcome to Cryptax")
+            .put("to", "email@email.com")
+            .put("html", "Here is your token: 12345")
+        given(mailClient.rxSendMail(any())).will { invocation ->
+            val mailMessage: MailMessage = invocation.getArgument<MailMessage>(0)
+            // then
+            assertThat(mailMessage.from).isEqualTo("webmaster.stock@yahoo.com")
+            assertThat(mailMessage.to).isEqualTo(listOf("email@email.com"))
+            assertThat(mailMessage.subject).isEqualTo("Welcome to Cryptax")
+            assertThat(mailMessage.html).isEqualTo("Here is your token: 12345")
+            testContext.completeNow()
+            Single.just(MailResult())
+        }
+
+        // when
+        vertx.eventBus().publish("cryptax.email.updated", message)
     }
 }

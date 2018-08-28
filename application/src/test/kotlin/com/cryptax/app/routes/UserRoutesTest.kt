@@ -7,13 +7,16 @@ import com.cryptax.app.initUserAndGetToken
 import com.cryptax.app.setupRestAssured
 import com.cryptax.app.user
 import com.cryptax.app.verticle.RestVerticle
+import com.nhaarman.mockitokotlin2.isNotNull
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import io.vertx.core.Vertx
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsNull.nullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
@@ -41,14 +44,14 @@ class UserRoutesTest {
 
     @Test
     @DisplayName("Create a user")
-    fun createUser(testContext: VertxTestContext) {
+    fun testCreateUser(testContext: VertxTestContext) {
         createUser()
         testContext.completeNow()
     }
 
     @Test
     @DisplayName("Get one user")
-    fun getOneUser(testContext: VertxTestContext) {
+    fun testGetOneUser(testContext: VertxTestContext) {
         // given
         val token = initUserAndGetToken()
 
@@ -73,7 +76,7 @@ class UserRoutesTest {
 
     @Test
     @DisplayName("Get one user with refresh token")
-    fun getOneUserWithRefreshToken(testContext: VertxTestContext) {
+    fun testGetOneUserWithRefreshToken(testContext: VertxTestContext) {
         // given
         val token = initUserAndGetToken()
 
@@ -94,7 +97,7 @@ class UserRoutesTest {
 
     @Test
     @DisplayName("Send welcome email")
-    fun sendWelcomeEmail(testContext: VertxTestContext) {
+    fun testSendWelcomeEmail(testContext: VertxTestContext) {
         // given
         val pair = createUser()
 
@@ -112,7 +115,7 @@ class UserRoutesTest {
 
     @Test
     @DisplayName("Send welcome email, user not found")
-    fun sendWelcomeEmailUserNotFound(testContext: VertxTestContext) {
+    fun testSendWelcomeEmailUserNotFound(testContext: VertxTestContext) {
         // given
         val email = "whatever"
 
@@ -120,6 +123,40 @@ class UserRoutesTest {
         given().
             log().ifValidationFails().
         get("/users/email/$email").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Initiate reset password")
+    fun testInitiatePasswordReset(testContext: VertxTestContext) {
+        // given
+        val pair = createUser()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+        get("/users/email/${pair.first.email}/reset").
+        then().
+            log().ifValidationFails().
+            assertThat().body("token", notNullValue()).
+            assertThat().statusCode(200)
+        // @formatter:on
+
+        testContext.completeNow()
+    }
+
+    @Test
+    @DisplayName("Initiate reset password, user not found")
+    fun testInitiatePasswordResetNotFound(testContext: VertxTestContext) {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+        get("/users/email/email@email.com/reset").
         then().
             log().ifValidationFails().
             assertThat().statusCode(400)

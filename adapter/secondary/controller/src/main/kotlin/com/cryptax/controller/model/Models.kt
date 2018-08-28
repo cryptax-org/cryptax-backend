@@ -5,7 +5,6 @@ import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.Line
 import com.cryptax.domain.entity.Metadata
 import com.cryptax.domain.entity.Report
-import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
 import java.time.ZonedDateTime
@@ -169,3 +168,5 @@ data class LineWeb(
         }
     }
 }
+
+data class ResetPasswordWeb(val token: String)

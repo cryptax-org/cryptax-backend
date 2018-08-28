@@ -2,6 +2,8 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.domain.exception.LoginException
+import com.cryptax.domain.exception.ResetPasswordException
+import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
@@ -246,6 +248,40 @@ class FailureTest {
                     }
                     testContext.completeNow()
                 }
+            }
+        }
+    }
+
+    @DisplayName("Validation transaction not found test")
+    @Test
+    fun testNotHandledTransactionNotFoundException(vertx: Vertx, testContext: VertxTestContext) {
+        router.route()
+            .handler {
+                (it as RoutingContextImpl).fail(TransactionNotFound("id"))
+            }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(404)
+                testContext.completeNow()
+            }
+        }
+    }
+
+    @DisplayName("Validation reset password test")
+    @Test
+    fun testNotHandledResetPasswordException(vertx: Vertx, testContext: VertxTestContext) {
+        router.route()
+            .handler {
+                (it as RoutingContextImpl).fail(ResetPasswordException("id"))
+            }
+            .failureHandler(failureHandler)
+
+        vertx.createHttpClient().getNow(port, host, "/") { resp ->
+            testContext.verify {
+                assertThat(resp.statusCode()).isEqualTo(400)
+                testContext.completeNow()
             }
         }
     }
