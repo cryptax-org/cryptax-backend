@@ -4,7 +4,6 @@ repositories {
     maven { url "https://kotlin.bintray.com/kotlinx" }
 }
 
-
 ext.moduleName = 'cryptax.price'
 
 dependencies {

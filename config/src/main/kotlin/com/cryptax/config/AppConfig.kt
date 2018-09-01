@@ -8,11 +8,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
-import io.vertx.ext.mail.StartTLSOptions
 import io.vertx.kotlin.ext.auth.KeyStoreOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.kotlin.ext.auth.jwt.JWTOptions
-import io.vertx.kotlin.ext.mail.MailConfig
 import org.kodein.di.Kodein
 
 abstract class AppConfig(private val overrideProfile: String? = null, vertx: Vertx? = null, externalKodeinModule: Kodein.Module? = null) {
@@ -32,16 +30,7 @@ abstract class AppConfig(private val overrideProfile: String? = null, vertx: Ver
             null
     }
 
-    private val mailConfig = MailConfig(
-        hostname = properties.email.host,
-        port = properties.email.port,
-        starttls = StartTLSOptions.REQUIRED,
-        username = properties.email.username,
-        password = properties.email.password(profile),
-        trustAll = true,
-        ssl = true)
-
-    val kodeinDefaultModule = KodeinConfig(properties, mailConfig, properties.db, vertx, datastoreOptions, externalKodeinModule).kodeinModule
+    val kodeinDefaultModule = KodeinConfig(properties, properties.db, properties.email, vertx, datastoreOptions, externalKodeinModule).kodeinModule
 
     val jwtAuthOptions = JWTAuthOptions(keyStore = KeyStoreOptions(path = properties.jwt.keyStorePath, password = properties.jwt.password(profile)))
     val jwtOptions = JWTOptions(algorithm = properties.jwt.algorithm, issuer = properties.jwt.issuer, expiresInMinutes = properties.jwt.expiresInMinutes)

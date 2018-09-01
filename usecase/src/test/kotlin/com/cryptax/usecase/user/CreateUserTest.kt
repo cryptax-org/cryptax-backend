@@ -124,7 +124,7 @@ class CreateUserTest {
         val actual = createUser.sendWelcomeEmail(user.email).blockingGet()
 
         //then
-        assertThat(actual).isEqualTo(Unit)
+        assertThat(actual).isEqualTo(Pair(user, token))
         then(userRepository).should().findByEmail(user.email)
         then(securePassword).should().generateToken(user)
         then(emailService).should().welcomeEmail(user, token)

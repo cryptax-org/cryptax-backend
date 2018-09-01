@@ -19,10 +19,9 @@ data class JwtDto(
     }
 }
 
-data class EmailDto(val host: String, val port: Int, val username: String, private var password: String, val from: String) {
-    fun password(profile: String? = null): String {
-        if (profile == "it") return password
-        return decrypt(password)
+data class EmailDto(val enabled: Boolean, val url: String?, val function: String?, private val key: String?, val from: String?) {
+    fun key(): String {
+        return decrypt(key!!)
     }
 }
 

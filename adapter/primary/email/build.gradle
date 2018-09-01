@@ -5,9 +5,12 @@ ext.moduleName = 'cryptax.email'
 dependencies {
     implementation(
         project(':domain'),
-        [group: 'io.vertx', name: 'vertx-core', version: vertxVersion],
+        [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
     )
     testImplementation(
-        [group: 'io.vertx', name: 'vertx-junit5', version: vertxVersion],
+        [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
+        [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
+        [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
     )
 }

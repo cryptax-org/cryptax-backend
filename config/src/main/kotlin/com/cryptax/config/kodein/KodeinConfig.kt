@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.cache.CacheService
 import com.cryptax.cache.VertxCacheService
 import com.cryptax.config.dto.DbDto
+import com.cryptax.config.dto.EmailDto
 import com.cryptax.config.dto.PropertiesDto
 import com.cryptax.config.jackson.JacksonConfig
 import com.cryptax.controller.CurrencyController
@@ -18,14 +19,13 @@ import com.cryptax.db.cloud.datastore.CloudDatastoreResetPasswordRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreTransactionRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreUserRepository
 import com.cryptax.domain.entity.Currency
-import com.cryptax.domain.entity.ResetPassword
-import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.ResetPasswordRepository
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.email.VertxEmailService
+import com.cryptax.email.EmailConfig
+import com.cryptax.email.SendGridEmailService
 import com.cryptax.health.ResetPasswordRepositoryHealthCheck
 import com.cryptax.health.TransactionRepositoryHealthCheck
 import com.cryptax.health.UserRepositoryHealthCheck
@@ -46,8 +46,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.datastore.Datastore
 import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
-import io.vertx.ext.mail.MailConfig
-import io.vertx.reactivex.ext.mail.MailClient
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
@@ -59,8 +57,8 @@ import java.util.concurrent.TimeUnit
 
 class KodeinConfig(
     properties: PropertiesDto,
-    mailConfig: MailConfig,
     db: DbDto,
+    email: EmailDto,
     vertx: Vertx?,
     datastoreOptions: DatastoreOptions?,
     externalKodeinModule: Kodein.Module?) {
@@ -118,23 +116,12 @@ class KodeinConfig(
 
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
-
         bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(client = instance(), objectMapper = instance(), cache = instance()) }
+        bind<EmailService>() with singleton { SendGridEmailService(instance(), EmailConfig(email.enabled, email.url!!, email.function!!, email.key(), email.from!!)) }
 
         if (vertx != null) {
-            // Vertx dependencies
-            bind<EmailService>() with singleton { VertxEmailService(vertx) }
             bind<CacheService>() with singleton { VertxCacheService(vertx) }
-            bind<MailClient>() with singleton { MailClient.createShared(io.vertx.reactivex.core.Vertx(vertx), mailConfig, "CRYPTAX_POOL") }
         } else {
-            // If vertx is not provided, we stub the dependencies
-            bind<EmailService>() with singleton {
-                object : EmailService {
-                    override fun welcomeEmail(user: User, token: String) {}
-                    override fun resetPasswordEmail(email: String, resetPassword: ResetPassword) {}
-                    override fun resetPasswordConfirmationEmail(email: String) {}
-                }
-            }
             bind<CacheService>() with singleton {
                 object : CacheService {
                     override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>) {}

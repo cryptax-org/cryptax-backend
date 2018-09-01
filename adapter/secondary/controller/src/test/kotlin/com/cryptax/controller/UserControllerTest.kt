@@ -149,7 +149,7 @@ class UserControllerTest {
     fun testSendWelcomeEmail() {
         // given
         val userId = "userId"
-        given(createUser.sendWelcomeEmail(userId)).willReturn(Single.just(Unit))
+        given(createUser.sendWelcomeEmail(userId)).willReturn(Single.just(Pair(user, "")))
 
         // when
         val actual = userController.sendWelcomeEmail(userId).blockingGet()

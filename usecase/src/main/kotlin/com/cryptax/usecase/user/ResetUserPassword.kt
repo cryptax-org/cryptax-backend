@@ -41,7 +41,7 @@ class ResetUserPassword(
                     ZonedDateTime.now(ZoneId.of("UTC")))
             }
             .flatMap { resetPassword -> resetPasswordRepository.save(resetPassword) }
-            .doOnSuccess { resetPassword -> emailService.resetPasswordEmail(email, resetPassword) }
+            .doAfterSuccess { resetPassword -> emailService.resetPasswordEmail(email, resetPassword) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(UserNotFoundException(email))
@@ -75,7 +75,7 @@ class ResetUserPassword(
                     }
                     .flatMap { u -> resetPasswordRepository.delete(u.id) }
             }
-            .doOnSuccess { _ -> emailService.resetPasswordConfirmationEmail(email) }
+            .doAfterSuccess { _ -> emailService.resetPasswordConfirmationEmail(email) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(ResetPasswordException(email))

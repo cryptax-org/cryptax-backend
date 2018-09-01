@@ -1,8 +1,10 @@
 package com.cryptax.usecase.transaction
 
 import com.cryptax.domain.exception.TransactionNotFound
+import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.Utils.oneTransactionWithId
+import com.cryptax.usecase.Utils.oneTransactionWithId2
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
@@ -39,6 +41,23 @@ class DeleteTransactionTest {
         assertThat(actual).isEqualTo(Unit)
         then(transactionRepository).should().get(transaction.id)
         then(transactionRepository).should().delete(transaction.id)
+    }
+
+    @Test
+    fun testDeleteTransactionNotRightUser() {
+        // given
+        val transaction = oneTransactionWithId
+        given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(oneTransactionWithId2))
+
+        // when
+        val exception = assertThrows(TransactionUserDoNotMatch::class.java) {
+            deleteTransaction.delete(transaction.id, transaction.userId).blockingGet()
+        }
+
+        // then
+        assertThat(exception.message).isEqualTo("User [userId] tried to update [ffwefewfwefgerge], but that transaction is owned by [userId2]")
+        then(transactionRepository).should().get(transaction.id)
+        then(transactionRepository).shouldHaveZeroInteractions()
     }
 
     @Test

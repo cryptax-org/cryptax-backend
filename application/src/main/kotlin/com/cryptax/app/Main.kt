@@ -1,6 +1,5 @@
 package com.cryptax.app
 
-import com.cryptax.app.verticle.EmailVerticle
 import com.cryptax.app.verticle.RestVerticle
 import com.cryptax.config.AppConfig
 import com.cryptax.config.DefaultAppConfig
@@ -39,12 +38,6 @@ object Main {
                         when {
                             arRest.succeeded() -> log.info("${RestVerticle::class.java.simpleName} deployed")
                             arRest.failed() -> log.error("Could not deploy ${RestVerticle::class.java.simpleName}", arRest.cause())
-                        }
-                    }
-                    vertx.deployVerticle(EmailVerticle(appConfig, kodein)) { arEmail: AsyncResult<String> ->
-                        when {
-                            arEmail.succeeded() -> log.info("${EmailVerticle::class.java.simpleName} deployed")
-                            arEmail.failed() -> log.error("Could not deploy ${EmailVerticle::class.java.simpleName}", arEmail.cause())
                         }
                     }
                 }

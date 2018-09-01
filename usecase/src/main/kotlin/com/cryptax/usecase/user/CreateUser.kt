@@ -45,16 +45,16 @@ class CreateUser(
             }
             .flatMap { u -> repository.create(u) }
             .map { u -> Pair(u, securePassword.generateToken(u)) }
-            .doOnSuccess { pair -> emailService.welcomeEmail(pair.first, pair.second) }
+            .doAfterSuccess { pair -> emailService.welcomeEmail(pair.first, pair.second) }
             .onErrorResumeNext { t: Throwable -> Single.error(t) }
     }
 
-    fun sendWelcomeEmail(email: String): Single<Unit> {
+    fun sendWelcomeEmail(email: String): Single<Pair<User, String>> {
         log.info("Usecase, send welcome email again to $email")
         return repository.findByEmail(email)
             .toSingle()
             .map { u -> Pair(u, securePassword.generateToken(u)) }
-            .map { pair -> emailService.welcomeEmail(pair.first, pair.second) }
+            .doAfterSuccess { pair -> emailService.welcomeEmail(pair.first, pair.second) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(UserNotFoundException(email))

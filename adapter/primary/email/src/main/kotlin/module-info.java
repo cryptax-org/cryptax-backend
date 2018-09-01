@@ -3,5 +3,7 @@ module cryptax.email {
 
     requires kotlin.stdlib;
     requires cryptax.domain;
-    requires vertx.core;
+    requires okhttp3;
+    requires org.slf4j;
+    requires com.fasterxml.jackson.databind;
 }

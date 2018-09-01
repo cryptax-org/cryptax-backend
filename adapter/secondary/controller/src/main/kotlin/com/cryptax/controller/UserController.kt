@@ -39,7 +39,7 @@ class UserController(
     }
 
     fun sendWelcomeEmail(userId: String): Single<Unit> {
-        return createUser.sendWelcomeEmail(userId)
+        return createUser.sendWelcomeEmail(userId).map { Unit }
     }
 
     fun initiatePasswordReset(email: String): Single<ResetPasswordWeb> {

@@ -10,11 +10,11 @@ jwt:
   expiresInMinutes: 30
   refreshExpiresInDays: 10
 email:
-  host: smtp.mail.yahoo.com
-  port: 465
-  from: webmaster.stock@yahoo.com
-  username: webmaster.stock
-  password: QB5LX65NOI3erVB04kMNEUgLWIDpkHjy3z//aAIzFy4=
+  enabled: true
+  url: https://us-central1-cryptax-backend-dev.cloudfunctions.net/
+  function: sendgridEmail
+  key: QcTncvSiPXDSGM89uGufBjZ4eNTTz6Cxqo2tjfUiJPbdMLELmXClanQVqfuU2Mx7CLnSVXXsuCnqdXtJ82Y3+yIfnwG8inW70jQLU5LC384=
+  from: noreply@cryptax.app
 http:
   maxIdleConnections: 50
   keepAliveDuration: 15
