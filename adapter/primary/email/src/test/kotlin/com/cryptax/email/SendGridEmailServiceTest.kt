@@ -1,5 +1,6 @@
 package com.cryptax.email
 
+import com.cryptax.config.EmailProps
 import com.cryptax.domain.entity.ResetPassword
 import com.cryptax.domain.entity.User
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -12,6 +13,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okio.Buffer
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -49,7 +51,7 @@ class SendGridEmailServiceTest {
             lastName = "derp",
             firstName = "derp",
             allowed = false)
-        val config = EmailConfig(true, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = true, url = "http://baseurl/", function = "sendEmail", from = "from@cryptax.app")
         val emailService = SendGridEmailService(client, config)
         given(client.newCall(any())).willReturn(call)
         given(call.execute()).willReturn(response)
@@ -61,7 +63,7 @@ class SendGridEmailServiceTest {
         argumentCaptor<Request>().apply {
             then(client).should().newCall(capture())
             val request = firstValue
-            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=key")
+            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=")
             assertThat(request.method()).isEqualTo("POST")
             val buffer = Buffer()
             request.body()!!.writeTo(buffer)
@@ -85,7 +87,7 @@ class SendGridEmailServiceTest {
             lastName = "derp",
             firstName = "derp",
             allowed = false)
-        val config = EmailConfig(false, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = false)
         val emailService = SendGridEmailService(client, config)
 
         // when
@@ -106,7 +108,7 @@ class SendGridEmailServiceTest {
             lastName = "derp",
             firstName = "derp",
             allowed = false)
-        val config = EmailConfig(true, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = true, url = "http://baseurl/", function = "sendEmail", from = "from@cryptax.app")
         val emailService = SendGridEmailService(client, config)
         val response = Response.Builder()
             .protocol(Protocol.HTTP_1_1)
@@ -124,7 +126,7 @@ class SendGridEmailServiceTest {
         argumentCaptor<Request>().apply {
             then(client).should().newCall(capture())
             val request = firstValue
-            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=key")
+            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=")
             assertThat(request.method()).isEqualTo("POST")
             val buffer = Buffer()
             request.body()!!.writeTo(buffer)
@@ -143,7 +145,7 @@ class SendGridEmailServiceTest {
         // given
         val email = "email@email.com"
         val resetPassword = ResetPassword("userId", "token", ZonedDateTime.now())
-        val config = EmailConfig(true, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = true, url = "http://baseurl/", function = "sendEmail", from = "from@cryptax.app")
         val emailService = SendGridEmailService(client, config)
         given(client.newCall(any())).willReturn(call)
         given(call.execute()).willReturn(response)
@@ -155,7 +157,7 @@ class SendGridEmailServiceTest {
         argumentCaptor<Request>().apply {
             then(client).should().newCall(capture())
             val request = firstValue
-            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=key")
+            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=")
             assertThat(request.method()).isEqualTo("POST")
             val buffer = Buffer()
             request.body()!!.writeTo(buffer)
@@ -174,7 +176,7 @@ class SendGridEmailServiceTest {
         // given
         val email = "email@email.com"
         val resetPassword = ResetPassword("userId", "token", ZonedDateTime.now())
-        val config = EmailConfig(false, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = false)
         val emailService = SendGridEmailService(client, config)
 
         // when
@@ -189,7 +191,7 @@ class SendGridEmailServiceTest {
     fun testResetPasswordConfirmationEmail() {
         // given
         val email = "email@email.com"
-        val config = EmailConfig(true, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = true, url = "http://baseurl/", function = "sendEmail", from = "from@cryptax.app")
         val emailService = SendGridEmailService(client, config)
         given(client.newCall(any())).willReturn(call)
         given(call.execute()).willReturn(response)
@@ -201,7 +203,7 @@ class SendGridEmailServiceTest {
         argumentCaptor<Request>().apply {
             then(client).should().newCall(capture())
             val request = firstValue
-            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=key")
+            assertThat(request.url().toString()).isEqualTo("http://baseurl/sendEmail?sg_key=")
             assertThat(request.method()).isEqualTo("POST")
             val buffer = Buffer()
             request.body()!!.writeTo(buffer)
@@ -219,7 +221,7 @@ class SendGridEmailServiceTest {
     fun testResetPasswordConfirmationEmailNotEnabled() {
         // given
         val email = "email@email.com"
-        val config = EmailConfig(false, "http://baseurl/", "sendEmail", "key", "from@cryptax.app")
+        val config = EmailProps(enabled = false)
         val emailService = SendGridEmailService(client, config)
 
         // when

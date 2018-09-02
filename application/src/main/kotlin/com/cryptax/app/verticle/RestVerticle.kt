@@ -3,7 +3,7 @@ package com.cryptax.app.verticle
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.app.routes.MetricsRoutes
 import com.cryptax.app.routes.Routes
-import com.cryptax.config.AppConfig
+import com.cryptax.config.Config
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -24,7 +24,7 @@ import org.kodein.di.generic.instance
 
 private val log: Logger = LoggerFactory.getLogger(RestVerticle::class.java)
 
-class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractVerticle() {
+class RestVerticle(private val config: Config, kodein: Kodein) : AbstractVerticle() {
 
     private val userController by kodein.instance<UserController>()
     private val transactionController by kodein.instance<TransactionController>()
@@ -40,24 +40,24 @@ class RestVerticle(private val appConfig: AppConfig, kodein: Kodein) : AbstractV
         // Create router
         val router = Router.router(vertx)
         router.route().handler(
-            CorsHandler.create(appConfig.properties.server.allowOrigin)
+            CorsHandler.create(config.properties.server.allowOrigin)
                 .allowedMethods(setOf(HttpMethod.POST, HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE, HttpMethod.OPTIONS))
                 .allowedHeaders(setOf("Accept", "Content-Type", "Authorization")))
-        Routes.setupRoutes(appConfig, vertx, router, userController, transactionController, reportController, currencyController, healthCheckRegistry)
+        Routes.setupRoutes(config, vertx, router, userController, transactionController, reportController, currencyController, healthCheckRegistry)
         MetricsRoutes.setupMetrics(metricsService, vertx, router)
 
         // Server options
         val options = HttpServerOptions()
         options.logActivity = true
 
-        val port = appConfig.properties.server.port
+        val port = config.properties.server.port
         // Create server
-        vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, appConfig.properties.server.domain) { ar ->
+        vertx.createHttpServer(options).requestHandler { router.accept(it) }.listen(port, config.properties.server.domain) { ar ->
             if (ar.failed()) {
                 log.error("Failed to deploy ${this.javaClass.simpleName}", ar.cause())
                 startFuture.fail(ar.cause())
             } else {
-                log.info("Server starter with profile [${appConfig.profile}] and listening on port [$port]")
+                log.info("Server starter with profile [${config.profile}] and listening on port [$port]")
                 startFuture.complete()
             }
         }

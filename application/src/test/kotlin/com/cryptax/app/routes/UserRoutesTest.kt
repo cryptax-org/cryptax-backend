@@ -1,20 +1,18 @@
 package com.cryptax.app.routes
 
-import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.TestConfig
 import com.cryptax.app.config.kodein
 import com.cryptax.app.createUser
 import com.cryptax.app.initUserAndGetToken
 import com.cryptax.app.setupRestAssured
 import com.cryptax.app.user
 import com.cryptax.app.verticle.RestVerticle
-import com.nhaarman.mockitokotlin2.isNotNull
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import io.vertx.core.Vertx
 import io.vertx.junit5.VertxExtension
 import io.vertx.junit5.VertxTestContext
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsNull.nullValue
@@ -38,7 +36,7 @@ class UserRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestVerticle(TestAppConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 

@@ -1,7 +1,7 @@
 package com.cryptax.app.routes
 
 import com.codahale.metrics.health.HealthCheckRegistry
-import com.cryptax.config.AppConfig
+import com.cryptax.config.Config
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -21,6 +21,8 @@ import io.vertx.ext.web.handler.LoggerFormat
 import io.vertx.ext.web.handler.impl.HttpStatusException
 import io.vertx.ext.web.handler.impl.JWTAuthHandlerImpl
 import io.vertx.ext.web.handler.impl.LoggerHandlerImpl
+import io.vertx.kotlin.ext.auth.KeyStoreOptions
+import io.vertx.kotlin.ext.auth.jwt.JWTAuthOptions
 import io.vertx.reactivex.RxHelper
 
 val bodyHandler: BodyHandler = BodyHandler.create()
@@ -29,7 +31,7 @@ object Routes {
 
     private val log = LoggerFactory.getLogger(Routes::class.java)
 
-    fun setupRoutes(appConfig: AppConfig,
+    fun setupRoutes(config: Config,
                     vertx: Vertx, router: Router,
                     userController: UserController,
                     transactionController: TransactionController,
@@ -37,14 +39,14 @@ object Routes {
                     currencyController: CurrencyController,
                     healthCheckRegistry: HealthCheckRegistry) {
 
-        val jwtProvider = JWTAuth.create(vertx, appConfig.jwtAuthOptions)
+        val jwtProvider = JWTAuth.create(vertx, JWTAuthOptions(keyStore = KeyStoreOptions(path = config.properties.jwt.keyStorePath, password = config.properties.jwt.password(config.profile))))
         val jwtAuthHandler = JWTAuthHandlerCustom(jwtProvider)
         val jwtRefreshAuthHandler = JWTRefreshAuthHandlerCustom(jwtProvider)
         val vertxScheduler = RxHelper.scheduler(vertx)
 
         router.route().handler(LoggerHandlerImpl(LoggerFormat.SHORT))
         handleUserRoutes(router, jwtAuthHandler, vertxScheduler, userController)
-        handleTokenRoutes(appConfig, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler, userController)
+        handleTokenRoutes(config, router, jwtProvider, jwtRefreshAuthHandler, vertxScheduler, userController)
         handleTransactionRoutes(router, jwtAuthHandler, vertxScheduler, transactionController)
         handleReportRoutes(router, jwtAuthHandler, vertxScheduler, reportController)
         handleCurrenciesRoutes(router, jwtAuthHandler, vertxScheduler, currencyController)

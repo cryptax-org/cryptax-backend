@@ -2,7 +2,7 @@ package com.cryptax.app.routes
 
 import com.cryptax.app.routes.Failure.failureHandler
 import com.cryptax.app.routes.Routes.sendSuccess
-import com.cryptax.config.AppConfig
+import com.cryptax.config.Config
 import com.cryptax.controller.UserController
 import com.cryptax.validation.RestValidation.jsonContentTypeValidation
 import com.cryptax.validation.RestValidation.loginValidation
@@ -11,8 +11,12 @@ import io.reactivex.schedulers.Schedulers
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.auth.jwt.JWTAuth
 import io.vertx.ext.web.Router
+import io.vertx.kotlin.ext.auth.jwt.JWTOptions
 
-fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: Routes.JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler, userController: UserController) {
+fun handleTokenRoutes(config: Config, router: Router, jwtProvider: JWTAuth, jwtRefreshAuthHandler: Routes.JWTRefreshAuthHandlerCustom, vertxScheduler: Scheduler, userController: UserController) {
+
+    val jwtOptions = JWTOptions(algorithm = config.properties.jwt.algorithm, issuer = config.properties.jwt.issuer, expiresInMinutes = config.properties.jwt.expiresInMinutes)
+    val jwtRefreshOptions = JWTOptions(algorithm = config.properties.jwt.algorithm, issuer = config.properties.jwt.issuer, expiresInMinutes = config.properties.jwt.refreshExpiresInDays * 1440)
 
     // Get token with user credentials
     router.post("/token")
@@ -27,8 +31,8 @@ fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth
                 .subscribeOn(Schedulers.io())
                 .subscribe(
                     { userWeb ->
-                        val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id, false), appConfig.jwtOptions)
-                        val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id, true), appConfig.jwtRefreshOptions)
+                        val token = jwtProvider.generateToken(tokenPayLoad(userWeb.id, false), jwtOptions)
+                        val refreshToken = jwtProvider.generateToken(tokenPayLoad(userWeb.id, true), jwtRefreshOptions)
 
                         val result = JsonObject()
                             .put("id", userWeb.id)
@@ -47,8 +51,8 @@ fun handleTokenRoutes(appConfig: AppConfig, router: Router, jwtProvider: JWTAuth
         .handler { routingContext ->
             val userId = routingContext.user().principal().getString("id")
 
-            val token = jwtProvider.generateToken(tokenPayLoad(userId, false), appConfig.jwtOptions)
-            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userId, true), appConfig.jwtRefreshOptions)
+            val token = jwtProvider.generateToken(tokenPayLoad(userId, false), jwtOptions)
+            val refreshToken = jwtProvider.generateToken(tokenPayLoad(userId, true), jwtRefreshOptions)
             val result = JsonObject()
                 .put("id", userId)
                 .put("token", token)

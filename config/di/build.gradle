@@ -1,9 +1,10 @@
 apply plugin: 'java-library'
 
-ext.moduleName = 'cryptax.config'
+ext.moduleName = 'cryptax.config.di'
 
 dependencies {
     implementation(
+        project(':properties'),
         project(':usecase'),
         project(':domain'),
         project(':in-memory-db-simple'),

@@ -1,6 +1,6 @@
 package com.cryptax.app.routes
 
-import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.TestConfig
 import com.cryptax.app.config.kodein
 import com.cryptax.app.initTransaction
 import com.cryptax.app.setupRestAssured
@@ -34,7 +34,7 @@ class ReportRoutesTest {
 
     @BeforeEach
     fun beforeEach(vertx: Vertx, testContext: VertxTestContext) {
-        vertx.deployVerticle(RestVerticle(TestAppConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
+        vertx.deployVerticle(RestVerticle(TestConfig(), kodein()), testContext.succeeding { _ -> testContext.completeNow() })
         testContext.awaitCompletion(1, TimeUnit.SECONDS)
     }
 

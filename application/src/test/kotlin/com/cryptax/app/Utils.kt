@@ -1,8 +1,8 @@
 package com.cryptax.app
 
-import com.cryptax.app.config.TestAppConfig
+import com.cryptax.app.config.TestConfig
 import com.cryptax.app.config.objectMapper
-import com.cryptax.config.AppConfig
+import com.cryptax.config.Config
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.domain.entity.User
@@ -20,13 +20,13 @@ import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.core.IsNull.nullValue
 import java.time.format.DateTimeFormatter
 
-val user: UserWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
-val transaction: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
-val transaction2: TransactionWeb = objectMapper.readValue(AppConfig::class.java.getResourceAsStream("/Transaction2.json"), TransactionWeb::class.java)
+val user: UserWeb = objectMapper.readValue(Config::class.java.getResourceAsStream("/User1.json"), UserWeb::class.java)
+val transaction: TransactionWeb = objectMapper.readValue(Config::class.java.getResourceAsStream("/Transaction1.json"), TransactionWeb::class.java)
+val transaction2: TransactionWeb = objectMapper.readValue(Config::class.java.getResourceAsStream("/Transaction2.json"), TransactionWeb::class.java)
 val credentials = JsonObject().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
-val transactionsBinance = AppConfig::class.java.getResource("/Binance-Trade-History.csv").readText()
-val transactionsCoinbase = AppConfig::class.java.getResource("/Coinbase-Trade-History.csv").readText()
-val transactionsCoinbase2 = AppConfig::class.java.getResource("/Coinbase-Trade-History2.csv").readText()
+val transactionsBinance = Config::class.java.getResource("/Binance-Trade-History.csv").readText()
+val transactionsCoinbase = Config::class.java.getResource("/Coinbase-Trade-History.csv").readText()
+val transactionsCoinbase2 = Config::class.java.getResource("/Coinbase-Trade-History2.csv").readText()
 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
 fun createUser(): Pair<User, String> {
@@ -132,7 +132,7 @@ fun initTransaction(): Pair<String, JsonPath> {
 fun setupRestAssured() {
     System.setProperty("PROFILE", "it")
     System.setProperty("vertx.logger-delegate-factory-class-name", "io.vertx.core.logging.Log4j2LogDelegateFactory")
-    val appConfig = TestAppConfig()
+    val appConfig = TestConfig()
     RestAssured.port = appConfig.properties.server.port
     RestAssured.baseURI = "http://" + appConfig.properties.server.domain
     RestAssured.config = RestAssuredConfig

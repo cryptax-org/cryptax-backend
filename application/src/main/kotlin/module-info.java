@@ -13,7 +13,8 @@ open module cryptax.app {
     requires kodein.di.core.jvm;
     requires kodein.di.generic.jvm;
     requires cryptax.domain;
-    requires cryptax.config;
+    requires cryptax.config.properties;
+    requires cryptax.config.di;
     requires cryptax.controller;
     requires cryptax.validation;
     requires cryptax.email;

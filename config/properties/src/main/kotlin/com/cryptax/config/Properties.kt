@@ -1,11 +1,11 @@
-package com.cryptax.config.dto
+package com.cryptax.config
 
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import java.lang.management.ManagementFactory
 
-data class PropertiesDto(val server: ServerDto, val jwt: JwtDto, val email: EmailDto, val http: HttpDto, val db: DbDto)
-data class ServerDto(val domain: String, val port: Int, val allowOrigin: String)
-data class JwtDto(
+data class AppProps(val server: ServerProps, val jwt: JwtProps, val email: EmailProps, val http: HttpProps, val db: DbDProps)
+data class ServerProps(val domain: String, val port: Int, val allowOrigin: String)
+data class JwtProps(
     val keyStorePath: String,
     private var password: String,
     val algorithm: String,
@@ -19,21 +19,29 @@ data class JwtDto(
     }
 }
 
-data class EmailDto(val enabled: Boolean, val url: String?, val function: String?, private val key: String?, val from: String?) {
-    fun key(): String {
+data class EmailProps(
+    val enabled: Boolean,
+    val url: String? = null,
+    val function: String? = null,
+    private val key: String? = null,
+    val from: String? = null) {
+
+    val fullUrl = "$url$function?sg_key=" + if (key == null) "" else key()
+
+    private fun key(): String {
         return decrypt(key!!)
     }
 }
 
-data class HttpDto(val maxIdleConnections: Int, val keepAliveDuration: Long)
+data class HttpProps(val maxIdleConnections: Int, val keepAliveDuration: Long)
 
-data class DbDto(val mode: String, val projectId: String?, private val credentials: String?) {
+data class DbDProps(val mode: String, val projectId: String?, private val credentials: String?) {
     fun credentials(): String {
         return decrypt(credentials!!)
     }
 }
 
-fun decrypt(password: String): String {
+private fun decrypt(password: String): String {
     val stringEncryptor = StandardPBEStringEncryptor()
     val runtimeMxBean = ManagementFactory.getRuntimeMXBean()
     val argument = runtimeMxBean.inputArguments.find { s -> s.contains("jasypt.encryptor.password") } ?: throw RuntimeException("jasypt.encryptor.password not found")

@@ -1,4 +1,4 @@
-package com.cryptax.config.jackson
+package com.cryptax.di.jackson
 
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Source

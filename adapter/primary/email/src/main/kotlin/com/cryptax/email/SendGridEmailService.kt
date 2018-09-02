@@ -1,5 +1,6 @@
 package com.cryptax.email
 
+import com.cryptax.config.EmailProps
 import com.cryptax.domain.entity.ResetPassword
 import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.EmailService
@@ -10,11 +11,13 @@ import okhttp3.RequestBody
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-private val log: Logger = LoggerFactory.getLogger(SendGridEmailService::class.java)
-
 class SendGridEmailService(
     private val client: OkHttpClient,
-    private val config: EmailConfig) : EmailService {
+    private val config: EmailProps) : EmailService {
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(SendGridEmailService::class.java)
+    }
 
     override fun welcomeEmail(user: User, token: String) {
         if (config.enabled) {
@@ -45,7 +48,7 @@ class SendGridEmailService(
         val content = createJsonContent(to, subject, body)
         val requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), content)
         val request = Request.Builder()
-            .url(config.url)
+            .url(config.fullUrl)
             .post(requestBody)
             .build()
         val response = client.newCall(request).execute()

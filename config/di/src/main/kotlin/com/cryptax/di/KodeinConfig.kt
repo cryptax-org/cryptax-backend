@@ -1,13 +1,10 @@
-package com.cryptax.config.kodein
+package com.cryptax.di
 
 import com.codahale.metrics.health.HealthCheck
 import com.codahale.metrics.health.HealthCheckRegistry
 import com.cryptax.cache.CacheService
 import com.cryptax.cache.VertxCacheService
-import com.cryptax.config.dto.DbDto
-import com.cryptax.config.dto.EmailDto
-import com.cryptax.config.dto.PropertiesDto
-import com.cryptax.config.jackson.JacksonConfig
+import com.cryptax.config.AppProps
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -18,13 +15,14 @@ import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreResetPasswordRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreTransactionRepository
 import com.cryptax.db.cloud.datastore.CloudDatastoreUserRepository
+import com.cryptax.di.gcp.GcpConfig
+import com.cryptax.di.jackson.JacksonConfig
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.ResetPasswordRepository
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
-import com.cryptax.email.EmailConfig
 import com.cryptax.email.SendGridEmailService
 import com.cryptax.health.ResetPasswordRepositoryHealthCheck
 import com.cryptax.health.TransactionRepositoryHealthCheck
@@ -44,7 +42,6 @@ import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.cloud.datastore.Datastore
-import com.google.cloud.datastore.DatastoreOptions
 import io.vertx.core.Vertx
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -56,12 +53,9 @@ import java.time.ZonedDateTime
 import java.util.concurrent.TimeUnit
 
 class KodeinConfig(
-    properties: PropertiesDto,
-    db: DbDto,
-    email: EmailDto,
-    vertx: Vertx?,
-    datastoreOptions: DatastoreOptions?,
-    externalKodeinModule: Kodein.Module?) {
+    properties: AppProps,
+    vertx: Vertx? = null,
+    externalKodeinModule: Kodein.Module? = null) {
 
     val kodeinModule = Kodein.Module(name = "defaultModule") {
 
@@ -103,12 +97,12 @@ class KodeinConfig(
             builder.build()
         }
 
-        if (db.mode == "in-memory") {
+        if (properties.db.mode == "in-memory") {
             bind<UserRepository>() with singleton { InMemoryUserRepository() }
             bind<TransactionRepository>() with singleton { InMemoryTransactionRepository() }
             bind<ResetPasswordRepository>() with singleton { InMemoryResetPasswordRepository() }
-        } else if (db.mode == "cloud-datastore") {
-            bind<Datastore>() with singleton { datastoreOptions!!.service }
+        } else if (properties.db.mode == "cloud-datastore") {
+            bind<Datastore>() with singleton { GcpConfig(properties.db).datastoreOptions().service }
             bind<UserRepository>() with singleton { CloudDatastoreUserRepository(instance()) }
             bind<TransactionRepository>() with singleton { CloudDatastoreTransactionRepository(instance()) }
             bind<ResetPasswordRepository>() with singleton { CloudDatastoreResetPasswordRepository(instance()) }
@@ -117,7 +111,7 @@ class KodeinConfig(
         bind<IdGenerator>() with singleton { JugIdGenerator() }
         bind<com.cryptax.domain.port.SecurePassword>() with singleton { SecurePassword() }
         bind<com.cryptax.domain.port.PriceService>() with singleton { PriceService(client = instance(), objectMapper = instance(), cache = instance()) }
-        bind<EmailService>() with singleton { SendGridEmailService(instance(), EmailConfig(email.enabled, email.url!!, email.function!!, email.key(), email.from!!)) }
+        bind<EmailService>() with singleton { SendGridEmailService(instance(), properties.email) }
 
         if (vertx != null) {
             bind<CacheService>() with singleton { VertxCacheService(vertx) }

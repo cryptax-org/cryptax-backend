@@ -4,9 +4,10 @@ import com.cryptax.app.stub.CacheServiceStub
 import com.cryptax.app.stub.EmailServiceStub
 import com.cryptax.app.stub.PriceServiceStub
 import com.cryptax.cache.CacheService
-import com.cryptax.config.AppConfig
+import com.cryptax.config.Config
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.di.KodeinConfig
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
 import com.cryptax.domain.port.PriceService
@@ -20,8 +21,10 @@ import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 
 fun kodein(): Kodein {
+    val appConfig = TestConfig()
+    val kodeinDefaultModule = KodeinConfig(properties = appConfig.properties, externalKodeinModule = testKodein()).kodeinModule
     return Kodein {
-        import(TestAppConfig().kodeinDefaultModule, true)
+        import(kodeinDefaultModule, true)
     }
 }
 
@@ -38,4 +41,4 @@ private fun testKodein(): Kodein.Module {
     }
 }
 
-class TestAppConfig : AppConfig(overrideProfile = "it", externalKodeinModule = testKodein())
+class TestConfig : Config(overrideProfile = "it")

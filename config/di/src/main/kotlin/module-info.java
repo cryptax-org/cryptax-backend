@@ -1,6 +1,5 @@
-module cryptax.config {
-    exports com.cryptax.config;
-    exports com.cryptax.config.dto;
+module cryptax.config.di {
+    exports com.cryptax.di;
 
     requires kotlin.stdlib;
     requires cryptax.usecase;
@@ -34,4 +33,5 @@ module cryptax.config {
     requires google.auth.library.oauth2.http;
     requires google.cloud.datastore;
     requires org.apache.commons.io;
+    requires cryptax.config.properties;
 }

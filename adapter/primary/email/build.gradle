@@ -5,6 +5,7 @@ ext.moduleName = 'cryptax.email'
 dependencies {
     implementation(
         project(':domain'),
+        project(':properties'),
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
     )
