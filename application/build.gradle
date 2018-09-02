@@ -1,10 +1,18 @@
-import java.time.LocalDateTime
-import java.time.ZoneId
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.netflix.nebula:gradle-info-plugin:3.8.0'
+    }
+}
 
 plugins {
     id 'java-library'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
+    id 'nebula.info' version '3.8.0'
 }
 
 ext.moduleName = 'cryptax.app'
@@ -50,25 +58,9 @@ dependencies {
     )
 }
 
-task createProperties {
-    doLast {
-        def file = new File("$buildDir/resources/main/info.properties")
-        if (file.exists()) {
-            file.delete()
-        }
-        def properties = []
-        def version = "version=" + project.version.toString()
-        def time = "createdAt=" + LocalDateTime.now(ZoneId.of("America/Chicago"))
-        properties << version
-        properties << time
-        writeToFile(file, properties)
-    }
-}
-
 mainClassName = 'com.cryptax.app.Main'
 
 shadowJar {
-    dependsOn createProperties
     baseName = rootProject.name
     classifier = null
     manifest {
@@ -94,9 +86,3 @@ task copyJarToRoot {
 }
 
 build.finalizedBy(copyJarToRoot)
-
-private static void writeToFile(def file, def properties) {
-    properties.each {
-        file << ("${it}\n")
-    }
-}

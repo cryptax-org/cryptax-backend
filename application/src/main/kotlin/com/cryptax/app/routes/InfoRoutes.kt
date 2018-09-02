@@ -5,28 +5,16 @@ import com.cryptax.app.routes.Routes.sendSuccess
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.web.Router
 
-private val version: String by lazy { currentVersion() }
-private val createdAt: String by lazy { createdAt() }
+private val info: Map<String, String> by lazy { loadInfoFile() }
 
 fun handleInfoRoutes(router: Router) {
     router.get("/info")
-        .handler { routingContext ->
-            val info = JsonObject().put("version", version).put("createdAt", createdAt)
-            sendSuccess(info, routingContext.response())
-        }
+        .handler { routingContext -> sendSuccess(JsonObject(info), routingContext.response()) }
         .failureHandler(Failure.failureHandler)
 }
 
-private fun currentVersion(): String {
-    return loadInfoFile().getOrDefault("version", "Unknown")
-}
-
-private fun createdAt(): String {
-    return loadInfoFile().getOrDefault("createdAt", "Unknown")
-}
-
 private fun loadInfoFile(): Map<String, String> {
-    val inputStream = Main::class.java.getResourceAsStream("/info.properties")
+    val inputStream = Main::class.java.getResourceAsStream("/META-INF/application.properties")
     return inputStream
         .bufferedReader()
         .readLines()
