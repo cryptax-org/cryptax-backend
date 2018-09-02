@@ -36,7 +36,7 @@ class InfoRoutesTest {
 
     @Test
     @DisplayName("Get info")
-    fun testHealth(testContext: VertxTestContext) {
+    fun testInfo(testContext: VertxTestContext) {
         // @formatter:off
         given().
             log().ifValidationFails().
@@ -44,8 +44,26 @@ class InfoRoutesTest {
         get("/info").
         then().
             log().ifValidationFails().
-            assertThat().body("version", notNullValue()).
-            assertThat().body("createdAt", notNullValue()).
+            assertThat().body("Manifest-Version", notNullValue()).
+            assertThat().body("Implementation-Title", notNullValue()).
+            assertThat().body("Implementation-Version", notNullValue()).
+            assertThat().body("Built-Status", notNullValue()).
+            assertThat().body("Built-By", notNullValue()).
+            assertThat().body("Built-OS", notNullValue()).
+            assertThat().body("Build-Date", notNullValue()).
+            assertThat().body("Gradle-Version", notNullValue()).
+            assertThat().body("Module-Source", notNullValue()).
+            assertThat().body("Module-Origin", notNullValue()).
+            assertThat().body("Change", notNullValue()).
+            assertThat().body("Branch", notNullValue()).
+            assertThat().body("Build-Host", notNullValue()).
+            assertThat().body("Build-Job", notNullValue()).
+            assertThat().body("Build-Number", notNullValue()).
+            assertThat().body("Build-Id", notNullValue()).
+            assertThat().body("Created-By", notNullValue()).
+            assertThat().body("Build-Java-Version", notNullValue()).
+            assertThat().body("X-Compile-Target-JDK", notNullValue()).
+            assertThat().body("X-Compile-Source-JDK", notNullValue()).
             assertThat().statusCode(200)
         // @formatter:on
 
