@@ -13,25 +13,18 @@ module cryptax.config.di {
     requires cryptax.price;
     requires cryptax.cache;
     requires cryptax.email;
+    requires cryptax.config.properties;
+
     requires com.fasterxml.jackson.core;
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.module.kotlin;
     requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
-    requires com.fasterxml.jackson.dataformat.yaml;
-    requires kodein.di.core.jvm;
-    requires kodein.di.generic.jvm;
-    requires jasypt;
-    requires java.management;
-    requires metrics.healthchecks;
-    requires vertx.auth.jwt;
-    requires vertx.auth.common;
-    requires vertx.mail.client;
-    requires vertx.core;
-    requires vertx.rx.java2;
-    requires okhttp3;
     requires google.auth.library.oauth2.http;
     requires google.cloud.datastore;
-    requires org.apache.commons.io;
-    requires cryptax.config.properties;
+    requires kodein.di.core.jvm;
+    requires kodein.di.generic.jvm;
+    requires metrics.healthchecks;
+    requires okhttp3;
+    requires vertx.core;
 }
