@@ -1,14 +1,13 @@
 open module cryptax.app {
     requires kotlin.stdlib;
-    requires vertx.core;
-    requires vertx.web;
     requires vertx.auth.jwt;
     requires vertx.auth.common;
-    requires vertx.web.api.contract;
-    requires vertx.rx.java2;
+    requires vertx.core;
     requires vertx.dropwizard.metrics;
-    requires vertx.mail.client;
-    requires io.reactivex.rxjava2;
+    requires vertx.hazelcast;
+    requires vertx.rx.java2;
+    requires vertx.web;
+    requires vertx.web.api.contract;
     requires metrics.healthchecks;
     requires kodein.di.core.jvm;
     requires kodein.di.generic.jvm;
@@ -20,6 +19,5 @@ open module cryptax.app {
     requires cryptax.email;
     requires cryptax.cache;
     requires org.slf4j;
-    requires com.fasterxml.jackson.databind;
-    requires vertx.hazelcast;
+    requires io.reactivex.rxjava2;
 }
