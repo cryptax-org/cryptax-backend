@@ -20,4 +20,5 @@ open module cryptax.app {
     requires cryptax.cache;
     requires org.slf4j;
     requires io.reactivex.rxjava2;
+    requires com.fasterxml.jackson.databind;
 }
