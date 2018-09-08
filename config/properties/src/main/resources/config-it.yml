@@ -15,6 +15,7 @@ email:
   function:
   key:
   from:
+  verifyUrl:
 http:
   maxIdleConnections: 5
   keepAliveDuration: 5

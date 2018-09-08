@@ -24,7 +24,8 @@ data class EmailProps(
     val url: String? = null,
     val function: String? = null,
     private val key: String? = null,
-    val from: String? = null) {
+    val from: String? = null,
+    val verifyUrl: String? = null) {
 
     val fullUrl = "$url$function?sg_key=" + if (key == null) "" else key()
 

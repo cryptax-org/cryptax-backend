@@ -22,7 +22,7 @@ class SendGridEmailService(
     override fun welcomeEmail(user: User, token: String) {
         if (config.enabled) {
             log.info("Send welcome email to ${user.email}")
-            sendEmail(user.email, "Welcome to Cryptax", "Here is your token: $token.<br />You can click <a href=\\\"http://localhost:8080/users/${user.id}/allow?token=$token\\\">here</a> to activate your account")
+            sendEmail(user.email, "Welcome to Cryptax", "You can click <a href=\\\"${config.verifyUrl}/${user.id}/$token\\\">here</a> to activate your account")
         }
     }
 

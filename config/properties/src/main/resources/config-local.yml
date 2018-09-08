@@ -15,6 +15,7 @@ email:
   function: sendgridEmail
   key: QcTncvSiPXDSGM89uGufBjZ4eNTTz6Cxqo2tjfUiJPbdMLELmXClanQVqfuU2Mx7CLnSVXXsuCnqdXtJ82Y3+yIfnwG8inW70jQLU5LC384=
   from: noreply@cryptax.app
+  verifyUrl: http://localhost:3000/verify-user
 http:
   maxIdleConnections: 5
   keepAliveDuration: 5
