@@ -47,7 +47,6 @@ fun createUser(): Pair<User, String> {
                     extract()
                         .response()
     // @formatter:on
-    response.header("welcomeToken")
     return Pair(User(
         id = response.body.jsonPath().getString("id"),
         email = response.body.jsonPath().getString("email"),

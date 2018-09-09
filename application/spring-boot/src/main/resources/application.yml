@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: spring-boot-app
+  profiles:
+    active: local
+server:
+  port: 8080

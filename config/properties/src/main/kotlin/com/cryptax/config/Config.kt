@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
-abstract class Config(private val overrideProfile: String? = null) {
+open class Config(private val overrideProfile: String? = null) {
 
     val profile: String by lazy { profile() }
 

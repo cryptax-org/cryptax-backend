@@ -1,0 +1,73 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
+    }
+}
+
+apply plugin: 'kotlin-spring'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+    mavenCentral()
+}
+
+configurations.all {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    exclude group: 'org.springframework', module: 'spring-jcl'
+    //exclude group: 'javax.annotation', module: 'javax.annotation-api'
+    exclude group: 'com.google.code.findbugs', module: 'jsr305'
+}
+
+dependencies {
+    implementation(
+        project(':cloud-datastore'),
+        project(':controller'),
+        project(':domain'),
+        project(':email'),
+        project(':in-memory-db-simple'),
+        project(':id-generator'),
+        project(':properties'),
+        project(':security'),
+        project(':usecase'),
+        [group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
+        [group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2'],
+        [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
+        [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
+        [group: 'com.google.auth', name: 'google-auth-library-appengine', version: '0.10.0'],
+        [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
+        [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
+        [group: 'org.hibernate.validator', name: 'hibernate-validator'],
+        //[group: 'org.apache.tomcat', name: 'tomcat-annotations-api'],
+    )
+
+    testImplementation(
+        [group: 'org.springframework.boot', name: 'spring-boot-starter-test'],
+        [group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.3.0'],
+        [group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion],
+    )
+}
+
+task copyJarToRoot {
+    doLast {
+        def jarName = "spring-boot-app-" + version + ".jar"
+        def outputDirectory = "${rootDir}/build"
+
+        def currentJar = file("${buildDir}/libs/$jarName")
+        def outputJar = "$outputDirectory/$projectName-spring-boot" + ".jar"
+
+        currentJar.renameTo(outputJar)
+        println("Move $jarName to $outputDirectory/$projectName-spring-boot" + ".jar")
+    }
+}
+
+build.finalizedBy(copyJarToRoot)

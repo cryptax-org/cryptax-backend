@@ -1,5 +1,6 @@
 package com.cryptax.controller.model
 
+import com.cryptax.controller.validation.Create
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.Line
@@ -9,13 +10,18 @@ import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
 import java.time.ZonedDateTime
 import java.util.Arrays
+import javax.validation.constraints.NotEmpty
 
 data class UserWeb(
     val id: String = "DEFAULT",
-    val email: String,
+    @get:NotEmpty(groups = [Create::class], message = "Email can not be empty")
+    val email: String = "",
+    @get:NotEmpty(groups = [Create::class], message = "Password can not be empty")
     val password: CharArray? = null,
-    val lastName: String,
-    val firstName: String) {
+    @get:NotEmpty(groups = [Create::class], message = "Last name can not be empty")
+    val lastName: String = "",
+    @get:NotEmpty(groups = [Create::class], message = "First name can not be empty")
+    val firstName: String = "") {
 
     fun toUser(): User {
         return User(
