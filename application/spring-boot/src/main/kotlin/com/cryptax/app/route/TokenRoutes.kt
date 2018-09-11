@@ -7,6 +7,7 @@ import com.cryptax.controller.UserController
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,9 +27,9 @@ class TokenRoutes @Autowired constructor(private val userController: UserControl
     }
 
     @GetMapping("/refresh")
-    fun obtainRefreshToken(/*req: HttpServletRequest*/): Single<GetTokenResponse> {
+    fun obtainRefreshToken(req: ServerHttpRequest): Single<GetTokenResponse> {
         return jwtTokenProvider
-            .buildTokenFromRefresh(null)
+            .buildTokenFromRefresh(req)
             .map { tripe -> GetTokenResponse(id = tripe.first, token = tripe.second, refreshToken = tripe.third) }
     }
 }

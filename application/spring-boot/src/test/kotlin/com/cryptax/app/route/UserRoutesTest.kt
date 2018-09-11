@@ -79,7 +79,6 @@ class UserRoutesTest {
         // @formatter:on
     }
 
-
     @DisplayName("Allow user, missing token")
     @Test
     fun testAllowUserNoToken() {

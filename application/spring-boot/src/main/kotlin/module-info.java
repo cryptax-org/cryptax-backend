@@ -19,7 +19,7 @@ open module cryptax.spring.app {
     requires google.cloud.datastore;
     requires google.auth.library.oauth2.http;
     requires com.fasterxml.jackson.databind;
-    requires jackson.annotations;
+//    requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.module.kotlin;
     requires com.fasterxml.jackson.core;
@@ -31,8 +31,8 @@ open module cryptax.spring.app {
     requires spring.core;
     requires spring.security.web;
     requires spring.webflux;
-    requires reactor.core;
-    requires reactor.adapter;
+    //requires reactor.core;
+    //requires reactor.adapter;
     //requires tomcat.embed.core;
     //requires spring.webmvc;
     //requires java.xml.ws.annotation;

@@ -41,6 +41,7 @@ dependencies {
         project(':usecase'),
         //[group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'],
+        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "$jacksonVersion"],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2'],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-security'],
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
@@ -54,7 +55,7 @@ dependencies {
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12']
     )
 
-    implementation "io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE"
+    //implementation "io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE"
 
     testImplementation(
         [group: 'org.springframework.boot', name: 'spring-boot-starter-test'],

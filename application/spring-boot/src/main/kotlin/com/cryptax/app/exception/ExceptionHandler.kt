@@ -4,25 +4,17 @@ import com.cryptax.app.jwt.JwtException
 import com.cryptax.domain.exception.LoginException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.bind.UnsatisfiedServletRequestParameterException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.ResponseStatus
+import org.springframework.web.bind.support.WebExchangeBindException
 
 
 @ControllerAdvice
-class ExceptionHandler { //: ResponseEntityExceptionHandler() {
+class ExceptionHandler {
 
     private val log = LoggerFactory.getLogger(ExceptionHandler::class.java)
-
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    fun validationException(ex: MethodArgumentNotValidException): ValidationErrorMessage {
-        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
-    }
 
     @ExceptionHandler(LoginException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -33,22 +25,21 @@ class ExceptionHandler { //: ResponseEntityExceptionHandler() {
     @ExceptionHandler(JwtException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun jwtException(exception: JwtException) {
-        log.warn("Jwt issue", exception)
+        log.warn("Jwt issue")
     }
 
-/*    @ExceptionHandler(UnsatisfiedServletRequestParameterException::class)
+    @ExceptionHandler(WebExchangeBindException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    fun exceptionHandler(e: UnsatisfiedServletRequestParameterException): DefaultErrorMessage {
-        log.warn("Missing parameter ${e.paramConditions.map { it }}")
-        return DefaultErrorMessage("Missing parameter ${e.paramConditions.map { it }}")
-    }*/
+    fun webExchangeBindException(ex: WebExchangeBindException): ValidationErrorMessage {
+        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
+    }
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     fun exceptionHandler(e: Exception): DefaultErrorMessage {
-        log.error("Unexpected exception", e)
+        log.warn("Unexpected exception", e)
         return DefaultErrorMessage("Unhandled exception ${e.javaClass.simpleName}")
     }
 
