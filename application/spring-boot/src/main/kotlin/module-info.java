@@ -19,12 +19,12 @@ open module cryptax.spring.app {
     requires google.cloud.datastore;
     requires google.auth.library.oauth2.http;
     requires com.fasterxml.jackson.databind;
-//    requires com.fasterxml.jackson.annotation;
+    //requires com.fasterxml.jackson.annotation;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.module.kotlin;
     requires com.fasterxml.jackson.core;
     requires io.reactivex.rxjava2;
-    requires java.validation;
+    //requires java.validation;
     requires spring.security.config;
     requires jjwt;
     requires spring.security.core;
