@@ -24,7 +24,6 @@ repositories {
 configurations.all {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     exclude group: 'org.springframework', module: 'spring-jcl'
-    //exclude group: 'javax.annotation', module: 'javax.annotation-api'
     exclude group: 'com.google.code.findbugs', module: 'jsr305'
 }
 
@@ -39,7 +38,6 @@ dependencies {
         project(':properties'),
         project(':security'),
         project(':usecase'),
-        //[group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-webflux'],
 
         [group: 'org.springframework.boot', name: 'spring-boot-starter-log4j2'],
@@ -51,14 +49,11 @@ dependencies {
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.12.Final'],
         [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'],
-        //[group: 'org.apache.tomcat', name: 'tomcat-annotations-api'],
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
 
     )
-
-    //implementation "io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE"
 
     testImplementation(
         [group: 'org.springframework.boot', name: 'spring-boot-starter-test'],
