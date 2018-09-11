@@ -25,4 +25,15 @@ open module cryptax.spring.app {
     requires com.fasterxml.jackson.core;
     requires io.reactivex.rxjava2;
     requires java.validation;
+    requires spring.security.config;
+    requires jjwt;
+    requires spring.security.core;
+    requires spring.core;
+    requires spring.security.web;
+    requires spring.webflux;
+    requires reactor.core;
+    requires reactor.adapter;
+    //requires tomcat.embed.core;
+    //requires spring.webmvc;
+    //requires java.xml.ws.annotation;
 }

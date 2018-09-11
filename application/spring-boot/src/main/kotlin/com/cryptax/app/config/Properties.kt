@@ -2,6 +2,7 @@ package com.cryptax.app.config
 
 import com.cryptax.config.AppProps
 import com.cryptax.config.Config
+import com.cryptax.config.JwtProps
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -20,5 +21,10 @@ class Properties {
     @Bean
     fun appProps(): AppProps {
         return config().properties
+    }
+
+    @Bean
+    fun jtwProperties() : JwtProps {
+        return appProps().jwt
     }
 }

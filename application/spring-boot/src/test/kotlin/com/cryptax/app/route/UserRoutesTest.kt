@@ -50,8 +50,8 @@ class UserRoutesTest {
             body("{}").
             contentType(ContentType.JSON).
             post("/users").
-         then().
-         log().ifValidationFails().
+        then().
+        log().ifValidationFails().
             assertThat().statusCode(400).
             assertThat().body("error", equalTo("Invalid request")).
             assertThat().body("details", hasItems(
@@ -59,6 +59,42 @@ class UserRoutesTest {
                                                         "Password can not be empty",
                                                         "Last name can not be empty",
                                                         "First name can not be empty"))
+        // @formatter:on
+    }
+
+    @DisplayName("Allow user")
+    @Test
+    fun testAllowUser() {
+        // given
+        val pair = createUser()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+            get("/users/${pair.first.id}/allow?token=${pair.second}").
+        then().
+        log().ifValidationFails().
+            assertThat().statusCode(200)
+        // @formatter:on
+    }
+
+
+    @DisplayName("Allow user, missing token")
+    @Test
+    fun testAllowUserNoToken() {
+        // given
+        val pair = createUser()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+            get("/users/${pair.first.id}/allow").
+        then().
+        log().ifValidationFails().
+            assertThat().statusCode(400).
+            assertThat().body("error", equalTo("Missing parameter [token]"))
         // @formatter:on
     }
 }

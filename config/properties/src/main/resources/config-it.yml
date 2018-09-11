@@ -5,7 +5,7 @@ server:
 jwt:
   keyStorePath: keystore-it.jceks
   password: secret
-  algorithm: ES512
+  algorithm: HS512
   issuer: Cryptax
   expiresInMinutes: 30
   refreshExpiresInDays: 10

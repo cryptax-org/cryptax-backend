@@ -5,12 +5,12 @@ server:
 jwt:
   keyStorePath: keystore.jceks
   password: cXHv1i/uP9ozQ/nA76cLvst5LBCuGYwQj2gH8xGno+Q=
-  algorithm: ES512
+  algorithm: HS512
   issuer: Cryptax
   expiresInMinutes: 30
   refreshExpiresInDays: 10
 email:
-  enabled: true
+  enabled: false
   url: https://us-central1-cryptax-backend-dev.cloudfunctions.net/
   function: sendgridEmail
   key: QcTncvSiPXDSGM89uGufBjZ4eNTTz6Cxqo2tjfUiJPbdMLELmXClanQVqfuU2Mx7CLnSVXXsuCnqdXtJ82Y3+yIfnwG8inW70jQLU5LC384=
