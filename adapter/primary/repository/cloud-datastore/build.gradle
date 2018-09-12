@@ -8,7 +8,7 @@ configurations.all {
 
 dependencies {
     implementation(
-        project(":domain"),
+        project(':domain'),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
         [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
     )

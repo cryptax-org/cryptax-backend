@@ -46,14 +46,13 @@ dependencies {
         [group: 'com.google.auth', name: 'google-auth-library-appengine', version: '0.10.0'],
         [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
-        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.12.Final'],
+        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernatesValidator],
         [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'],
         [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
+        [group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.1.7.RELEASE'],
     )
-
-    implementation "io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE"
 
     testImplementation(
         [group: 'org.springframework.boot', name: 'spring-boot-starter-test'],

@@ -9,6 +9,7 @@ buildscript {
         dropwizardVersion = '4.0.2'
         googleCloudDatastoreVersion = '1.38.0'
         googleCloudSqlVersion = '1.0.10'
+        hibernatesValidator = '6.0.12.Final'
         junitVersion = '5.2.0'
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'

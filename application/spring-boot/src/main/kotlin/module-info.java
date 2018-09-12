@@ -3,6 +3,7 @@ open module cryptax.spring.app {
     requires com.fasterxml.jackson.databind;
     requires com.fasterxml.jackson.datatype.jsr310;
     requires com.fasterxml.jackson.module.kotlin;
+    requires com.fasterxml.jackson.annotation;
 
     requires cryptax.controller;
     requires cryptax.config.properties;
@@ -24,6 +25,7 @@ open module cryptax.spring.app {
     requires okhttp3;
     requires org.slf4j;
     requires reactor.core;
+    requires reactor.adapter;
 
     requires spring.core;
     requires spring.boot.autoconfigure;
@@ -35,6 +37,4 @@ open module cryptax.spring.app {
     requires spring.security.web;
     requires spring.web;
     requires spring.webflux;
-    requires reactor.adapter;
-    requires com.fasterxml.jackson.annotation;
 }

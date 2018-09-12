@@ -8,7 +8,7 @@ dependencies {
         project(':domain'),
         project(':parser'),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
-        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.12.Final'],
+        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernatesValidator],
     )
     testImplementation(
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],

@@ -1,7 +1,7 @@
 module cryptax.parser {
     exports com.cryptax.parser;
 
-    requires kotlin.stdlib;
     requires cryptax.domain;
+    requires kotlin.stdlib;
     requires opencsv;
 }
