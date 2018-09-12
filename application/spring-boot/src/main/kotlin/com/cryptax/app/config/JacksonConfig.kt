@@ -18,13 +18,13 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.ZoneId
-import java.util.TimeZone
+import java.util.*
 
 @Configuration
 class JacksonConfig {
 
     @Bean
-    fun objectMapper() : ObjectMapper {
+    fun objectMapper(): ObjectMapper {
         return ObjectMapper()
             .registerModule(KotlinModule())
             .registerModule(JavaTimeModule())

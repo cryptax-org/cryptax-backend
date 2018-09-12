@@ -1,6 +1,5 @@
 package com.cryptax.app.route
 
-import com.cryptax.app.jwt.JwtException
 import com.cryptax.app.model.ResetPasswordRequest
 import com.cryptax.controller.UserController
 import com.cryptax.controller.model.ResetPasswordWeb
@@ -10,9 +9,15 @@ import io.reactivex.Single
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
 import reactor.adapter.rxjava.toMono
 import reactor.core.publisher.Mono
 
@@ -52,16 +57,5 @@ class UserRoutes @Autowired constructor(private val userController: UserControll
     @PutMapping("/password")
     fun resetPassword(@RequestBody @Validated body: ResetPasswordRequest): Single<Unit> {
         return userController.resetPassword(body.email, body.password, body.token)
-    }
-
-    private fun verifyUserId(userId: String): Mono<Boolean> {
-        return ReactiveSecurityContextHolder
-            .getContext()
-            .flatMap { context ->
-                when (context.authentication.principal as String) {
-                    userId -> Mono.just(true)
-                    else -> Mono.error(JwtException("User $userId can't be accessed with the given token ${context.authentication.credentials}"))
-                }
-            }
     }
 }

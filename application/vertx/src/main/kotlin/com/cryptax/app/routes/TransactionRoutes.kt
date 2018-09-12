@@ -110,7 +110,7 @@ fun handleTransactionRoutes(router: Router, jwtAuthHandler: JWTAuthHandler, vert
         }
         .failureHandler(failureHandler)
 
-    // Update transaction with JWT token
+    // Delete transaction with JWT token
     router.delete("/users/:userId/transactions/:transactionId")
         .handler(jsonContentTypeValidation)
         .handler(jwtAuthHandler)

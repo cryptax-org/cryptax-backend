@@ -36,4 +36,5 @@ open module cryptax.spring.app {
     requires spring.web;
     requires spring.webflux;
     requires reactor.adapter;
+    requires com.fasterxml.jackson.annotation;
 }

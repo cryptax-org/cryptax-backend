@@ -3,6 +3,7 @@ package com.cryptax.app.exception
 import com.cryptax.app.jwt.JwtException
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.ResetPasswordException
+import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.UserNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -42,9 +43,7 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     fun webExchangeBindException(ex: WebExchangeBindException): ValidationErrorMessage {
-        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e ->
-            e.defaultMessage ?: "Field validation issue"
-        })
+        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
     }
 
     @ExceptionHandler(UserNotFoundException::class)
@@ -57,6 +56,12 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun resetPasswordException(ex: ResetPasswordException) {
         log.warn("Invalid reset password token [${ex.message}]")
+    }
+
+    @ExceptionHandler(TransactionNotFound::class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    fun transactionNotFoundException(exception: TransactionNotFound) {
+        log.warn("Transaction not found [${exception.message}]")
     }
 
     @ExceptionHandler(Exception::class)

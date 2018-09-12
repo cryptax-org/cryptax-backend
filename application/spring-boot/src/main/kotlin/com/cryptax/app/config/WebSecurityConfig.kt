@@ -34,7 +34,7 @@ class WebSecurityConfig {
             .anyExchange().authenticated()
             .and()
             .exceptionHandling()
-            .accessDeniedHandler(HttpStatusServerAccessDeniedHandler(HttpStatus.UNAUTHORIZED))
+            .accessDeniedHandler(HttpStatusServerAccessDeniedHandler(HttpStatus.I_AM_A_TEAPOT))
             .and()
             .build()
     }

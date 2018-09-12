@@ -65,6 +65,10 @@ class InMemoryTransactionRepository : TransactionRepository {
         }
     }
 
+    fun deleteAll() {
+        inMemoryDb.clear()
+    }
+
     override fun ping(): Boolean {
         return true
     }
