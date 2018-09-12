@@ -51,6 +51,10 @@ class InMemoryUserRepository : UserRepository {
         }
     }
 
+    fun deleteAll() {
+        inMemoryDb.clear()
+    }
+
     override fun ping(): Boolean {
         return true
     }

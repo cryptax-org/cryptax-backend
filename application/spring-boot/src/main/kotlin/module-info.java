@@ -35,4 +35,5 @@ open module cryptax.spring.app {
     requires spring.security.web;
     requires spring.web;
     requires spring.webflux;
+    requires reactor.adapter;
 }

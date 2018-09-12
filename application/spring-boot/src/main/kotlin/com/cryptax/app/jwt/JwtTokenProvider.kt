@@ -10,6 +10,7 @@ import io.reactivex.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -25,11 +26,14 @@ class JwtTokenProvider {
         val log: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
     }
 
+    @Value("\${spring.profiles.active}")
+    lateinit var profile: String
+
     @Autowired
     lateinit var jwtProps: JwtProps
 
     fun getUserAuthentication(token: String): UsernamePasswordAuthenticationToken {
-        val claims: Jws<Claims> = Jwts.parser().setSigningKey(jwtProps.password()).parseClaimsJws(token)
+        val claims: Jws<Claims> = Jwts.parser().setSigningKey(jwtProps.password(profile)).parseClaimsJws(token)
         val roles = (claims.body["auth"] as List<*>).map { str -> SimpleGrantedAuthority(str as String) }
         return UsernamePasswordAuthenticationToken(claims.body.subject, token, roles)
     }
@@ -43,7 +47,7 @@ class JwtTokenProvider {
 
     fun validateToken(token: String): Boolean {
         val result = try {
-            val jwt = Jwts.parser().setSigningKey(jwtProps.password()).parseClaimsJws(token)
+            val jwt = Jwts.parser().setSigningKey(jwtProps.password(profile)).parseClaimsJws(token)
             !(jwt.body["isRefresh"] as Boolean)
         } catch (e: JwtException) {
             false
@@ -67,7 +71,7 @@ class JwtTokenProvider {
         return Single.create { emitter ->
             val currentToken = resolveToken(req)
             if(currentToken.isBlank()) throw com.cryptax.app.jwt.JwtException("Token not provided")
-            val isRefresh = Jwts.parser().setSigningKey(jwtProps.password()).parseClaimsJws(currentToken).body["isRefresh"]
+            val isRefresh = Jwts.parser().setSigningKey(jwtProps.password(profile)).parseClaimsJws(currentToken).body["isRefresh"]
             if (isRefresh == false) throw com.cryptax.app.jwt.JwtException("Refresh token expected")
             val userId = getUserId(currentToken)
             val token = createToken(userId, listOf(Role.USER), false)
@@ -77,7 +81,7 @@ class JwtTokenProvider {
     }
 
     private fun getUserId(token: String): String {
-        return Jwts.parser().setSigningKey(jwtProps.password()).parseClaimsJws(token).body.subject
+        return Jwts.parser().setSigningKey(jwtProps.password(profile)).parseClaimsJws(token).body.subject
     }
 
     private fun createToken(userId: String, roles: List<Role>, isRefresh: Boolean): String {
@@ -102,7 +106,7 @@ class JwtTokenProvider {
             .setClaims(claims)
             .setIssuedAt(now)
             .setExpiration(validity)
-            .signWith(signature, jwtProps.password())
+            .signWith(signature, jwtProps.password(profile))
             .compact()
     }
 }

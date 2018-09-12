@@ -8,12 +8,6 @@ import org.springframework.boot.runApplication
 @SpringBootApplication
 class Application
 
-/*fun main(args: Array<String>) {
-    SpringApplication.run()
-    //runApplication<Application>(*args)
-}*/
-
-//@JvmStatic
 fun main(args: Array<String>) {
     val springApplication = SpringApplication(Application::class.java)
     springApplication.webApplicationType = WebApplicationType.REACTIVE

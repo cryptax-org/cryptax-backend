@@ -3,12 +3,14 @@ package com.cryptax.app.route
 import com.cryptax.app.config.JacksonConfig
 import com.cryptax.controller.model.UserWeb
 import com.cryptax.domain.entity.User
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.restassured.RestAssured
 import io.restassured.RestAssured.given
 import io.restassured.config.HttpClientConfig
 import io.restassured.config.ObjectMapperConfig
 import io.restassured.config.RestAssuredConfig
 import io.restassured.http.ContentType
+import io.restassured.path.json.JsonPath
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
@@ -16,6 +18,7 @@ import org.hamcrest.CoreMatchers.nullValue
 object Utils {
     private val objectMapper = JacksonConfig().objectMapper()
     val user = objectMapper.readValue(Utils::class.java.getResourceAsStream("/user.json"), UserWeb::class.java)
+    val credentials = JsonNodeFactory.instance.objectNode().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
 
     fun setupRestAssured(port: Int) {
         RestAssured.port = port
@@ -52,6 +55,55 @@ object Utils {
             lastName = response.body.jsonPath().getString("lastName"),
             firstName = response.body.jsonPath().getString("firstName")
         ), response.header("welcomeToken"))
+    }
+
+    fun validateUser(pair: Pair<User, String>) {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            queryParam("token", pair.second).
+        get("/users/${pair.first.id}/allow").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200)
+        // @formatter:on
+    }
+
+    fun getToken(): JsonPath {
+        // @formatter:off
+        return  given().
+                    log().ifValidationFails().
+                    body(credentials).
+                    contentType(ContentType.JSON).
+                post("/token").
+                    then().
+                    log().ifValidationFails().
+                    assertThat().statusCode(200).
+                    assertThat().body("token", notNullValue()).
+                    assertThat().body("refreshToken", notNullValue()).
+                extract().
+                    body().jsonPath()
+         // @formatter:on
+    }
+
+    fun initiatePasswordReset(pair: Pair<User, String>): JsonPath {
+        // @formatter:off
+        return given().
+                    log().ifValidationFails().
+                get("/users/email/${pair.first.email}/reset").
+                then().
+                    log().ifValidationFails().
+                    assertThat().statusCode(200).
+                    assertThat().body("token", notNullValue()).
+                extract().
+                    body().jsonPath()
+        // @formatter:on
+    }
+
+    fun initUserAndGetToken(): JsonPath {
+        val pair = createUser()
+        validateUser(pair)
+        return getToken()
     }
 }
 

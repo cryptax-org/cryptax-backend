@@ -1,6 +1,6 @@
 rootProject.name = 'cryptax-backend'
 
-//include ':vertx-app'
+include ':vertx-app'
 include ':spring-boot-app'
 include ':properties'
 include ':di'
@@ -18,7 +18,7 @@ include ':health'
 include ':price'
 include ':cache'
 
-//project(":vertx-app").projectDir = file("application/vertx")
+project(":vertx-app").projectDir = file("application/vertx")
 project(":spring-boot-app").projectDir = file("application/spring-boot")
 project(":properties").projectDir = file("config/properties")
 project(":di").projectDir = file("config/di")
