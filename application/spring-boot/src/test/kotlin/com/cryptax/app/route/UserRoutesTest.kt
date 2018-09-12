@@ -11,14 +11,8 @@ import com.cryptax.db.InMemoryUserRepository
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
-import org.hamcrest.CoreMatchers.equalTo
-import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.CoreMatchers.nullValue
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import org.hamcrest.CoreMatchers.*
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -145,12 +139,12 @@ class UserRoutesTest {
         get("/users/${token.getString("id")}").
         then().
             log().ifValidationFails().
+            assertThat().statusCode(200).
             assertThat().body("id", equalTo(token.getString("id"))).
             assertThat().body("email", equalTo(user.email)).
             assertThat().body("password", nullValue()).
             assertThat().body("lastName", equalTo(user.lastName)).
-            assertThat().body("firstName",equalTo(user.firstName)).
-            assertThat().statusCode(200)
+            assertThat().body("firstName",equalTo(user.firstName))
         // @formatter:on
     }
 
@@ -168,9 +162,7 @@ class UserRoutesTest {
         get("/users/WroNgId").
         then().
             log().ifValidationFails().
-            assertThat().statusCode(400).
-            assertThat().body("$", nullValue())
-
+            assertThat().statusCode(401)
         // @formatter:on
     }
 

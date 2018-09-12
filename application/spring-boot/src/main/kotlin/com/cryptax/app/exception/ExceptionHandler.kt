@@ -28,7 +28,7 @@ class ExceptionHandler {
     @ExceptionHandler(JwtException::class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun jwtException(exception: JwtException) {
-        log.warn("Jwt issue")
+        log.warn("Jwt issue - ${exception.message}")
     }
 
     @ExceptionHandler(ServerWebInputException::class)
@@ -42,7 +42,9 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     fun webExchangeBindException(ex: WebExchangeBindException): ValidationErrorMessage {
-        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
+        return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e ->
+            e.defaultMessage ?: "Field validation issue"
+        })
     }
 
     @ExceptionHandler(UserNotFoundException::class)
@@ -53,8 +55,8 @@ class ExceptionHandler {
 
     @ExceptionHandler(ResetPasswordException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    fun resetPasswordException(exception: ResetPasswordException) {
-        log.warn("Invalid reset password token [${exception.message}]")
+    fun resetPasswordException(ex: ResetPasswordException) {
+        log.warn("Invalid reset password token [${ex.message}]")
     }
 
     @ExceptionHandler(Exception::class)
