@@ -146,6 +146,8 @@ subprojects {
     jacoco {
         toolVersion = '0.8.2'
     }
+
+    task allDeps(type: DependencyReportTask) {}
 }
 
 apply plugin: 'java'
