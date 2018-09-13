@@ -1,5 +1,6 @@
 package com.cryptax.app.config
 
+import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.domain.port.EmailService
@@ -91,5 +92,10 @@ class ControllerConfig {
     @Bean
     fun transactionController(addTransaction: AddTransaction, updateTransaction: UpdateTransaction, findTransaction: FindTransaction, deleteTransaction: DeleteTransaction): TransactionController {
         return TransactionController(addTransaction, updateTransaction, findTransaction, deleteTransaction)
+    }
+
+    @Bean
+    fun currencyController(): CurrencyController {
+        return CurrencyController()
     }
 }
