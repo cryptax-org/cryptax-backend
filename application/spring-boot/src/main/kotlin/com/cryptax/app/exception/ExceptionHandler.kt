@@ -4,7 +4,11 @@ import com.cryptax.app.jwt.JwtException
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
+import com.cryptax.domain.exception.TransactionValidationException
+import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
+import com.cryptax.domain.exception.UserValidationException
+import com.cryptax.domain.exception.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -51,6 +55,12 @@ class ExceptionHandler {
         log.warn("User not found [${ex.message}]")
     }
 
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun userAlreadyExistsException(ex: UserAlreadyExistsException) {
+        log.warn("User already exists [${ex.message}]")
+    }
+
     @ExceptionHandler(ResetPasswordException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun resetPasswordException(ex: ResetPasswordException) {
@@ -61,6 +71,14 @@ class ExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun transactionNotFoundException(exception: TransactionNotFound) {
         log.warn("Transaction not found [${exception.message}]")
+    }
+
+    @ExceptionHandler(value = [UserValidationException::class, TransactionValidationException::class])
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun validationException(exception: ValidationException): DefaultErrorMessage {
+        log.debug("Validation exception [${exception.message}]")
+        return DefaultErrorMessage("${exception.message}")
     }
 
     @ExceptionHandler(Exception::class)
