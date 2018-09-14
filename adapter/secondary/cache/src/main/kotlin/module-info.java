@@ -3,5 +3,5 @@ module cryptax.cache {
 
     requires cryptax.domain;
     requires kotlin.stdlib;
-    requires vertx.core;
+    requires org.slf4j;
 }

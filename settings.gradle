@@ -1,9 +1,7 @@
 rootProject.name = 'cryptax-backend'
 
-//include ':vertx-app'
-include ':spring-boot-app'
-include ':properties'
-//include ':di'
+include ':application'
+include ':config'
 include ':domain'
 include ':usecase'
 include ':security'
@@ -11,23 +9,17 @@ include ':id-generator'
 include ':in-memory-db-simple'
 include ':cloud-datastore'
 include ':controller'
-//include ':validation'
 include ':parser'
 include ':email'
 include ':health'
 include ':price'
 include ':cache'
 
-//project(":vertx-app").projectDir = file("application/vertx")
-project(":spring-boot-app").projectDir = file("application/spring-boot")
-project(":properties").projectDir = file("config/properties")
-//project(":di").projectDir = file("config/di")
 project(":security").projectDir = file("adapter/primary/security")
 project(":id-generator").projectDir = file("adapter/primary/id-generator")
 project(":in-memory-db-simple").projectDir = file("adapter/primary/repository/in-memory-simple")
 project(":cloud-datastore").projectDir = file("adapter/primary/repository/cloud-datastore")
 project(":controller").projectDir = file("adapter/secondary/controller")
-//project(":validation").projectDir = file("adapter/secondary/validation")
 project(":parser").projectDir = file("adapter/secondary/parser")
 project(":email").projectDir = file("adapter/primary/email")
 project(":health").projectDir = file("adapter/secondary/health")

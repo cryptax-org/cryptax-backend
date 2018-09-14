@@ -13,7 +13,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okio.Buffer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

@@ -2,7 +2,7 @@ module cryptax.email {
     exports com.cryptax.email;
 
     requires cryptax.domain;
-    requires cryptax.config.properties;
+    requires cryptax.config;
 
     requires com.fasterxml.jackson.databind;
     requires kotlin.stdlib;
