@@ -33,6 +33,8 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, "/token").permitAll()
             .pathMatchers(HttpMethod.GET, "/refresh").permitAll()
             .pathMatchers(HttpMethod.GET, "/info").permitAll()
+            .pathMatchers(HttpMethod.GET, "/health").permitAll()
+            .pathMatchers(HttpMethod.GET, "/ping").permitAll()
             .anyExchange().authenticated()
             .and()
             .exceptionHandling()

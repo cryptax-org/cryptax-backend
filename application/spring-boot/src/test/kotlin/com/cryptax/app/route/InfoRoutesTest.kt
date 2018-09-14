@@ -1,13 +1,12 @@
 package com.cryptax.app.route
 
 import com.cryptax.app.Application
-import com.cryptax.app.route.Utils.initUserAndGetToken
 import com.cryptax.app.route.Utils.setupRestAssured
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
-import io.restassured.http.Header
-import org.hamcrest.CoreMatchers.hasItems
+import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
+import org.hamcrest.Matchers.hasKey
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -67,6 +66,53 @@ class InfoRoutesTest {
             assertThat().body("Build-Java-Version", notNullValue()).
             assertThat().body("X-Compile-Target-JDK", notNullValue()).
             assertThat().body("X-Compile-Source-JDK", notNullValue())
+        // @formatter:on
+    }
+
+    @DisplayName("Get health data")
+    @Test
+    fun `get health data`() {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+        get("/health").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200).
+            assertThat().body("transactionRepository.healthy", equalTo(true)).
+            assertThat().body("transactionRepository", hasKey("timestamp")).
+            assertThat().body("userRepository.healthy", equalTo(true)).
+            assertThat().body("userRepository", hasKey("timestamp"))
+        // @formatter:on
+    }
+
+    @DisplayName("Ping")
+    @Test
+    fun ping() {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+        get("/ping").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200).
+            assertThat().body("result", equalTo("pong"))
+        // @formatter:on
+    }
+
+    @DisplayName("Root")
+    @Test
+    fun root() {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            contentType(ContentType.JSON).
+        get("/").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200)
         // @formatter:on
     }
 }

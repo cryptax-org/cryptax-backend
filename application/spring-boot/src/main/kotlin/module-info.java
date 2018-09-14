@@ -37,4 +37,6 @@ open module cryptax.spring.app {
     requires spring.security.web;
     requires spring.web;
     requires spring.webflux;
+    requires metrics.healthchecks;
+    requires cryptax.health;
 }

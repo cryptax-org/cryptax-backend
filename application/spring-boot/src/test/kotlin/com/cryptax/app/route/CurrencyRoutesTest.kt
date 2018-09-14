@@ -17,7 +17,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@DisplayName("Token routes integration tests")
+@DisplayName("Currency routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles("it")
 @ExtendWith(SpringExtension::class)
@@ -50,10 +50,10 @@ class CurrencyRoutesTest {
         then().
             log().ifValidationFails().
             assertThat().statusCode(200).
-            body("code", hasItems("ADA", "ARK", "BTC", "EOS", "ETH", "ETHOS")).
-            body("name", hasItems("Cardano", "Ark", "Bitcoin", "Ethereum", "Ethos", "Euro")).
-            body("symbol", hasItems("ADA", "ARK", "฿", "Ξ", "€", "$")).
-            body("type", hasItems("crypto", "fiat"))
+            assertThat().body("code", hasItems("ADA", "ARK", "BTC", "EOS", "ETH", "ETHOS")).
+            assertThat().body("name", hasItems("Cardano", "Ark", "Bitcoin", "Ethereum", "Ethos", "Euro")).
+            assertThat().body("symbol", hasItems("ADA", "ARK", "฿", "Ξ", "€", "$")).
+            assertThat().body("type", hasItems("crypto", "fiat"))
         // @formatter:on
     }
 

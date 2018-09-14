@@ -22,6 +22,7 @@ import io.restassured.http.Header
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -58,6 +59,12 @@ class TransactionRoutesTest {
     @BeforeAll
     internal fun beforeAll() {
         setupRestAssured(randomServerPort.toInt())
+    }
+
+    @AfterAll
+    internal fun afterAll() {
+        userRepository.deleteAll()
+        transactionRepository.deleteAll()
     }
 
     @BeforeEach

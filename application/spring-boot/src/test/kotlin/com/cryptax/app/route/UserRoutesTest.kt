@@ -11,8 +11,15 @@ import com.cryptax.db.InMemoryUserRepository
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
-import org.hamcrest.CoreMatchers.*
-import org.junit.jupiter.api.*
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItems
+import org.hamcrest.CoreMatchers.nullValue
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -39,6 +46,11 @@ class UserRoutesTest {
     @BeforeAll
     internal fun beforeAll() {
         setupRestAssured(randomServerPort.toInt())
+    }
+
+    @AfterAll
+    internal fun afterAll() {
+        memory.deleteAll()
     }
 
     @BeforeEach

@@ -86,7 +86,7 @@ object Utils {
                     body(credentials).
                     contentType(ContentType.JSON).
                 post("/token").
-                    then().
+                then().
                     log().ifValidationFails().
                     assertThat().statusCode(200).
                     assertThat().body("token", notNullValue()).
