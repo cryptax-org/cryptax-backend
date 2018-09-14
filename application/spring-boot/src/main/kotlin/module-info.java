@@ -11,6 +11,7 @@ open module cryptax.spring.app {
     requires cryptax.db.simple;
     requires cryptax.db.cloud.datastore;
     requires cryptax.email;
+    requires cryptax.health;
     requires cryptax.id;
     requires cryptax.security;
     requires cryptax.usecase;
@@ -22,6 +23,7 @@ open module cryptax.spring.app {
     requires java.validation;
     requires jjwt;
     requires kotlin.stdlib;
+    requires metrics.healthchecks;
     requires okhttp3;
     requires org.slf4j;
     requires reactor.core;
@@ -37,6 +39,4 @@ open module cryptax.spring.app {
     requires spring.security.web;
     requires spring.web;
     requires spring.webflux;
-    requires metrics.healthchecks;
-    requires cryptax.health;
 }
