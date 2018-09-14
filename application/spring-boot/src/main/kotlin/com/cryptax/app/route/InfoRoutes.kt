@@ -9,6 +9,10 @@ class InfoRoutes {
 
     private val info: Map<String, String> by lazy { loadInfoFile() }
 
+    @GetMapping("/")
+    fun root() {
+    }
+
     @GetMapping("/info")
     fun info(): Single<Map<String, String>> {
         return Single.just(info)
