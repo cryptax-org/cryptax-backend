@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.support.WebExchangeBindException
 import org.springframework.web.server.ServerWebInputException
 
-
 @ControllerAdvice
 class ExceptionHandler {
 

@@ -32,12 +32,14 @@ configurations.all {
 dependencies {
     implementation(
         project(':cloud-datastore'),
+        project(':cache'),
         project(':controller'),
         project(':domain'),
         project(':email'),
         project(':health'),
         project(':in-memory-db-simple'),
         project(':id-generator'),
+        project(':price'),
         project(':properties'),
         project(':security'),
         project(':usecase'),

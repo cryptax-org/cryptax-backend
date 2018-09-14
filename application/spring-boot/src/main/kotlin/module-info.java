@@ -7,12 +7,14 @@ open module cryptax.spring.app {
 
     requires cryptax.controller;
     requires cryptax.config.properties;
+    requires cryptax.cache;
     requires cryptax.domain;
     requires cryptax.db.simple;
     requires cryptax.db.cloud.datastore;
     requires cryptax.email;
     requires cryptax.health;
     requires cryptax.id;
+    requires cryptax.price;
     requires cryptax.security;
     requires cryptax.usecase;
 

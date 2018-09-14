@@ -1,14 +1,19 @@
 package com.cryptax.app.config
 
+import com.cryptax.cache.CacheService
+import com.cryptax.cache.InMemoryCacheService
 import com.cryptax.controller.CurrencyController
+import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
+import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.ResetPasswordRepository
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.domain.port.UserRepository
+import com.cryptax.usecase.report.GenerateReport
 import com.cryptax.usecase.transaction.AddTransaction
 import com.cryptax.usecase.transaction.DeleteTransaction
 import com.cryptax.usecase.transaction.FindTransaction
@@ -18,6 +23,8 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
+import com.fasterxml.jackson.databind.ObjectMapper
+import okhttp3.OkHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -47,6 +54,21 @@ class ControllerConfig {
     @Bean
     fun validateUser(userRepository: UserRepository, securePassword: SecurePassword): ValidateUser {
         return ValidateUser(userRepository, securePassword)
+    }
+
+    @Bean
+    fun cacheService(): CacheService {
+        return InMemoryCacheService()
+    }
+
+    @Bean
+    fun priceService(client: OkHttpClient, objectMapper: ObjectMapper, cache: CacheService) : PriceService {
+        return com.cryptax.price.PriceService(client, objectMapper, cache)
+    }
+
+    @Bean
+    fun generateReport(userRepository: UserRepository, transactionRepository: TransactionRepository, priceService: PriceService): GenerateReport {
+        return GenerateReport(userRepository, transactionRepository, priceService)
     }
 
     @Bean
@@ -97,5 +119,10 @@ class ControllerConfig {
     @Bean
     fun currencyController(): CurrencyController {
         return CurrencyController()
+    }
+
+    @Bean
+    fun reportController(generateReport: GenerateReport): ReportController {
+        return ReportController(generateReport)
     }
 }
