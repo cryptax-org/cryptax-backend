@@ -4,19 +4,9 @@ import com.cryptax.domain.entity.Currency
 import com.hazelcast.nio.ObjectDataInput
 import com.hazelcast.nio.ObjectDataOutput
 import com.hazelcast.nio.serialization.DataSerializable
-import java.time.Instant
-import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class Key() : DataSerializable {
-
-    lateinit var currency: Currency
-    lateinit var date: ZonedDateTime
-
-    constructor(currency: Currency, date: ZonedDateTime) : this() {
-        this.currency = currency
-        this.date = date
-    }
+class Key(private val currency: Currency, private val date: ZonedDateTime) : DataSerializable {
 
     override fun writeData(out: ObjectDataOutput) {
         out.writeUTF(currency.code)
@@ -25,8 +15,5 @@ class Key() : DataSerializable {
     }
 
     override fun readData(input: ObjectDataInput) {
-        currency = Currency.findCurrency(input.readUTF())
-        val zoneId = input.readUTF()
-        date = ZonedDateTime.ofInstant(Instant.ofEpochMilli(input.readLong()), ZoneId.of(zoneId))
     }
 }
