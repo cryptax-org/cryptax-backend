@@ -52,6 +52,8 @@ dependencies {
         [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: jacksonVersion],
         [group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: jacksonVersion],
 
+        [group: 'com.hazelcast', name: 'hazelcast'],
+        [group: 'com.hazelcast', name: 'hazelcast-spring'],
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
         [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
         [group: 'com.google.auth', name: 'google-auth-library-appengine', version: '0.10.0'],

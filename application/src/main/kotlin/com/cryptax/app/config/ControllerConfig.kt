@@ -1,7 +1,7 @@
 package com.cryptax.app.config
 
 import com.cryptax.cache.CacheService
-import com.cryptax.cache.InMemoryCacheService
+import com.cryptax.cache.HazelcastService
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
@@ -24,6 +24,7 @@ import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hazelcast.core.HazelcastInstance
 import okhttp3.OkHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,8 +38,7 @@ class ControllerConfig {
             repository = userRepository,
             securePassword = securePassword,
             idGenerator = idGenerator,
-            emailService = emailService
-        )
+            emailService = emailService)
     }
 
     @Bean
@@ -57,12 +57,12 @@ class ControllerConfig {
     }
 
     @Bean
-    fun cacheService(): CacheService {
-        return InMemoryCacheService()
+    fun cacheService(hazelcastInstance: HazelcastInstance): CacheService {
+        return HazelcastService(hazelcastInstance)
     }
 
     @Bean
-    fun priceService(client: OkHttpClient, objectMapper: ObjectMapper, cache: CacheService) : PriceService {
+    fun priceService(client: OkHttpClient, objectMapper: ObjectMapper, cache: CacheService): PriceService {
         return com.cryptax.price.PriceService(client, objectMapper, cache)
     }
 
@@ -82,12 +82,7 @@ class ControllerConfig {
     }
 
     @Bean
-    fun userController(
-        createUser: CreateUser,
-        findUser: FindUser,
-        loginUser: LoginUser,
-        validateUser: ValidateUser,
-        resetUserPassword: ResetUserPassword): UserController {
+    fun userController(createUser: CreateUser, findUser: FindUser, loginUser: LoginUser, validateUser: ValidateUser, resetUserPassword: ResetUserPassword): UserController {
         return UserController(createUser, findUser, loginUser, validateUser, resetUserPassword)
     }
 

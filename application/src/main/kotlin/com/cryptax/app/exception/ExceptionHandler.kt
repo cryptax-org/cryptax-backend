@@ -81,6 +81,14 @@ class ExceptionHandler {
         return DefaultErrorMessage("${exception.message}")
     }
 
+    @ExceptionHandler(ParamException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun paramException(exception: ParamException): ValidationErrorMessage {
+        log.debug("Validation exception [${exception.message}]")
+        return ValidationErrorMessage(details = listOf("Csv file is mandatory"))
+    }
+
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

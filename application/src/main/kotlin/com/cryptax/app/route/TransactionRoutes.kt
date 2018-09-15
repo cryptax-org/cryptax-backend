@@ -1,5 +1,6 @@
 package com.cryptax.app.route
 
+import com.cryptax.app.exception.ParamException
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.domain.entity.Source
@@ -21,6 +22,7 @@ import reactor.adapter.rxjava.toMono
 import reactor.core.publisher.Mono
 import java.io.InputStream
 import java.io.SequenceInputStream
+import java.time.Duration
 
 @RestController
 class TransactionRoutes @Autowired constructor(private val transactionController: TransactionController) {
@@ -66,7 +68,7 @@ class TransactionRoutes @Autowired constructor(private val transactionController
         @RequestParam(value = "source", required = true) source: String,
         @RequestParam(value = "delimiter", required = false, defaultValue = ",") delimiter: Char): Mono<List<TransactionWeb>> {
         return verifyUserId(userId)
-            .flatMap { file }
+            .flatMap { file.timeout(Duration.ofMillis(50), Mono.error(ParamException())) }
             .flatMap { filePart ->
                 filePart
                     .content()

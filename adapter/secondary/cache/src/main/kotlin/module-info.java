@@ -4,4 +4,5 @@ module cryptax.cache {
     requires cryptax.domain;
     requires kotlin.stdlib;
     requires org.slf4j;
+    requires hazelcast;
 }
