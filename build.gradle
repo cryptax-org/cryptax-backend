@@ -23,7 +23,6 @@ buildscript {
         restAssuredVersion = '3.1.0'
         rxjava2Version = '2.1.17'
         slf4jVersion = '1.8.0-beta2'
-        vertxVersion = '3.5.3'
     }
 
     repositories {
@@ -40,7 +39,7 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '0.0.27-SNAPSHOT'
+    version = '0.0.28-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
@@ -133,7 +132,6 @@ subprojects {
 
     clean.doFirst {
         delete 'out'
-        delete '.vertx'
     }
 
     jacocoTestReport {
@@ -186,7 +184,12 @@ task jacocoRootReport(type: JacocoReport) {
     }
     afterEvaluate {
         classDirectories = files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['**/com/cryptax/config/**', '**/com/cryptax/di/**', '**/entity/**', '**/model/**', '**/app/Main**'])
+            fileTree(dir: it, exclude: [
+                '**/com/cryptax/app/config/**',
+                '**/com/cryptax/config/**',
+                '**/entity/**',
+                '**/model/**',
+                '**/cryptax/app/Application**'])
         })
     }
 }

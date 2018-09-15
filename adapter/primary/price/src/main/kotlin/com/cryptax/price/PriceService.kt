@@ -13,10 +13,6 @@ class PriceService(
     private val cache: CacheService,
     private val api: CryptoApi = CryptoCompare(client, objectMapper)) : com.cryptax.domain.port.PriceService {
 
-    companion object {
-        private const val cacheName = "cache.currency"
-    }
-
     override fun currencyUsdValueAt(currency: Currency, date: ZonedDateTime): Pair<String, Double> {
         var value = cache.get(cacheName, currency, date)
         if (value == null) {
@@ -24,5 +20,9 @@ class PriceService(
             cache.put(cacheName, currency, date, value)
         }
         return value
+    }
+
+    companion object {
+        private const val cacheName = "cache.currency"
     }
 }

@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory
 
 class InMemoryResetPasswordRepository : ResetPasswordRepository {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(InMemoryUserRepository::class.java)
-    }
-
     private val inMemoryDb = HashMap<String, ResetPassword>()
 
     override fun save(resetPassword: ResetPassword): Single<ResetPassword> {
@@ -44,5 +40,9 @@ class InMemoryResetPasswordRepository : ResetPasswordRepository {
 
     override fun ping(): Boolean {
         return true
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(InMemoryUserRepository::class.java)
     }
 }

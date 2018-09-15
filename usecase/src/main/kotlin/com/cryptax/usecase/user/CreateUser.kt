@@ -19,10 +19,6 @@ class CreateUser(
     private val idGenerator: IdGenerator,
     private val emailService: EmailService) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
-    }
-
     fun create(user: User): Single<Pair<User, String>> {
         log.info("Usecase, create a user $user")
         return validateCreateUser(user)
@@ -61,5 +57,9 @@ class CreateUser(
                     else -> Single.error(throwable)
                 }
             }
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CreateUser::class.java)
     }
 }

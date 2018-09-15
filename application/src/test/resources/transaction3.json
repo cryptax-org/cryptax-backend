@@ -1,0 +1,9 @@
+{
+    "source": "random source",
+    "date": "2011-12-03T10:15:30Z",
+    "type": "buy",
+    "price": -10.0,
+    "quantity": 2.0,
+    "currency1": "ETH",
+    "currency2": "BTC"
+}

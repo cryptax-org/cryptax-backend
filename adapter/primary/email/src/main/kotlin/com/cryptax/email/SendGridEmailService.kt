@@ -15,10 +15,6 @@ class SendGridEmailService(
     private val client: OkHttpClient,
     private val config: EmailProps) : EmailService {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(SendGridEmailService::class.java)
-    }
-
     override fun welcomeEmail(user: User, token: String) {
         if (config.enabled) {
             log.info("Send welcome email to ${user.email}")
@@ -59,5 +55,9 @@ class SendGridEmailService(
 
     private fun createJsonContent(to: String, subject: String, body: String): String {
         return "{\"to\":\"$to\",\"from\":\"${config.from}\",\"subject\":\"$subject\",\"body\":\"$body\"}"
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(SendGridEmailService::class.java)
     }
 }

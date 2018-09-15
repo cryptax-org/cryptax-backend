@@ -17,10 +17,6 @@ class AddTransaction(
     private val userRepository: UserRepository,
     private val idGenerator: IdGenerator) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(AddTransaction::class.java)
-    }
-
     fun add(transaction: Transaction): Single<Transaction> {
         log.info("Usecase, add a transaction $transaction")
         return validateAddTransaction(transaction)
@@ -69,5 +65,9 @@ class AddTransaction(
                     }
                     .flatMap { transactionToSave: List<Transaction> -> transactionRepository.add(transactionToSave) }
             }
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(AddTransaction::class.java)
     }
 }

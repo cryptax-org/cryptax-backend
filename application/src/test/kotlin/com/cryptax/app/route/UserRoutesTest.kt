@@ -60,13 +60,13 @@ class UserRoutesTest {
 
     @DisplayName("Create a user")
     @Test
-    fun testCreate() {
+    fun `create a user`() {
         createUser()
     }
 
     @DisplayName("Create a user, no body")
     @Test
-    fun testCreateWithEmptyBody() {
+    fun `create a user with empty body`() {
         // @formatter:off
         given().
             log().ifValidationFails().
@@ -82,6 +82,23 @@ class UserRoutesTest {
                                                         "Password can not be empty",
                                                         "Last name can not be empty",
                                                         "First name can not be empty"))
+        // @formatter:on
+    }
+
+    @DisplayName("Create a user, exists already")
+    @Test
+    fun `create a user, but it exists already`() {
+        createUser()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            body(user).
+            contentType(ContentType.JSON).
+        post("/users").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400)
         // @formatter:on
     }
 

@@ -9,6 +9,7 @@ import com.cryptax.app.route.Utils.initTransaction
 import com.cryptax.app.route.Utils.setupRestAssured
 import com.cryptax.app.route.Utils.transaction
 import com.cryptax.app.route.Utils.transaction2
+import com.cryptax.app.route.Utils.transaction3
 import com.cryptax.app.route.Utils.validateUser
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.db.InMemoryTransactionRepository
@@ -104,6 +105,27 @@ class TransactionRoutesTest {
             assertThat().body("quantity", equalTo(2.0f)).
             assertThat().body("currency1", equalTo(transaction.currency1.toString())).
             assertThat().body("currency2", equalTo(transaction.currency2.toString()))
+        // @formatter:on
+    }
+
+    @DisplayName("Add a transaction with negative price")
+    @Test
+    fun `add transaction with negative price`() {
+        val pair = createUser()
+        validateUser(pair)
+        val token = getToken()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            body(transaction3).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        post("/users/${pair.first.id}/transactions").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400).
+            assertThat().body("error", equalTo("Price can't be negative"))
         // @formatter:on
     }
 
@@ -334,6 +356,28 @@ class TransactionRoutesTest {
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
             assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
             assertThat().statusCode(200)
+        // @formatter:on
+    }
+
+    @DisplayName("Upload a csv without any csv")
+    @Test
+    fun `upload csv without any csv`() {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+
+        // @formatter:off
+        given().
+            header(Header("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")).
+            //multiPart("file", "{}").
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+            queryParam("source","coinbase").
+        post("/users/$userId/transactions/upload").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400).
+            assertThat().body("error", equalTo("Invalid request")).
+            assertThat().body("details[0]", equalTo("Csv file is mandatory"))
         // @formatter:on
     }
 }

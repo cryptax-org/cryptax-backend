@@ -9,10 +9,6 @@ import org.slf4j.LoggerFactory
 
 class InMemoryTransactionRepository : TransactionRepository {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(InMemoryTransactionRepository::class.java)
-    }
-
     private val inMemoryDb = HashMap<String, Transaction>()
 
     override fun add(transaction: Transaction): Single<Transaction> {
@@ -71,5 +67,9 @@ class InMemoryTransactionRepository : TransactionRepository {
 
     override fun ping(): Boolean {
         return true
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(InMemoryTransactionRepository::class.java)
     }
 }

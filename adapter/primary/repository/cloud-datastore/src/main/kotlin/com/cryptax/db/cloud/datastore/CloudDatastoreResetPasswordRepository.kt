@@ -16,12 +16,6 @@ import java.time.ZoneId
 
 class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswordRepository, CloudDatastore(datastore) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreResetPasswordRepository::class.java)
-        private val zoneId = ZoneId.of("UTC")
-        private val kind = ResetPassword::class.java.simpleName
-    }
-
     override fun save(resetPassword: ResetPassword): Single<ResetPassword> {
         return Single.create<ResetPassword> { emitter ->
             log.debug("Create ResetPassword $resetPassword")
@@ -77,5 +71,11 @@ class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswor
             userId = entity.key.name,
             token = entity.getString("token"),
             date = date.toInstant().atZone(zoneId))
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreResetPasswordRepository::class.java)
+        private val zoneId = ZoneId.of("UTC")
+        private val kind = ResetPassword::class.java.simpleName
     }
 }

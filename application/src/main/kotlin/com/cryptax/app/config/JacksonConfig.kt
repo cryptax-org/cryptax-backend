@@ -18,7 +18,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.time.ZoneId
-import java.util.*
+import java.util.TimeZone
 
 @Configuration
 class JacksonConfig {

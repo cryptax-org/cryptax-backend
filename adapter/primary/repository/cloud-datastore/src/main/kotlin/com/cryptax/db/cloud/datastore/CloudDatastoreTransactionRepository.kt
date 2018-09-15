@@ -20,12 +20,6 @@ import java.time.ZoneId
 
 class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRepository, CloudDatastore(datastore) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreTransactionRepository::class.java)
-        private val zoneId = ZoneId.of("UTC")
-        private val kind = Transaction::class.java.simpleName
-    }
-
     override fun add(transaction: Transaction): Single<Transaction> {
         return Single.create<Transaction> { emitter ->
             log.debug("Create a transaction $transaction")
@@ -130,5 +124,11 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             currency1 = Currency.findCurrency(entity.getString("currency1")),
             currency2 = Currency.findCurrency(entity.getString("currency2"))
         )
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreTransactionRepository::class.java)
+        private val zoneId = ZoneId.of("UTC")
+        private val kind = Transaction::class.java.simpleName
     }
 }

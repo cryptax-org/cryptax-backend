@@ -9,12 +9,10 @@ import org.springframework.web.reactive.function.server.ServerRequest
 class GlobalErrorAttributes : DefaultErrorAttributes(false) {
 
     var status = HttpStatus.BAD_REQUEST
-    var message = "please provide a name"
 
     override fun getErrorAttributes(request: ServerRequest, includeStackTrace: Boolean): Map<String, Any> {
         val map = super.getErrorAttributes(request, includeStackTrace)
-        map.put("status", status)
-        map.put("message", message)
+        map["status"] = status
         return map
     }
 }

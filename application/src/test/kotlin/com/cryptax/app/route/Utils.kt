@@ -19,15 +19,15 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Base64
 
 object Utils {
     private val objectMapper = JacksonConfig().objectMapper()
-    val user = objectMapper.readValue(Utils::class.java.getResourceAsStream("/user.json"), UserWeb::class.java)
+    val user: UserWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/user.json"), UserWeb::class.java)
     val credentials = JsonNodeFactory.instance.objectNode().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
     val transaction: TransactionWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/transaction.json"), TransactionWeb::class.java)
     val transaction2: TransactionWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/transaction2.json"), TransactionWeb::class.java)
-    val transactionsBinance = Utils::class.java.getResource("/binance-trade-history.csv").readText()
+    val transaction3: TransactionWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/transaction3.json"), TransactionWeb::class.java)
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
     fun setupRestAssured(port: Int) {

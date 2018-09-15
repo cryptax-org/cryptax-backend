@@ -22,10 +22,6 @@ import java.util.UUID
 @Component
 class JwtTokenProvider {
 
-    companion object {
-        val log: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
-    }
-
     @Value("\${spring.profiles.active}")
     lateinit var profile: String
 
@@ -108,5 +104,9 @@ class JwtTokenProvider {
             .setExpiration(validity)
             .signWith(signature, jwtProps.password(profile))
             .compact()
+    }
+
+    companion object {
+        val log: Logger = LoggerFactory.getLogger(JwtTokenProvider::class.java)
     }
 }

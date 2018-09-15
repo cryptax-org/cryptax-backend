@@ -23,10 +23,6 @@ class ResetUserPassword(
     private val userRepository: UserRepository,
     private val resetPasswordRepository: ResetPasswordRepository) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(ResetUserPassword::class.java)
-    }
-
     /**
      * First step during password reset. Get the user, create a token, save it in the DB, and send the email
      */
@@ -82,5 +78,9 @@ class ResetUserPassword(
                     else -> Single.error(throwable)
                 }
             }
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(ResetUserPassword::class.java)
     }
 }

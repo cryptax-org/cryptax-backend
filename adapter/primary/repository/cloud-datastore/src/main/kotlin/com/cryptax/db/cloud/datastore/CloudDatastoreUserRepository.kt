@@ -14,11 +14,6 @@ import org.slf4j.LoggerFactory
 
 class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, CloudDatastore(datastore) {
 
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreUserRepository::class.java)
-        private val kind = User::class.java.simpleName
-    }
-
     override fun create(user: User): Single<User> {
         return Single.create<User> { emitter ->
             log.debug("Create a user $user")
@@ -90,5 +85,10 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
             firstName = entity.getString("firstName"),
             allowed = entity.getBoolean("allowed")
         )
+    }
+
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(CloudDatastoreUserRepository::class.java)
+        private val kind = User::class.java.simpleName
     }
 }

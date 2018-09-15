@@ -8,10 +8,6 @@ import org.slf4j.LoggerFactory
 
 class DeleteTransaction(private val transactionRepository: TransactionRepository) {
 
-    companion object {
-        private val log = LoggerFactory.getLogger(DeleteTransaction::class.java)
-    }
-
     fun delete(id: String, userId: String): Single<Unit> {
         log.info("Usecase, delete a transaction $id")
         return transactionRepository
@@ -29,6 +25,9 @@ class DeleteTransaction(private val transactionRepository: TransactionRepository
                     else -> Single.error(throwable)
                 }
             }
+    }
 
+    companion object {
+        private val log = LoggerFactory.getLogger(DeleteTransaction::class.java)
     }
 }

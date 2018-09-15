@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory
 
 class FindTransaction(private val transactionRepository: TransactionRepository) {
 
-    companion object {
-        private val log = LoggerFactory.getLogger(FindTransaction::class.java)
-    }
-
     fun find(id: String, userId: String): Maybe<Transaction> {
         log.info("Usecase, find a transaction $id, for user $userId")
         return transactionRepository
@@ -37,5 +33,9 @@ class FindTransaction(private val transactionRepository: TransactionRepository) 
 
     fun findAllForUser(userId: String): Single<List<Transaction>> {
         return transactionRepository.getAllForUser(userId)
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(FindTransaction::class.java)
     }
 }
