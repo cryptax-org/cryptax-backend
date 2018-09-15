@@ -1,18 +1,9 @@
 package com.cryptax.app.config
 
-import com.cryptax.cache.CacheService
-import com.cryptax.cache.HazelcastService
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
-import com.cryptax.domain.port.EmailService
-import com.cryptax.domain.port.IdGenerator
-import com.cryptax.domain.port.PriceService
-import com.cryptax.domain.port.ResetPasswordRepository
-import com.cryptax.domain.port.SecurePassword
-import com.cryptax.domain.port.TransactionRepository
-import com.cryptax.domain.port.UserRepository
 import com.cryptax.usecase.report.GenerateReport
 import com.cryptax.usecase.transaction.AddTransaction
 import com.cryptax.usecase.transaction.DeleteTransaction
@@ -23,9 +14,6 @@ import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
 import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.hazelcast.core.HazelcastInstance
-import okhttp3.OkHttpClient
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -33,77 +21,8 @@ import org.springframework.context.annotation.Configuration
 class ControllerConfig {
 
     @Bean
-    fun createUser(userRepository: UserRepository, securePassword: SecurePassword, idGenerator: IdGenerator, emailService: EmailService): CreateUser {
-        return CreateUser(
-            repository = userRepository,
-            securePassword = securePassword,
-            idGenerator = idGenerator,
-            emailService = emailService)
-    }
-
-    @Bean
-    fun findUser(userRepository: UserRepository): FindUser {
-        return FindUser(userRepository)
-    }
-
-    @Bean
-    fun loginUser(userRepository: UserRepository, securePassword: SecurePassword): LoginUser {
-        return LoginUser(userRepository, securePassword)
-    }
-
-    @Bean
-    fun validateUser(userRepository: UserRepository, securePassword: SecurePassword): ValidateUser {
-        return ValidateUser(userRepository, securePassword)
-    }
-
-    @Bean
-    fun cacheService(hazelcastInstance: HazelcastInstance): CacheService {
-        return HazelcastService(hazelcastInstance)
-    }
-
-    @Bean
-    fun priceService(client: OkHttpClient, objectMapper: ObjectMapper, cache: CacheService): PriceService {
-        return com.cryptax.price.PriceService(client, objectMapper, cache)
-    }
-
-    @Bean
-    fun generateReport(userRepository: UserRepository, transactionRepository: TransactionRepository, priceService: PriceService): GenerateReport {
-        return GenerateReport(userRepository, transactionRepository, priceService)
-    }
-
-    @Bean
-    fun resetUserPassword(userRepository: UserRepository, resetPasswordRepository: ResetPasswordRepository, securePassword: SecurePassword, idGenerator: IdGenerator, emailService: EmailService): ResetUserPassword {
-        return ResetUserPassword(
-            idGenerator = idGenerator,
-            securePassword = securePassword,
-            emailService = emailService,
-            userRepository = userRepository,
-            resetPasswordRepository = resetPasswordRepository)
-    }
-
-    @Bean
     fun userController(createUser: CreateUser, findUser: FindUser, loginUser: LoginUser, validateUser: ValidateUser, resetUserPassword: ResetUserPassword): UserController {
         return UserController(createUser, findUser, loginUser, validateUser, resetUserPassword)
-    }
-
-    @Bean
-    fun addTransaction(transactionRepository: TransactionRepository, userRepository: UserRepository, idGenerator: IdGenerator): AddTransaction {
-        return AddTransaction(transactionRepository, userRepository, idGenerator)
-    }
-
-    @Bean
-    fun updateTransaction(transactionRepository: TransactionRepository): UpdateTransaction {
-        return UpdateTransaction(transactionRepository)
-    }
-
-    @Bean
-    fun findTransaction(transactionRepository: TransactionRepository): FindTransaction {
-        return FindTransaction(transactionRepository)
-    }
-
-    @Bean
-    fun deleteTransaction(transactionRepository: TransactionRepository): DeleteTransaction {
-        return DeleteTransaction(transactionRepository)
     }
 
     @Bean

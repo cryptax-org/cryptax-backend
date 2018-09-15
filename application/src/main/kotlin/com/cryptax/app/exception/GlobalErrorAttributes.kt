@@ -1,4 +1,4 @@
-package com.cryptax.app.jwt
+package com.cryptax.app.exception
 
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes
 import org.springframework.http.HttpStatus

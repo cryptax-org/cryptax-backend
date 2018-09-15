@@ -1,4 +1,4 @@
-package com.cryptax.app.jwt
+package com.cryptax.app.exception
 
 import org.springframework.boot.autoconfigure.web.ResourceProperties
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler

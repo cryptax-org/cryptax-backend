@@ -1,18 +1,16 @@
 package com.cryptax.app.config
 
-import com.codahale.metrics.health.HealthCheckRegistry
+import com.cryptax.cache.CacheService
+import com.cryptax.cache.HazelcastService
 import com.cryptax.config.AppProps
 import com.cryptax.domain.port.EmailService
 import com.cryptax.domain.port.IdGenerator
-import com.cryptax.domain.port.ResetPasswordRepository
+import com.cryptax.domain.port.PriceService
 import com.cryptax.domain.port.SecurePassword
-import com.cryptax.domain.port.TransactionRepository
-import com.cryptax.domain.port.UserRepository
 import com.cryptax.email.SendGridEmailService
-import com.cryptax.health.ResetPasswordRepositoryHealthCheck
-import com.cryptax.health.TransactionRepositoryHealthCheck
-import com.cryptax.health.UserRepositoryHealthCheck
 import com.cryptax.id.JugIdGenerator
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.hazelcast.core.HazelcastInstance
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,29 +47,12 @@ class AdapterConfig {
     }
 
     @Bean
-    fun userRepositoryHealthCheck(userRepository: UserRepository): UserRepositoryHealthCheck {
-        return UserRepositoryHealthCheck(userRepository)
+    fun cacheService(hazelcastInstance: HazelcastInstance): CacheService {
+        return HazelcastService(hazelcastInstance)
     }
 
     @Bean
-    fun transactionRepositoryHealthCheck(transactionRepository: TransactionRepository): TransactionRepositoryHealthCheck {
-        return TransactionRepositoryHealthCheck(transactionRepository)
-    }
-
-    @Bean
-    fun resetPasswordRepository(resetPasswordRepository: ResetPasswordRepository): ResetPasswordRepositoryHealthCheck {
-        return ResetPasswordRepositoryHealthCheck(resetPasswordRepository)
-    }
-
-    @Bean
-    fun healthCheckRegistry(
-        userRepositoryHealthCheck: UserRepositoryHealthCheck,
-        transactionRepositoryHealthCheck: TransactionRepositoryHealthCheck,
-        resetPasswordRepositoryCheck: ResetPasswordRepositoryHealthCheck): HealthCheckRegistry {
-        val healthCheckRegistry = HealthCheckRegistry()
-        healthCheckRegistry.register("userRepository", userRepositoryHealthCheck)
-        healthCheckRegistry.register("transactionRepository", transactionRepositoryHealthCheck)
-        healthCheckRegistry.register("resetPasswordRepository", resetPasswordRepositoryCheck)
-        return healthCheckRegistry
+    fun priceService(client: OkHttpClient, objectMapper: ObjectMapper, cache: CacheService): PriceService {
+        return com.cryptax.price.PriceService(client, objectMapper, cache)
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class HazelcastConfiguration {
+class HazelcastConfig {
 
     @Bean
     fun hazelCastConfig(): Config {
