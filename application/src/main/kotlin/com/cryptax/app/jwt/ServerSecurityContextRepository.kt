@@ -27,6 +27,6 @@ class SecurityContextRepository : ServerSecurityContextRepository {
     }
 
     override fun save(exchange: ServerWebExchange, context: SecurityContext): Mono<Void> {
-        TODO("not implemented")
+        return Mono.error(RuntimeException("not implemented"))
     }
 }

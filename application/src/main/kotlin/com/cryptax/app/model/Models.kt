@@ -2,19 +2,20 @@ package com.cryptax.app.model
 
 import javax.validation.constraints.NotEmpty
 
-data class GetTokenRequest(
+class GetTokenRequest() {
     @get:NotEmpty(message = "Email can not be empty")
-    val email: String,
+    var email: String? = null
     @get:NotEmpty(message = "Password can not be empty")
-    val password: CharArray
-)
+    var password: CharArray? = null
+}
 
 data class GetTokenResponse(val id: String, val token: String, val refreshToken: String)
 
-data class ResetPasswordRequest(
+class ResetPasswordRequest() {
     @get:NotEmpty(message = "Email can not be empty")
-    val email: String,
+    var email: String? = null
     @get:NotEmpty(message = "Password can not be empty")
-    val password: CharArray,
+    var password: CharArray? = null
     @get:NotEmpty(message = "Token can not be empty")
-    val token: String)
+    var token: String? = null
+}

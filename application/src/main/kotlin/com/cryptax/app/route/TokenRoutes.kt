@@ -20,7 +20,7 @@ class TokenRoutes @Autowired constructor(private val userController: UserControl
     @PostMapping("/token")
     fun obtainToken(@RequestBody @Validated getTokenRequest: GetTokenRequest): Single<GetTokenResponse> {
         return userController
-            .login(getTokenRequest.email, getTokenRequest.password)
+            .login(getTokenRequest.email!!, getTokenRequest.password!!)
             .subscribeOn(Schedulers.io())
             .flatMap { userWeb -> jwtTokenProvider.buildToken(userWeb.id) }
             .map { triple -> GetTokenResponse(id = triple.first, token = triple.second, refreshToken = triple.third) }
