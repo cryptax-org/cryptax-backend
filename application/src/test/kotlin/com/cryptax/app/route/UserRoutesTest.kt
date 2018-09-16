@@ -247,7 +247,7 @@ class UserRoutesTest {
 
     @DisplayName("Initiate reset password")
     @Test
-    fun testInitiatePasswordReset() {
+    fun `initiate reset password`() {
         // given
         val pair = createUser()
 
@@ -256,7 +256,7 @@ class UserRoutesTest {
 
     @DisplayName("Initiate reset password, user not found")
     @Test
-    fun testInitiatePasswordResetNotFound() {
+    fun `initiate reset password, user not found`() {
         // @formatter:off
         given().
             log().ifValidationFails().
@@ -269,7 +269,7 @@ class UserRoutesTest {
 
     @DisplayName("Reset password")
     @Test
-    fun testResetPassword() {
+    fun `reset password`() {
         val pair = createUser()
         val token = initiatePasswordReset(pair).getString("token")
 
@@ -287,9 +287,29 @@ class UserRoutesTest {
         // @formatter:on
     }
 
+    @DisplayName("Reset password, param error")
+    @Test
+    fun `reset password, param error`() {
+        // @formatter:off
+        given().
+            contentType(ContentType.JSON).
+            body("{}").
+            log().ifValidationFails().
+        put("/users/password").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400).
+            assertThat().body("error", equalTo("Invalid request")).
+            assertThat().body("details", hasItems(
+                                                        "Email can not be empty",
+                                                        "Password can not be empty",
+                                                        "Token can not be empty"))
+        // @formatter:on
+    }
+
     @DisplayName("Reset password, unknown user")
     @Test
-    fun testResetPasswordUserNotFound() {
+    fun `reset password, unknown user`() {
         val resetPassword = ResetPasswordRequest("email@email.com", "dwqdqd".toCharArray(), "token")
 
         // @formatter:off

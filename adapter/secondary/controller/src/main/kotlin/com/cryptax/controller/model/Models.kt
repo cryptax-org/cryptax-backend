@@ -11,16 +11,17 @@ import com.cryptax.domain.entity.User
 import java.time.ZonedDateTime
 import java.util.Arrays
 import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
 
 data class UserWeb(
     val id: String = "DEFAULT",
-    @get:NotEmpty(groups = [Create::class], message = "Email can not be empty")
+    @get:NotEmpty(groups = [Create::class], message = "{user.email}")
     val email: String = "",
-    @get:NotEmpty(groups = [Create::class], message = "Password can not be empty")
+    @get:NotEmpty(groups = [Create::class], message = "{user.password}")
     val password: CharArray? = null,
-    @get:NotEmpty(groups = [Create::class], message = "Last name can not be empty")
+    @get:NotEmpty(groups = [Create::class], message = "{user.lastname}")
     val lastName: String = "",
-    @get:NotEmpty(groups = [Create::class], message = "First name can not be empty")
+    @get:NotEmpty(groups = [Create::class], message = "{user.firstname}")
     val firstName: String = "") {
 
     fun toUser(): User {
@@ -67,28 +68,48 @@ data class UserWeb(
     }
 }
 
-data class TransactionWeb(
-    val id: String = "DEFAULT",
-    val source: String,
-    val date: ZonedDateTime,
-    val type: Transaction.Type,
-    val price: Double,
-    val quantity: Double,
-    val currency1: Currency,
-    val currency2: Currency
-) {
+class TransactionWeb() {
+
+    constructor(id: String?, source: String, date: ZonedDateTime, type: Transaction.Type, price: Double, quantity: Double, currency1: Currency, currency2: Currency) : this() {
+        if (id != null) {
+            this.id = id
+        }
+        this.source = source
+        this.date = date
+        this.type = type
+        this.price = price
+        this.quantity = quantity
+        this.currency1 = currency1
+        this.currency2 = currency2
+    }
+
+    var id: String = "DEFAULT"
+    @get:NotEmpty(message = "{transaction.source}")
+    var source: String? = null
+    @get:NotNull(message = "{transaction.date}")
+    var date: ZonedDateTime? = null
+    @get:NotNull(message = "{transaction.type}")
+    var type: Transaction.Type? = null
+    @get:NotNull(message = "{transaction.price}")
+    var price: Double? = null
+    @get:NotNull(message = "{transaction.quantity}")
+    var quantity: Double? = null
+    @get:NotNull(message = "{transaction.currency1}")
+    var currency1: Currency? = null
+    @get:NotNull(message = "{transaction.currency2}")
+    var currency2: Currency? = null
 
     fun toTransaction(userId: String): Transaction {
         return Transaction(
             id = id,
             userId = userId,
-            source = source,
-            date = date,
-            type = type,
-            price = price,
-            quantity = quantity,
-            currency1 = currency1,
-            currency2 = currency2
+            source = source!!,
+            date = date!!,
+            type = type!!,
+            price = price!!,
+            quantity = quantity!!,
+            currency1 = currency1!!,
+            currency2 = currency2!!
         )
     }
 
@@ -96,13 +117,13 @@ data class TransactionWeb(
         return Transaction(
             id = transactionId,
             userId = userId,
-            source = source,
-            date = date,
-            type = type,
-            price = price,
-            quantity = quantity,
-            currency1 = currency1,
-            currency2 = currency2
+            source = source!!,
+            date = date!!,
+            type = type!!,
+            price = price!!,
+            quantity = quantity!!,
+            currency1 = currency1!!,
+            currency2 = currency2!!
         )
     }
 

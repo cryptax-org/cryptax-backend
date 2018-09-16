@@ -13,6 +13,9 @@ import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import org.assertj.core.api.Assertions.assertThat
+import org.hamcrest.CoreMatchers
+import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -58,9 +61,9 @@ class TokenRoutesTest {
         memory.deleteAll()
     }
 
-    @DisplayName("Obtain token")
+    @DisplayName("Request a token")
     @Test
-    fun testObtainToken() {
+    fun `request a token`() {
         // given
         val pair = createUser()
         validateUser(pair)
@@ -77,9 +80,27 @@ class TokenRoutesTest {
         validateToken(actualRefreshToken, pair.first.id, true)
     }
 
+    @DisplayName("Request a token, validation test")
+    @Test
+    fun `request a token, validation test`() {
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            body("{}").
+            contentType(ContentType.JSON).
+        post("/token").
+        then().
+            log().ifValidationFails().
+            assertThat().body("error", equalTo("Invalid request")).
+            assertThat().body("details", hasItems(
+                                                        "Email can not be empty",
+                                                        "Password can not be empty"))
+        // @formatter:on
+    }
+
     @DisplayName("Obtain token, wrong credentials")
     @Test
-    fun testObtainTokenWrongCredentials() {
+    fun `request a token with wrong credentials`() {
         val pair = createUser()
         validateUser(pair)
         val credentials = JsonNodeFactory.instance.objectNode().put("email", pair.first.email).put("password", "mywrongpassword").toString()

@@ -43,6 +43,7 @@ class TransactionControllerTest {
         currency1 = Currency.BTC,
         currency2 = Currency.ETH)
     private val transactionWeb = TransactionWeb(
+        id = null,
         source = Source.MANUAL.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,

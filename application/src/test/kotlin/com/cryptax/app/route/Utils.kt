@@ -129,7 +129,7 @@ object Utils {
                     assertThat().statusCode(200).
                     assertThat().body("id", notNullValue()).
                     assertThat().body("userId", nullValue()).
-                    assertThat().body("date", equalTo(transaction.date.format(formatter))).
+                    assertThat().body("date", equalTo(transaction.date!!.format(formatter))).
                     assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
                     assertThat().body("price", equalTo(10.0f)).
                     assertThat().body("quantity", equalTo(2.0f)).

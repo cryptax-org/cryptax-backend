@@ -20,6 +20,7 @@ import com.cryptax.domain.entity.Transaction
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
+import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
@@ -58,31 +59,31 @@ class TransactionRoutesTest {
     lateinit var transactionRepository: InMemoryTransactionRepository
 
     @BeforeAll
-    internal fun beforeAll() {
+    internal fun `before all`() {
         setupRestAssured(randomServerPort.toInt())
     }
 
     @AfterAll
-    internal fun afterAll() {
+    internal fun `after all`() {
         userRepository.deleteAll()
         transactionRepository.deleteAll()
     }
 
     @BeforeEach
-    fun setUp() {
+    fun `before each`() {
         userRepository.deleteAll()
         transactionRepository.deleteAll()
     }
 
     @DisplayName("Add a transaction")
     @Test
-    fun addTransaction() {
+    fun `add a transaction`() {
         initTransaction()
     }
 
     @DisplayName("Add a transaction with custom source")
     @Test
-    fun addTransactionWithCustomSource() {
+    fun `add a transaction with a custom source`() {
         val pair = createUser()
         validateUser(pair)
         val token = getToken()
@@ -99,12 +100,42 @@ class TransactionRoutesTest {
             assertThat().statusCode(200).
             assertThat().body("id", notNullValue()).
             assertThat().body("userId", nullValue()).
-            assertThat().body("date", equalTo(transaction.date.format(formatter))).
-            assertThat().body("type", equalTo(transaction.type.name.toLowerCase())).
+            assertThat().body("date", equalTo(transaction.date!!.format(formatter))).
+            assertThat().body("type", equalTo(transaction.type!!.name.toLowerCase())).
             assertThat().body("price", equalTo(10.0f)).
             assertThat().body("quantity", equalTo(2.0f)).
             assertThat().body("currency1", equalTo(transaction.currency1.toString())).
             assertThat().body("currency2", equalTo(transaction.currency2.toString()))
+        // @formatter:on
+    }
+
+    @DisplayName("Add a transaction, test validation")
+    @Test
+    fun `add a transaction, test validation`() {
+        val pair = createUser()
+        validateUser(pair)
+        val token = getToken()
+        val transaction = TransactionWeb()
+
+        // @formatter:off
+        given().
+            log().ifValidationFails().
+            body(transaction).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        post("/users/${pair.first.id}/transactions").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(400).
+            assertThat().body("error", equalTo("Invalid request")).
+            assertThat().body("details", CoreMatchers.hasItems(
+                                                        "Source can not be empty",
+                                                        "Date can not be null",
+                                                        "Type can not be null",
+                                                        "Price can not be null",
+                                                        "Quantity can not be null",
+                                                        "Currency1 can not be null",
+                                                        "Currency2 can not be null"))
         // @formatter:on
     }
 
@@ -147,7 +178,7 @@ class TransactionRoutesTest {
             assertThat().statusCode(200).
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].userId", nullValue()).
-            assertThat().body("[0].date", equalTo(transaction.date.format(formatter))).
+            assertThat().body("[0].date", equalTo(transaction.date!!.format(formatter))).
             assertThat().body("[0].type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("[0].price", equalTo(10.0f)).
             assertThat().body("[0].quantity", equalTo(2.0f)).
@@ -175,7 +206,7 @@ class TransactionRoutesTest {
             assertThat().statusCode(200).
             assertThat().body("id", notNullValue()).
             assertThat().body("userId", nullValue()).
-            assertThat().body("date", equalTo(transaction.date.format(formatter))).
+            assertThat().body("date", equalTo(transaction.date!!.format(formatter))).
             assertThat().body("type", equalTo(transaction.type.toString().toLowerCase())).
             assertThat().body("price", equalTo(10.0f)).
             assertThat().body("quantity", equalTo(2.0f)).
@@ -212,6 +243,7 @@ class TransactionRoutesTest {
 
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
+            id = null,
             source = Source.MANUAL.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.SELL,
