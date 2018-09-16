@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Djasypt.encryptor.password=$JASYPT_PASSWORD -jar cryptax-backend.jar
+java -Djasypt.encryptor.password=$JASYPT_PASSWORD -Dspring.profiles.active=$PROFILE -jar cryptax-backend.jar
