@@ -56,6 +56,6 @@ class UserRoutes @Autowired constructor(private val userController: UserControll
 
     @PutMapping("/password")
     fun resetPassword(@RequestBody @Validated body: ResetPasswordRequest): Single<Unit> {
-        return userController.resetPassword(body.email, body.password, body.token)
+        return userController.resetPassword(body.email!!, body.password!!, body.token!!)
     }
 }
