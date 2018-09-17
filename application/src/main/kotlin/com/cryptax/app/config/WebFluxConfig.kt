@@ -15,7 +15,7 @@ class WebFluxConfig : WebFluxConfigurer {
     override fun addCorsMappings(registry: CorsRegistry) {
         registry.addMapping("/**")
             .allowedOrigins(appProps.server.allowOrigin)
-            .allowedMethods("GET, POST", "PUT", "DELETE")
+            .allowedMethods("GET, POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("Accept", "Content-Type", "Authorization")
     }
 }
