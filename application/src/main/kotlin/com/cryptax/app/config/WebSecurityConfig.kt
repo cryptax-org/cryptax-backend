@@ -22,6 +22,7 @@ class WebSecurityConfig {
             .csrf().disable()
             .securityContextRepository(securityContextRepository)
             .authorizeExchange()
+            .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
             .pathMatchers(HttpMethod.GET, "/").permitAll()
             .pathMatchers(HttpMethod.POST, "/users").permitAll()
             .pathMatchers(HttpMethod.GET, "/users/email/*").permitAll()
@@ -41,5 +42,3 @@ class WebSecurityConfig {
             .build()
     }
 }
-
-
