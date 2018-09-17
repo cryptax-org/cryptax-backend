@@ -23,6 +23,7 @@ class BinanceParser(delimiter: Char = ',') : Parser(
             .withCSVParser(CSVParserBuilder().withSeparator(delimiter).build())
             .build()
             .readAll()
+            .asSequence()
             .map { line ->
                 BinanceTransaction(
                     date = LocalDateTime.parse(line[0], pattern).atZone(utc),
@@ -35,6 +36,7 @@ class BinanceParser(delimiter: Char = ',') : Parser(
                     feeCoin = Currency.findCurrency(line[7]))
             }
             .map { it.toTransaction(userId) }
+            .toList()
     }
 }
 

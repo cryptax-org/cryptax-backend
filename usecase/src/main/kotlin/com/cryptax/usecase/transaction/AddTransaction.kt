@@ -49,21 +49,21 @@ class AddTransaction(
                     .map { isEmpty ->
                         when (isEmpty) {
                             true -> throw UserNotFoundException(transactions[0].userId)
-                            else -> transactions.map {
+                            else -> transactions.map { transaction ->
                                 Transaction(
                                     id = idGenerator.generate(),
-                                    userId = it.userId,
-                                    source = it.source,
-                                    date = it.date,
-                                    type = it.type,
-                                    price = it.price,
-                                    quantity = it.quantity,
-                                    currency1 = it.currency1,
-                                    currency2 = it.currency2)
+                                    userId = transaction.userId,
+                                    source = transaction.source,
+                                    date = transaction.date,
+                                    type = transaction.type,
+                                    price = transaction.price,
+                                    quantity = transaction.quantity,
+                                    currency1 = transaction.currency1,
+                                    currency2 = transaction.currency2)
                             }
                         }
                     }
-                    .flatMap { transactionToSave: List<Transaction> -> transactionRepository.add(transactionToSave) }
+                    .flatMap { transaction -> transactionRepository.add(transaction) }
             }
     }
 

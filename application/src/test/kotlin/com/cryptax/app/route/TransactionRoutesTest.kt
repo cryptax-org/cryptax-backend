@@ -6,6 +6,7 @@ import com.cryptax.app.route.Utils.createUser
 import com.cryptax.app.route.Utils.formatter
 import com.cryptax.app.route.Utils.getToken
 import com.cryptax.app.route.Utils.initTransaction
+import com.cryptax.app.route.Utils.objectMapper
 import com.cryptax.app.route.Utils.setupRestAssured
 import com.cryptax.app.route.Utils.transaction
 import com.cryptax.app.route.Utils.transaction2
@@ -79,6 +80,45 @@ class TransactionRoutesTest {
     @Test
     fun `add a transaction`() {
         initTransaction()
+    }
+
+    @Test
+    @DisplayName("Add multiple transactions")
+    fun `add multiple transactions`() {
+        val result = initTransaction()
+        val userId = result.first
+        val token = result.second
+        val transactions: List<TransactionWeb> = objectMapper.readValue(
+            Utils::class.java.getResourceAsStream("/transactions.json"),
+            objectMapper.typeFactory.constructCollectionType(List::class.java, TransactionWeb::class.java)
+        )
+
+        // @formatter:off
+        given().
+            body(transactions).
+            contentType(ContentType.JSON).
+            header(Header("Authorization", "Bearer ${token.getString("token")}")).
+        post("/users/$userId/transactions/bulk").
+        then().
+            log().ifValidationFails().
+            assertThat().statusCode(200).
+            assertThat().body("[0].id", notNullValue()).
+            assertThat().body("[0].source", equalTo("manual")).
+            assertThat().body("[0].date", equalTo("2011-12-03T10:15:30Z")).
+            assertThat().body("[0].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
+            assertThat().body("[0].price", equalTo(10.0f)).
+            assertThat().body("[0].quantity", equalTo(2.0f)).
+            assertThat().body("[0].currency1", equalTo(Currency.ETH.code)).
+            assertThat().body("[0].currency2", equalTo(Currency.BTC.code)).
+            assertThat().body("[1].id", notNullValue()).
+            assertThat().body("[1].source", equalTo("random source")).
+            assertThat().body("[1].date", equalTo("2011-12-03T10:15:30Z")).
+            assertThat().body("[1].type", equalTo(Transaction.Type.BUY.toString().toLowerCase())).
+            assertThat().body("[1].price", equalTo(1000.0f)).
+            assertThat().body("[1].quantity", equalTo(5.0f)).
+            assertThat().body("[1].currency1", equalTo(Currency.BTC.code)).
+            assertThat().body("[1].currency2", equalTo(Currency.ETH.code))
+        // @formatter:on
     }
 
     @DisplayName("Add a transaction with custom source")
@@ -162,7 +202,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Get all transactions for a user")
     @Test
-    fun getAllTransactions() {
+    fun `get all transactions`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -189,7 +229,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Get one transaction for a user")
     @Test
-    fun getOneTransaction() {
+    fun `get one transaction`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -217,7 +257,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Get one transaction not found for a user")
     @Test
-    fun getOneTransactionNotFound() {
+    fun `get transaction, not found`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -236,7 +276,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Update one transaction for a user")
     @Test
-    fun updateOneTransaction() {
+    fun `update one transaction`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -274,7 +314,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Delete one transaction for a user")
     @Test
-    fun deleteOneTransaction() {
+    fun `delete one transaction`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -294,7 +334,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Delete one transaction not found for a user")
     @Test
-    fun deleteOneTransactionNotFound() {
+    fun `delete one transaction, not found`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -312,7 +352,7 @@ class TransactionRoutesTest {
 
     @Test
     @DisplayName("Upload a Binance CSV")
-    fun uploadBinanceCsv() {
+    fun `upload binance csv`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -339,7 +379,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Upload a Coinbase CSV")
     @Test
-    fun uploadCoinbaseCsv() {
+    fun `upload coinbase csv`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second
@@ -366,7 +406,7 @@ class TransactionRoutesTest {
 
     @DisplayName("Upload a Coinbase CSV 2")
     @Test
-    fun uploadCoinbaseCsv2() {
+    fun `upload coinbase csv 2`() {
         val result = initTransaction()
         val userId = result.first
         val token = result.second

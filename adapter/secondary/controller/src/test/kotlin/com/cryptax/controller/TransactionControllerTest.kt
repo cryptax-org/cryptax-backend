@@ -66,7 +66,7 @@ class TransactionControllerTest {
     lateinit var transactionController: TransactionController
 
     @Test
-    fun testAddTransaction() {
+    fun `add a transaction`() {
         // given
         given(addTransaction.add(any())).willReturn(Single.just(transactionReturn))
 
@@ -74,14 +74,14 @@ class TransactionControllerTest {
         val actual = transactionController.addTransaction(userId, transactionWeb).blockingGet()
 
         // then
-        assertThat(transactionId).isEqualTo(actual.id)
-        assertThat(transactionReturn.source).isEqualTo(actual.source)
-        assertThat(transactionReturn.date).isEqualTo(actual.date)
-        assertThat(transactionReturn.type).isEqualTo(actual.type)
-        assertThat(transactionReturn.price).isEqualTo(actual.price)
-        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
-        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
-        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
+        assertThat(actual.id).isEqualTo(transactionId)
+        assertThat(actual.source).isEqualTo(transactionReturn.source)
+        assertThat(actual.date).isEqualTo(transactionReturn.date)
+        assertThat(actual.type).isEqualTo(transactionReturn.type)
+        assertThat(actual.price).isEqualTo(transactionReturn.price)
+        assertThat(actual.quantity).isEqualTo(transactionReturn.quantity)
+        assertThat(actual.currency1).isEqualTo(transactionReturn.currency1)
+        assertThat(actual.currency2).isEqualTo(transactionReturn.currency2)
         argumentCaptor<Transaction>().apply {
             then(addTransaction).should().add(capture())
             assertThat(userId).isEqualTo(firstValue.userId)
@@ -89,7 +89,59 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun testUpdateTransaction() {
+    fun `add multiple transactions`() {
+        // given
+        val transactionWeb2 = TransactionWeb(
+            id = null,
+            source = Source.MANUAL.name.toLowerCase(),
+            date = now,
+            type = Transaction.Type.BUY,
+            price = 10.0,
+            quantity = 5.0,
+            currency1 = Currency.BTC,
+            currency2 = Currency.ETH)
+        val transactionReturn2 = Transaction(
+            id = "transactionid2",
+            userId = userId,
+            source = Source.MANUAL.name.toLowerCase(),
+            date = now,
+            type = Transaction.Type.BUY,
+            price = 10.0,
+            quantity = 5.0,
+            currency1 = Currency.BTC,
+            currency2 = Currency.ETH)
+        given(addTransaction.addMultiple(any())).willReturn(Single.just(listOf(transactionReturn, transactionReturn2)))
+
+        // when
+        val actual = transactionController.addMultipleTransactions(userId, listOf(transactionWeb, transactionWeb2)).blockingGet()
+
+        // then
+        assertThat(actual).hasSize(2)
+        assertThat(actual[0].id).isEqualTo(transactionId)
+        assertThat(actual[0].source).isEqualTo(transactionReturn.source)
+        assertThat(actual[0].date).isEqualTo(transactionReturn.date)
+        assertThat(actual[0].type).isEqualTo(transactionReturn.type)
+        assertThat(actual[0].price).isEqualTo(transactionReturn.price)
+        assertThat(actual[0].quantity).isEqualTo(transactionReturn.quantity)
+        assertThat(actual[0].currency1).isEqualTo(transactionReturn.currency1)
+        assertThat(actual[0].currency2).isEqualTo(transactionReturn.currency2)
+        assertThat(actual[1].id).isEqualTo(transactionReturn2.id)
+        assertThat(actual[1].source).isEqualTo(transactionReturn2.source)
+        assertThat(actual[1].date).isEqualTo(transactionReturn2.date)
+        assertThat(actual[1].type).isEqualTo(transactionReturn2.type)
+        assertThat(actual[1].price).isEqualTo(transactionReturn2.price)
+        assertThat(actual[1].quantity).isEqualTo(transactionReturn2.quantity)
+        assertThat(actual[1].currency1).isEqualTo(transactionReturn2.currency1)
+        assertThat(actual[1].currency2).isEqualTo(transactionReturn2.currency2)
+        argumentCaptor<List<Transaction>>().apply {
+            then(addTransaction).should().addMultiple(capture())
+            assertThat(userId).isEqualTo(firstValue[0].userId)
+            assertThat(userId).isEqualTo(firstValue[1].userId)
+        }
+    }
+
+    @Test
+    fun `update a transaction`() {
         // given
         val transactionId = "randomId"
         val userId = "userId"
@@ -99,14 +151,14 @@ class TransactionControllerTest {
         val actual = transactionController.updateTransaction(transactionId, userId, transactionWeb).blockingGet()
 
         // then
-        assertThat(transactionId).isEqualTo(actual.id)
-        assertThat(transactionReturn.source).isEqualTo(actual.source)
-        assertThat(transactionReturn.date).isEqualTo(actual.date)
-        assertThat(transactionReturn.type).isEqualTo(actual.type)
-        assertThat(transactionReturn.price).isEqualTo(actual.price)
-        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
-        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
-        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
+        assertThat(actual.id).isEqualTo(transactionId)
+        assertThat(actual.source).isEqualTo(transactionReturn.source)
+        assertThat(actual.date).isEqualTo(transactionReturn.date)
+        assertThat(actual.type).isEqualTo(transactionReturn.type)
+        assertThat(actual.price).isEqualTo(transactionReturn.price)
+        assertThat(actual.quantity).isEqualTo(transactionReturn.quantity)
+        assertThat(actual.currency1).isEqualTo(transactionReturn.currency1)
+        assertThat(actual.currency2).isEqualTo(transactionReturn.currency2)
         argumentCaptor<Transaction>().apply {
             then(updateTransaction).should().update(capture())
             assertThat(userId).isEqualTo(firstValue.userId)
@@ -115,7 +167,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun testGetTransaction() {
+    fun `get a transaction`() {
         // given
         val transactionId = "randomId"
         val userId = "userId"
@@ -126,19 +178,19 @@ class TransactionControllerTest {
 
         // then
         assertThat(actual).isNotNull
-        assertThat(transactionId).isEqualTo(actual!!.id)
-        assertThat(transactionReturn.source).isEqualTo(actual.source)
-        assertThat(transactionReturn.date).isEqualTo(actual.date)
-        assertThat(transactionReturn.type).isEqualTo(actual.type)
-        assertThat(transactionReturn.price).isEqualTo(actual.price)
-        assertThat(transactionReturn.quantity).isEqualTo(actual.quantity)
-        assertThat(transactionReturn.currency1).isEqualTo(actual.currency1)
-        assertThat(transactionReturn.currency2).isEqualTo(actual.currency2)
+        assertThat(actual!!.id).isEqualTo(transactionId)
+        assertThat(actual.source).isEqualTo(transactionReturn.source)
+        assertThat(actual.date).isEqualTo(transactionReturn.date)
+        assertThat(actual.type).isEqualTo(transactionReturn.type)
+        assertThat(actual.price).isEqualTo(transactionReturn.price)
+        assertThat(actual.quantity).isEqualTo(transactionReturn.quantity)
+        assertThat(actual.currency1).isEqualTo(transactionReturn.currency1)
+        assertThat(actual.currency2).isEqualTo(transactionReturn.currency2)
         then(findTransaction).should().find(transactionId, userId)
     }
 
     @Test
-    fun testGetTransactionNotFound() {
+    fun `get a transaction, not found`() {
         // given
         val transactionId = "randomId"
         val userId = "userId"
@@ -153,7 +205,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun testGetAllTransactions() {
+    fun `get all transactions`() {
         // given
         val userId = "userId"
         given(findTransaction.findAllForUser(userId)).willReturn(Single.just(listOf(transactionReturn)))
@@ -163,19 +215,19 @@ class TransactionControllerTest {
 
         // then
         assertThat(actual).hasSize(1)
-        assertThat(transactionId).isEqualTo(actual[0].id)
-        assertThat(transactionReturn.source).isEqualTo(actual[0].source)
-        assertThat(transactionReturn.date).isEqualTo(actual[0].date)
-        assertThat(transactionReturn.type).isEqualTo(actual[0].type)
-        assertThat(transactionReturn.price).isEqualTo(actual[0].price)
-        assertThat(transactionReturn.quantity).isEqualTo(actual[0].quantity)
-        assertThat(transactionReturn.currency1).isEqualTo(actual[0].currency1)
-        assertThat(transactionReturn.currency2).isEqualTo(actual[0].currency2)
+        assertThat(actual[0].id).isEqualTo(transactionId)
+        assertThat(actual[0].source).isEqualTo(transactionReturn.source)
+        assertThat(actual[0].date).isEqualTo(transactionReturn.date)
+        assertThat(actual[0].type).isEqualTo(transactionReturn.type)
+        assertThat(actual[0].price).isEqualTo(transactionReturn.price)
+        assertThat(actual[0].quantity).isEqualTo(transactionReturn.quantity)
+        assertThat(actual[0].currency1).isEqualTo(transactionReturn.currency1)
+        assertThat(actual[0].currency2).isEqualTo(transactionReturn.currency2)
         then(findTransaction).should().findAllForUser(userId)
     }
 
     @Test
-    fun testUploadCSVTransactions() {
+    fun `upload csv`() {
         // when
         val actual = assertThrows<RuntimeException> {
             transactionController.uploadCSVTransactions(inputStream, "", Source.MANUAL)
@@ -187,7 +239,7 @@ class TransactionControllerTest {
     }
 
     @Test
-    fun testDeleteTransaction() {
+    fun `delete a transaction`() {
         // given
         val transactionId = "randomId"
         val userId = "userId"

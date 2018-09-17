@@ -34,6 +34,13 @@ class TransactionRoutes @Autowired constructor(private val transactionController
         return verifyUserId(userId).flatMap { transactionController.addTransaction(userId, transactionWeb).toMono() }
     }
 
+    @PostMapping("/users/{userId}/transactions/bulk")
+    fun addMultipleTransactions(
+        @RequestBody @Validated transactions: List<TransactionWeb>,
+        @PathVariable userId: String): Mono<List<TransactionWeb>> {
+        return verifyUserId(userId).flatMap { transactionController.addMultipleTransactions(userId, transactions).toMono() }
+    }
+
     @GetMapping("/users/{userId}/transactions")
     fun getAllTransactions(@PathVariable userId: String): Mono<List<TransactionWeb>> {
         return verifyUserId(userId).flatMap { transactionController.getAllTransactions(userId).toMono() }

@@ -15,6 +15,7 @@ class CoinbaseParser(delimiter: Char = ',') : Parser(
     pattern = DateTimeFormatter.ofPattern("MM/dd/yyyy"),
     source = Source.COINBASE,
     delimiter = delimiter) {
+
     override fun parse(inputStream: InputStream, userId: String): List<Transaction> {
         return CSVReaderBuilder(InputStreamReader(inputStream))
             .withSkipLines(4)
@@ -22,10 +23,10 @@ class CoinbaseParser(delimiter: Char = ',') : Parser(
             .withCSVParser(CSVParserBuilder().withSeparator(delimiter).build())
             .build()
             .readAll()
+            .asSequence()
             .map { line ->
-                val test = LocalDate.parse(line[0], pattern).atStartOfDay().atZone(utc)
                 CoinbaseTransaction(
-                    date = test,
+                    date = LocalDate.parse(line[0], pattern).atStartOfDay().atZone(utc),
                     transactionType = line[1],
                     asset = Currency.findCurrency(line[2]),
                     quantity = line[3].toDouble(),
@@ -34,5 +35,6 @@ class CoinbaseParser(delimiter: Char = ',') : Parser(
             }
             .filter { coinbaseTransaction -> "buy" == coinbaseTransaction.transactionType.toLowerCase() || "sell" == coinbaseTransaction.transactionType.toLowerCase() }
             .map { it.toTransaction(userId) }
+            .toList()
     }
 }

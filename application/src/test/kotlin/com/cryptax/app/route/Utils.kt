@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Base64
 
 object Utils {
-    private val objectMapper = JacksonConfig().objectMapper()
+    val objectMapper = JacksonConfig().objectMapper()
     val user: UserWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/user.json"), UserWeb::class.java)
     val credentials = JsonNodeFactory.instance.objectNode().put("email", user.email).put("password", user.password!!.joinToString("")).toString()
     val transaction: TransactionWeb = objectMapper.readValue(Utils::class.java.getResourceAsStream("/transaction.json"), TransactionWeb::class.java)

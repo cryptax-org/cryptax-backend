@@ -24,6 +24,12 @@ class TransactionController(
             .map { transaction -> TransactionWeb.toTransactionWeb(transaction) }
     }
 
+    fun addMultipleTransactions(userId: String, transactionsWeb: List<TransactionWeb>): Single<List<TransactionWeb>> {
+        return addTransaction
+            .addMultiple(transactionsWeb.map { transactionWeb -> transactionWeb.toTransaction(userId) })
+            .map { transactions -> transactions.map { transaction -> TransactionWeb.toTransactionWeb(transaction) } }
+    }
+
     fun updateTransaction(id: String, userId: String, transactionWeb: TransactionWeb): Single<TransactionWeb> {
         return updateTransaction
             .update(transactionWeb.toTransaction(transactionId = id, userId = userId))
