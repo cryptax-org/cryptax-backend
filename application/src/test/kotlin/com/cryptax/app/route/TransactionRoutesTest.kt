@@ -362,9 +362,10 @@ class TransactionRoutesTest {
             multiPart(File(Utils::class.java.getResource("/binance-trade-history.csv").toURI())).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","binance").
+            log().all().
         post("/users/$userId/transactions/upload").
         then().
-            log().ifValidationFails().
+            log().all().
             assertThat().statusCode(200).
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.BINANCE.toString().toLowerCase())).
