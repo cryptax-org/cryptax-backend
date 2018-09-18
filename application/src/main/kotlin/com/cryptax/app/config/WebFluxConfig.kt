@@ -4,6 +4,7 @@ import com.cryptax.config.AppProps
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.web.cors.reactive.CorsUtils
@@ -27,8 +28,10 @@ class WebFluxConfig {
                 val headers = response.headers
                 if (appProps.server.allowOrigin == "*") {
                     headers.add("Access-Control-Allow-Origin", "*")
-                } else if (request.uri.host.contains(appProps.server.allowOrigin)) {
-                    headers.add("Access-Control-Allow-Origin", request.uri.host)
+                } else {
+                    request.headers[HttpHeaders.ORIGIN]!!
+                        .find { origin -> origin.contains(appProps.server.allowOrigin) }
+                        .apply { headers.add("Access-Control-Allow-Origin", this!!) }
                 }
                 headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS)
                 headers.add("Access-Control-Max-Age", MAX_AGE)
