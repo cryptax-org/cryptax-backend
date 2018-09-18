@@ -357,9 +357,12 @@ class TransactionRoutesTest {
         val userId = result.first
         val token = result.second
 
+        val file = Utils::class.java.getResource("/binance-trade-history.csv").toURI()
+        println("File from resources: $file - file exists? " + File(file).exists())
+
         // @formatter:off
         given().
-            multiPart(File(Utils::class.java.getResource("/binance-trade-history.csv").toURI())).
+            multiPart(File(file)).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","binance").
             log().all().
