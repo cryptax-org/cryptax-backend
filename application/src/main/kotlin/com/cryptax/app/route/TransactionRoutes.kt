@@ -75,7 +75,7 @@ class TransactionRoutes @Autowired constructor(private val transactionController
         @RequestParam(value = "source", required = true) source: String,
         @RequestParam(value = "delimiter", required = false, defaultValue = ",") delimiter: Char): Mono<List<TransactionWeb>> {
         return verifyUserId(userId)
-            .flatMap { file.timeout(Duration.ofMillis(50), Mono.error(ParamException())) }
+            .flatMap { file.timeout(Duration.ofMillis(100), Mono.error(ParamException())) }
             .flatMap { filePart ->
                 filePart
                     .content()
