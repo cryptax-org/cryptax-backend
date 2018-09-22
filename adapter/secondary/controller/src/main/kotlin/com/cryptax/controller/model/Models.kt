@@ -197,3 +197,10 @@ data class LineWeb(
 }
 
 data class ResetPasswordWeb(val token: String)
+
+data class CurrencyWeb(
+    val code: String,
+    val name: String,
+    val symbol: String,
+    val type: String
+)

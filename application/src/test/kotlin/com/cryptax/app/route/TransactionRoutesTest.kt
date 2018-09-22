@@ -23,6 +23,7 @@ import io.restassured.http.ContentType
 import io.restassured.http.Header
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.CoreMatchers.nullValue
 import org.junit.jupiter.api.AfterAll
@@ -168,7 +169,7 @@ class TransactionRoutesTest {
             log().ifValidationFails().
             assertThat().statusCode(400).
             assertThat().body("error", equalTo("Invalid request")).
-            assertThat().body("details", CoreMatchers.hasItems(
+            assertThat().body("details", hasItems(
                                                         "Source can not be empty",
                                                         "Date can not be null",
                                                         "Type can not be null",
@@ -350,8 +351,8 @@ class TransactionRoutesTest {
         // @formatter:on
     }
 
-    @Test
     @DisplayName("Upload a Binance CSV")
+    @Test
     fun `upload binance csv`() {
         val result = initTransaction()
         val userId = result.first
@@ -362,10 +363,10 @@ class TransactionRoutesTest {
             multiPart(File(Utils::class.java.getResource("/binance-trade-history.csv").toURI())).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","binance").
-            log().all().
+            log().ifValidationFails().
         post("/users/$userId/transactions/upload").
         then().
-            log().all().
+            log().ifValidationFails().
             assertThat().statusCode(200).
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.BINANCE.toString().toLowerCase())).
@@ -393,6 +394,7 @@ class TransactionRoutesTest {
         post("/users/$userId/transactions/upload").
         then().
             log().ifValidationFails().
+            assertThat().statusCode(200).
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
             assertThat().body("[0].date", equalTo("2017-10-31T00:00:00Z")).
@@ -400,8 +402,7 @@ class TransactionRoutesTest {
             assertThat().body("[0].price", equalTo(6417.48f)).
             assertThat().body("[0].quantity", equalTo(0.18730723f)).
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
-            assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
-            assertThat().statusCode(200)
+            assertThat().body("[0].currency2", equalTo(Currency.USD.code))
         // @formatter:on
     }
 
@@ -420,6 +421,7 @@ class TransactionRoutesTest {
         post("/users/$userId/transactions/upload").
         then().
             log().ifValidationFails().
+            assertThat().statusCode(200).
             assertThat().body("[0].id", notNullValue()).
             assertThat().body("[0].source", equalTo(Source.COINBASE.toString().toLowerCase())).
             assertThat().body("[0].date", equalTo("2017-10-31T00:00:00Z")).
@@ -427,8 +429,7 @@ class TransactionRoutesTest {
             assertThat().body("[0].price", equalTo(6417.48f)).
             assertThat().body("[0].quantity", equalTo(0.18730723f)).
             assertThat().body("[0].currency1", equalTo(Currency.BTC.code)).
-            assertThat().body("[0].currency2", equalTo(Currency.USD.code)).
-            assertThat().statusCode(200)
+            assertThat().body("[0].currency2", equalTo(Currency.USD.code))
         // @formatter:on
     }
 
@@ -442,7 +443,6 @@ class TransactionRoutesTest {
         // @formatter:off
         given().
             header(Header("Content-Type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW")).
-            //multiPart("file", "{}").
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
             queryParam("source","coinbase").
         post("/users/$userId/transactions/upload").
