@@ -35,7 +35,7 @@ class TransactionControllerTest {
     private val transactionReturn = Transaction(
         id = transactionId,
         userId = userId,
-        source = Source.MANUAL.name.toLowerCase(),
+        source = Source.UNKNOWN.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
@@ -44,7 +44,7 @@ class TransactionControllerTest {
         currency2 = Currency.ETH)
     private val transactionWeb = TransactionWeb(
         id = null,
-        source = Source.MANUAL.name.toLowerCase(),
+        source = Source.UNKNOWN.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,
         price = 10.0,
@@ -93,7 +93,7 @@ class TransactionControllerTest {
         // given
         val transactionWeb2 = TransactionWeb(
             id = null,
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = now,
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -103,7 +103,7 @@ class TransactionControllerTest {
         val transactionReturn2 = Transaction(
             id = "transactionid2",
             userId = userId,
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = now,
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -230,11 +230,11 @@ class TransactionControllerTest {
     fun `upload csv`() {
         // when
         val actual = assertThrows<RuntimeException> {
-            transactionController.uploadCSVTransactions(inputStream, "", Source.MANUAL)
+            transactionController.uploadCSVTransactions(inputStream, "", Source.UNKNOWN)
         }
 
         // then
-        assertThat(actual.message).isEqualTo("Source [MANUAL] not handled")
+        assertThat(actual.message).isEqualTo("Source [UNKNOWN] not handled")
         then(addTransaction).shouldHaveZeroInteractions()
     }
 

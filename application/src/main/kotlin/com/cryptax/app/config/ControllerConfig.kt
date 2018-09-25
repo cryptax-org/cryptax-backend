@@ -2,6 +2,7 @@ package com.cryptax.app.config
 
 import com.cryptax.controller.CurrencyController
 import com.cryptax.controller.ReportController
+import com.cryptax.controller.SourceController
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.UserController
 import com.cryptax.usecase.report.GenerateReport
@@ -38,5 +39,10 @@ class ControllerConfig {
     @Bean
     fun reportController(generateReport: GenerateReport): ReportController {
         return ReportController(generateReport)
+    }
+
+    @Bean
+    fun sourceController(): SourceController {
+        return SourceController()
     }
 }

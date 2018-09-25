@@ -21,7 +21,6 @@ import com.cryptax.domain.entity.Transaction
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.notNullValue
@@ -285,7 +284,7 @@ class TransactionRoutesTest {
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
             id = null,
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.SELL,
             price = 20.0,

@@ -47,7 +47,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -83,7 +83,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction1 = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -93,7 +93,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction2 = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -141,7 +141,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transactionId = "id"
         val transaction = Transaction(id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(ZoneId.of("UTC")),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -202,7 +202,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transactionId = "id"
         val transaction = Transaction(id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(ZoneId.of("UTC")),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -254,7 +254,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
@@ -290,7 +290,7 @@ class CloudDatastoreTransactionRepositoryTest {
         val transaction = Transaction(
             id = "id",
             userId = "userId",
-            source = Source.MANUAL.name.toLowerCase(),
+            source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.BUY,
             price = 10.0,
