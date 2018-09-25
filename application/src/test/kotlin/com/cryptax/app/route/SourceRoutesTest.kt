@@ -37,7 +37,7 @@ class SourceRoutesTest {
 
     @DisplayName("Get all sources")
     @Test
-    fun `get all currencies`() {
+    fun `get all sources`() {
         // given
         val token = initUserAndGetToken()
 
@@ -56,7 +56,7 @@ class SourceRoutesTest {
 
     @DisplayName("Get all sources without any token")
     @Test
-    fun `get all currencies without any token`() {
+    fun `get all sources without any token`() {
         // @formatter:off
         given().
             log().ifValidationFails().
