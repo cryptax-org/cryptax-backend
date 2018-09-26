@@ -14,7 +14,7 @@ buildscript {
         jacksonVersion = '2.9.6'
         jasyptVersion = '1.9.2'
         jooqVersion = '3.11.3'
-        kotlinVersion = '1.2.70'
+        kotlinVersion = '1.2.71'
         kodeinVersion = '5.2.0'
         log4j2Version = '2.11.0'
         mockitoVersion = '2.19.0'
@@ -39,7 +39,7 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '1.0.4-SNAPSHOT'
+    version = '1.0.5-SNAPSHOT'
 
     sourceCompatibility = JavaVersion.VERSION_1_10
     targetCompatibility = JavaVersion.VERSION_1_10
