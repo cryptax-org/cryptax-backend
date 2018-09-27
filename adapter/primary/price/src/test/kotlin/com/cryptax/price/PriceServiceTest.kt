@@ -3,6 +3,9 @@ package com.cryptax.price
 import com.cryptax.cache.CacheService
 import com.cryptax.domain.entity.Currency
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.nhaarman.mockitokotlin2.any
+import io.reactivex.Maybe
+import io.reactivex.Single
 import okhttp3.OkHttpClient
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -45,11 +48,12 @@ class PriceServiceTest {
         val timestamp = date.toInstant().toEpochMilli() / 1000
         val currency = Currency.ETH
         val expected = Pair("serviceName", 10.0)
-        given(cache.get(cacheName, currency, date)).willReturn(null)
-        given(api.findUsdPriceAt(currency, timestamp)).willReturn(expected)
+        given(cache.get(cacheName, currency, date)).willReturn(Maybe.empty())
+        given(api.findUsdPriceAt(currency, timestamp)).willReturn(Single.just(expected))
+        given(cache.put(cacheName, currency, date, expected)).willReturn(Single.just(Unit))
 
         // when
-        val actual = priceService.currencyUsdValueAt(currency, date)
+        val actual = priceService.currencyUsdValueAt(currency, date).blockingGet()
 
         // then
         assertThat(actual).isEqualTo(expected)
@@ -64,10 +68,10 @@ class PriceServiceTest {
         val date = ZonedDateTime.now()
         val currency = Currency.ETH
         val expected = Pair("serviceName", 10.0)
-        given(cache.get(cacheName, currency, date)).willReturn(expected)
+        given(cache.get(cacheName, currency, date)).willReturn(Maybe.just(expected))
 
         // when
-        val actual = priceService.currencyUsdValueAt(currency, date)
+        val actual = priceService.currencyUsdValueAt(currency, date).blockingGet()
 
         // then
         assertThat(actual).isEqualTo(expected)

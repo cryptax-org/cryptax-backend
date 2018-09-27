@@ -58,7 +58,7 @@ class CryptoCompareTest {
         given(call.execute()).willReturn(response)
 
         // when
-        val actual = cryptoCompare.findUsdPriceAt(currency, timestamp)
+        val actual = cryptoCompare.findUsdPriceAt(currency, timestamp).blockingGet()
 
         // then
         assertThat(actual).isEqualTo(Pair("cryptoCompare", 15.0))
@@ -83,7 +83,7 @@ class CryptoCompareTest {
 
         // when
         val exception = assertThrows<RuntimeException> {
-            cryptoCompare.findUsdPriceAt(Currency.ETH, timestamp)
+            cryptoCompare.findUsdPriceAt(Currency.ETH, timestamp).blockingGet()
         }
 
         // then
@@ -109,7 +109,7 @@ class CryptoCompareTest {
 
         // when
         val exception = assertThrows<RuntimeException> {
-            cryptoCompare.findUsdPriceAt(currency, timestamp)
+            cryptoCompare.findUsdPriceAt(currency, timestamp).blockingGet()
         }
 
         // then

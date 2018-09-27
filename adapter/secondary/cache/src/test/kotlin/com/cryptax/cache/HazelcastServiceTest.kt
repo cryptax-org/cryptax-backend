@@ -20,7 +20,7 @@ class HazelcastServiceTest {
         val now = ZonedDateTime.now()
 
         // when
-        hazelcastService.put(cache, currency, now, Pair("co", 10.4))
+        hazelcastService.put(cache, currency, now, Pair("co", 10.4)).blockingGet()
         val actual = hazelcastService.get(cache, currency, now)
 
         // then
@@ -35,7 +35,7 @@ class HazelcastServiceTest {
         val now = ZonedDateTime.now()
 
         // when
-        val actual = hazelcastService.get(cache, currency, now)
+        val actual = hazelcastService.get(cache, currency, now).blockingGet()
 
         // then
         assertThat(actual).isNull()

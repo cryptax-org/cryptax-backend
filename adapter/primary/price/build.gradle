@@ -12,6 +12,7 @@ dependencies {
         project(':cache'),
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion],
+        [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
     )
 
     testImplementation(

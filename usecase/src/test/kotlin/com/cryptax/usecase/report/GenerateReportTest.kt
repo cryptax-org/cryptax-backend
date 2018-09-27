@@ -85,27 +85,27 @@ class GenerateReportTest {
     }
 
     class PriceServiceStub : PriceService {
-        override fun currencyUsdValueAt(currency: Currency, date: ZonedDateTime): Pair<String, Double> {
+        override fun currencyUsdValueAt(currency: Currency, date: ZonedDateTime): Single<Pair<String, Double>> {
             return when (currency) {
                 Currency.BTC -> {
                     when (date) {
-                        ZonedDateTime.of(2017, 10, 1, 10, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 4403.09)
-                        ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 13444.88)
-                        ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 14754.13)
-                        ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 995.44)
-                        ZonedDateTime.of(2017, 7, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 2424.61)
-                        ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 13631.98)
-                        else -> throw RuntimeException("Stubbing issue, date not handled")
+                        ZonedDateTime.of(2017, 10, 1, 10, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 4403.09))
+                        ZonedDateTime.of(2018, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 13444.88))
+                        ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 14754.13))
+                        ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 995.44))
+                        ZonedDateTime.of(2017, 7, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 2424.61))
+                        ZonedDateTime.of(2018, 1, 15, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 13631.98))
+                        else -> Single.error(RuntimeException("Stubbing issue, date not handled"))
                     }
                 }
                 Currency.ETH -> {
                     when (date) {
-                        ZonedDateTime.of(2018, 2, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 1026.19)
-                        ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")) -> Pair("", 861.97)
-                        else -> throw RuntimeException("Stubbing issue, date not handled")
+                        ZonedDateTime.of(2018, 2, 1, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 1026.19))
+                        ZonedDateTime.of(2018, 1, 2, 0, 0, 0, 0, ZoneId.of("UTC")) -> Single.just(Pair("", 861.97))
+                        else -> Single.error(RuntimeException("Stubbing issue, date not handled"))
                     }
                 }
-                else -> throw RuntimeException("Stubbing issue, currency not handled")
+                else -> Single.error(RuntimeException("Stubbing issue, currency not handled"))
             }
         }
     }
