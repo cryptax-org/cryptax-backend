@@ -15,20 +15,23 @@ import org.slf4j.LoggerFactory
 class CryptoCompare(private val client: OkHttpClient = OkHttpClient(), private val objectMapper: ObjectMapper = ObjectMapper()) : CryptoApi {
 
     override fun findUsdPriceAt(currency: Currency, timestamp: Long): Single<Pair<String, Double>> {
-        return Single.create { emitter ->
-            val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=$timestamp").build()
-            log.debug("Get ${currency.code} price in USD ${request.url()}")
-            val response = client.newCall(request).execute()
-            val body = response.body()
-            if (body == null) {
-                emitter.onError(RuntimeException("The body received was null"))
+        val request = Request.Builder().url("$BASE_URL/pricehistorical?fsym=${currency.code}&tsyms=USD&ts=$timestamp").build()
+        return Single.fromCallable { getPrice(request, currency) }
+    }
+
+    private fun getPrice(request: Request, currency: Currency): Pair<String, Double> {
+        log.debug("Get ${currency.code} price in USD ${request.url()}")
+        val response = client.newCall(request).execute()
+        val body = response.body()
+        if (body == null) {
+            throw RuntimeException("The body received was null")
+        } else {
+            val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
+            if (!jsonResponse.has(currency.code)) {
+                log.debug("Body received: $jsonResponse")
+                throw RuntimeException("The body received does not have the right format $jsonResponse")
             } else {
-                val jsonResponse = objectMapper.readValue<JsonNode>(body.string(), JsonNode::class.java)
-                if (!jsonResponse.has(currency.code)) {
-                    log.debug("Body received: $jsonResponse")
-                    throw RuntimeException("The body received does not have the right format $jsonResponse")
-                }
-                emitter.onSuccess(Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble()))
+                return Pair(NAME, jsonResponse.get(currency.code).get("USD").toString().toDouble())
             }
         }
     }

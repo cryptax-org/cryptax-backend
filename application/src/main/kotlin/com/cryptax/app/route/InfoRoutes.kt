@@ -26,9 +26,7 @@ class InfoRoutes @Autowired constructor(private val healthCheckRegistry: HealthC
 
     @GetMapping("/health")
     fun health(): Single<SortedMap<String, HealthCheck.Result>> {
-        return Single.create<SortedMap<String, HealthCheck.Result>> { emitter ->
-            emitter.onSuccess(healthCheckRegistry.runHealthChecks())
-        }
+        return Single.fromCallable { healthCheckRegistry.runHealthChecks() }
     }
 
     @GetMapping("/ping")

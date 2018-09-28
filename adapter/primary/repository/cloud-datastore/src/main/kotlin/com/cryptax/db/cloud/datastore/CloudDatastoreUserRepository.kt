@@ -15,43 +15,43 @@ import org.slf4j.LoggerFactory
 class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, CloudDatastore(datastore) {
 
     override fun create(user: User): Single<User> {
-        return Single.create<User> { emitter ->
+        return Single.fromCallable {
             log.debug("Create a user $user")
             datastore.put(toEntity(user))
-            emitter.onSuccess(user)
+            user
         }
     }
 
     override fun findById(id: String): Maybe<User> {
-        return Maybe.create<User> { emitter ->
+        return Maybe.defer {
             log.debug("Get a user by id [$id]")
             val record = datastore.get(datastore.newKeyFactory().setKind(kind).newKey(id))
             when (record) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(toUser(record))
+                null -> Maybe.empty<User>()
+                else -> Maybe.just(toUser(record))
             }
         }
     }
 
     override fun findByEmail(email: String): Maybe<User> {
-        return Maybe.create<User> { emitter ->
+        return Maybe.defer {
             val query = Query.newEntityQueryBuilder()
                 .setKind(kind)
                 .setFilter(StructuredQuery.PropertyFilter.eq("email", email))
                 .build()
             val queryResults = datastore.run(query)
             when (queryResults.hasNext()) {
-                false -> emitter.onComplete()
-                true -> emitter.onSuccess(toUser(queryResults.next()))
+                false -> Maybe.empty<User>()
+                true -> Maybe.just(toUser(queryResults.next()))
             }
         }
     }
 
     override fun updateUser(user: User): Single<User> {
-        return Single.create<User> { emitter ->
+        return Single.fromCallable {
             log.debug("Update a user $user")
             datastore.update(toEntity(user))
-            emitter.onSuccess(user)
+            user
         }
     }
 

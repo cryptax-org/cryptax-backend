@@ -12,52 +12,49 @@ class InMemoryTransactionRepository : TransactionRepository {
     private val inMemoryDb = HashMap<String, Transaction>()
 
     override fun add(transaction: Transaction): Single<Transaction> {
-        return Single.create<Transaction> { emitter ->
+        return Single.fromCallable {
             log.debug("Create a transaction $transaction")
             inMemoryDb[transaction.id] = transaction
-            emitter.onSuccess(transaction)
+            transaction
         }
     }
 
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
-        return Single.create<List<Transaction>> { emitter ->
+        return Single.fromCallable {
             log.debug("Add transactions")
             transactions.forEach {
                 inMemoryDb[it.id] = it
             }
-            emitter.onSuccess(transactions)
+            transactions
         }
     }
 
     override fun get(id: String): Maybe<Transaction> {
-        return Maybe.create<Transaction> { emitter ->
+        return Maybe.defer {
             log.debug("Get a transaction by id [$id]")
             val transaction = inMemoryDb[id]
             when (transaction) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(transaction)
+                null -> Maybe.empty<Transaction>()
+                else -> Maybe.just(transaction)
             }
         }
     }
 
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
-        return Single.create<List<Transaction>> { emitter ->
-            val transactions = inMemoryDb.values.filter { value -> value.userId == userId }
-            emitter.onSuccess(transactions)
-        }
+        return Single.fromCallable { inMemoryDb.values.filter { value -> value.userId == userId } }
     }
 
     override fun update(transaction: Transaction): Single<Transaction> {
-        return Single.create<Transaction> { emitter ->
+        return Single.fromCallable {
             inMemoryDb[transaction.id] = transaction
-            emitter.onSuccess(transaction)
+            transaction
         }
     }
 
     override fun delete(id: String): Single<Unit> {
-        return Single.create<Unit> { emitter ->
+        return Single.fromCallable {
             inMemoryDb.remove(id)
-            emitter.onSuccess(Unit)
+            Unit
         }
     }
 

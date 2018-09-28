@@ -20,8 +20,9 @@ import java.util.stream.Stream
 @DisplayName("Transaction data validation")
 class TransactionValidatorTest {
 
+    @DisplayName("Validate transaction")
     @Test
-    fun testValidateTransaction() {
+    fun `validate transaction`() {
         //given
         val transaction = Transaction(
             userId = "userId",
@@ -41,7 +42,7 @@ class TransactionValidatorTest {
 
     @ParameterizedTest
     @MethodSource("transactionProvider")
-    fun testValidateTransactionFail(transaction: Transaction, errorMessage: String) {
+    fun `validate transaction fails`(transaction: Transaction, errorMessage: String) {
         //when
         val exception = assertThrows(TransactionValidationException::class.java) {
             validateAddTransaction(transaction).blockingGet()
@@ -52,11 +53,11 @@ class TransactionValidatorTest {
     }
 
     @Test
-    fun testValidateTransactions() {
+    fun `validate transactions`() {
         //given
         val transaction = twoTransactions
         //when
-        validateAddTransactions(transaction)
+        validateAddTransactions(transaction).blockingGet()
 
         //then
         // no failure
@@ -64,7 +65,7 @@ class TransactionValidatorTest {
 
     @ParameterizedTest
     @MethodSource("transactionsProvider")
-    fun testValidateTransactionsFail(transactions: List<Transaction>, errorMessage: String) {
+    fun `validate transactions fails`(transactions: List<Transaction>, errorMessage: String) {
         //when
         val exception = assertThrows(TransactionValidationException::class.java) {
             validateAddTransactions(transactions).blockingGet()

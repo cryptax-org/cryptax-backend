@@ -56,15 +56,15 @@ class JwtTokenProvider {
     }
 
     fun buildToken(userId: String): Single<Triple<String, String, String>> {
-        return Single.create { emitter ->
+        return Single.fromCallable {
             val token = createToken(userId, listOf(Role.USER), false)
             val refreshToken = createToken(userId, listOf(Role.USER), true)
-            emitter.onSuccess(Triple(userId, token, refreshToken))
+            Triple(userId, token, refreshToken)
         }
     }
 
     fun buildTokenFromRefresh(req: ServerHttpRequest): Single<Triple<String, String, String>> {
-        return Single.create { emitter ->
+        return Single.fromCallable {
             val currentToken = resolveToken(req)
             if(currentToken.isBlank()) throw com.cryptax.app.jwt.JwtException("Token not provided")
             val isRefresh = Jwts.parser().setSigningKey(jwtProps.password(profile)).parseClaimsJws(currentToken).body["isRefresh"]
@@ -72,7 +72,7 @@ class JwtTokenProvider {
             val userId = getUserId(currentToken)
             val token = createToken(userId, listOf(Role.USER), false)
             val refreshToken = createToken(userId, listOf(Role.USER), true)
-            emitter.onSuccess(Triple(userId, token, refreshToken))
+            Triple(userId, token, refreshToken)
         }
     }
 

@@ -13,23 +13,22 @@ import java.time.ZonedDateTime
 class HazelcastService(private val hazelcast: HazelcastInstance) : CacheService {
 
     override fun get(name: String, currency: Currency, date: ZonedDateTime): Maybe<Pair<String, Double>> {
-        return Maybe.create { emitter ->
+        return Maybe.defer {
             log.trace("Cache access ${currency.code} $date")
             val map = hazelcast.getMap<Key, Value>(name)
             val cache = map[Key(currency, date)]
             when (cache) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(Pair(cache.service, cache.value))
+                null -> Maybe.empty<Pair<String, Double>>()
+                else -> Maybe.just(Pair(cache.service, cache.value))
             }
         }
     }
 
     override fun put(name: String, currency: Currency, date: ZonedDateTime, value: Pair<String, Double>): Single<Unit> {
-        return Single.create { emitter ->
+        return Single.fromCallable {
             log.trace("Put in cache ${currency.code} $date $value")
             val map = hazelcast.getMap<Key, Value>(name)
             map[Key(currency, date)] = Value(value.first, value.second)
-            emitter.onSuccess(Unit)
         }
     }
 

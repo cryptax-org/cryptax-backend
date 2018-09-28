@@ -1,7 +1,6 @@
 package com.cryptax.db.cloud.datastore
 
 import com.cryptax.domain.entity.Currency
-import com.cryptax.domain.entity.Source
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.port.TransactionRepository
 import com.google.cloud.Timestamp
@@ -10,7 +9,6 @@ import com.google.cloud.datastore.DatastoreException
 import com.google.cloud.datastore.Entity
 import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Query
-import com.google.cloud.datastore.QueryResults
 import com.google.cloud.datastore.StructuredQuery
 import io.reactivex.Maybe
 import io.reactivex.Single
@@ -21,35 +19,35 @@ import java.time.ZoneId
 class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRepository, CloudDatastore(datastore) {
 
     override fun add(transaction: Transaction): Single<Transaction> {
-        return Single.create<Transaction> { emitter ->
+        return Single.fromCallable {
             log.debug("Create a transaction $transaction")
             datastore.put(toEntity(transaction))
-            emitter.onSuccess(transaction)
+            transaction
         }
     }
 
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
-        return Single.create<List<Transaction>> { emitter ->
+        return Single.fromCallable {
             log.debug("Add transactions")
             val entities = transactions.map { transaction -> toEntity(transaction) }.toTypedArray()
             datastore.put(*entities)
-            emitter.onSuccess(transactions)
+            transactions
         }
     }
 
     override fun get(id: String): Maybe<Transaction> {
-        return Maybe.create<Transaction> { emitter ->
+        return Maybe.defer {
             log.debug("Get a transaction by id $id")
             val entity = datastore.get(key(id))
             when (entity) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(toTransaction(entity))
+                null -> Maybe.empty<Transaction>()
+                else -> Maybe.just(toTransaction(entity))
             }
         }
     }
 
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
-        return Single.create<List<Transaction>> { emitter ->
+        return Single.defer {
             log.debug("Get all transactions for $userId")
             val query = Query.newEntityQueryBuilder()
                 .setKind(kind)
@@ -60,26 +58,22 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             while (queryResults.hasNext()) {
                 result.add(toTransaction(queryResults.next()))
             }
-            when {
-                result.isEmpty() -> emitter.onSuccess(listOf())
-                else -> emitter.onSuccess(result)
-            }
+            Single.just(result)
         }
     }
 
     override fun update(transaction: Transaction): Single<Transaction> {
-        return Single.create<Transaction> { emitter ->
+        return Single.fromCallable {
             log.debug("Update one transaction ${transaction.id}")
             datastore.update(toEntity(transaction))
-            emitter.onSuccess(transaction)
+            transaction
         }
     }
 
     override fun delete(id: String): Single<Unit> {
-        return Single.create<Unit> { emitter ->
+        return Single.fromCallable {
             log.debug("Delete one transaction $id")
             datastore.delete(key(id))
-            emitter.onSuccess(Unit)
         }
     }
 

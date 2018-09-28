@@ -12,29 +12,29 @@ class InMemoryResetPasswordRepository : ResetPasswordRepository {
     private val inMemoryDb = HashMap<String, ResetPassword>()
 
     override fun save(resetPassword: ResetPassword): Single<ResetPassword> {
-        return Single.create<ResetPassword> { emitter ->
+        return Single.fromCallable {
             log.debug("Create ResetPassword $resetPassword")
             inMemoryDb[resetPassword.userId] = resetPassword
-            emitter.onSuccess(resetPassword)
+            resetPassword
         }
     }
 
     override fun findByUserId(userId: String): Maybe<ResetPassword> {
-        return Maybe.create<ResetPassword> { emitter ->
+        return Maybe.defer {
             log.debug("Get ResetPassword by userId [$userId]")
             val resetPassword = inMemoryDb[userId]
             when (resetPassword) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(resetPassword)
+                null -> Maybe.empty<ResetPassword>()
+                else -> Maybe.just(resetPassword)
             }
         }
     }
 
     override fun delete(userId: String): Single<Unit> {
-        return Single.create<Unit> { emitter ->
+        return Single.fromCallable {
             log.debug("Delete ResetPassword by userId [$userId]")
             inMemoryDb.remove(userId)
-            emitter.onSuccess(Unit)
+            Unit
         }
     }
 

@@ -17,29 +17,28 @@ import java.time.ZoneId
 class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswordRepository, CloudDatastore(datastore) {
 
     override fun save(resetPassword: ResetPassword): Single<ResetPassword> {
-        return Single.create<ResetPassword> { emitter ->
+        return Single.fromCallable<ResetPassword> {
             log.debug("Create ResetPassword $resetPassword")
             datastore.put(toEntity(resetPassword))
-            emitter.onSuccess(resetPassword)
+            resetPassword
         }
     }
 
     override fun findByUserId(userId: String): Maybe<ResetPassword> {
-        return Maybe.create<ResetPassword> { emitter ->
+        return Maybe.defer {
             log.debug("Get ResetPassword by userId [$userId]")
             val entity = datastore.get(key(userId))
             when (entity) {
-                null -> emitter.onComplete()
-                else -> emitter.onSuccess(toResetPassword(entity))
+                null -> Maybe.empty<ResetPassword>()
+                else -> Maybe.just(toResetPassword(entity))
             }
         }
     }
 
     override fun delete(userId: String): Single<Unit> {
-        return Single.create<Unit> { emitter ->
+        return Single.fromCallable {
             log.debug("Delete ResetPassword $userId")
             datastore.delete(key(userId))
-            emitter.onSuccess(Unit)
         }
     }
 
