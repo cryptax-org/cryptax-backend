@@ -1,4 +1,4 @@
-FROM openjdk:10-jdk-slim
+FROM openjdk:11-jdk-slim
 
 LABEL maintainer="cp.harmant@gmail.com"
 
@@ -13,7 +13,7 @@ COPY . /tmp/cryptax
 WORKDIR /tmp/cryptax
 RUN   chmod +x scripts/run.sh && \
       chmod +x gradlew && \
-      ./gradlew clean build && \
+      ./gradlew clean build -Dorg.gradle.daemon=false -Dorg.gradle.configureondemand=false -Dorg.gradle.parallel=false && \
       mv build/cryptax-backend.jar /opt && \
       mv scripts/run.sh /opt && \
       rm -rf /tmp/* && \

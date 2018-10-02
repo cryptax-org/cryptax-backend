@@ -1,9 +1,12 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.5.RELEASE'
+        springBootVersion = '2.1.0.M4'
     }
     repositories {
         mavenCentral()
+        maven {
+            url "https://repo.spring.io/milestone"
+        }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
@@ -21,12 +24,17 @@ apply plugin: 'nebula.info'
 
 repositories {
     mavenCentral()
+    maven {
+        url "https://repo.spring.io/milestone"
+    }
 }
 
 configurations.all {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
     exclude group: 'org.springframework', module: 'spring-jcl'
     exclude group: 'com.google.code.findbugs', module: 'jsr305'
+    exclude group: 'org.mockito', module: 'mockito-core'
+    exclude group: 'junit', module: 'junit'
 }
 
 dependencies {
@@ -67,7 +75,6 @@ dependencies {
 
     testImplementation(
         [group: 'org.springframework.boot', name: 'spring-boot-starter-test'],
-        [group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.3.0'],
         [group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion],
     )
 }

@@ -5,6 +5,7 @@ ext.moduleName = 'cryptax.parser'
 dependencies {
     implementation(
         project(':domain'),
-        [group: 'com.opencsv', name: 'opencsv', version: '4.2']
+        [group: 'com.opencsv', name: 'opencsv', version: '4.2'],
+        [group: 'org.apache.commons', name: 'commons-lang3', version: '3.8']
     )
 }

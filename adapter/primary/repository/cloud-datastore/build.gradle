@@ -4,6 +4,10 @@ ext.moduleName = 'cryptax.db.cloud.datastore'
 
 configurations.all {
     exclude module: 'grpc-context'
+    resolutionStrategy {
+        force "com.google.code.gson:gson:2.8.5"
+        force "joda-time:joda-time:2.10"
+    }
 }
 
 dependencies {

@@ -2,6 +2,12 @@ apply plugin: 'java-library'
 
 ext.moduleName = 'cryptax.controller'
 
+configurations.all {
+    resolutionStrategy {
+        force "com.fasterxml:classmate:1.4.0"
+    }
+}
+
 dependencies {
     implementation(
         project(':usecase'),
@@ -14,5 +20,6 @@ dependencies {
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
         [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
         [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
+        [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.0']
     )
 }

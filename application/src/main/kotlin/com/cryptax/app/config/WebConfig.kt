@@ -30,6 +30,7 @@ class WebConfig {
     fun springWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http
             .csrf().disable()
+            // TODO: use .cors() instead of the corsfilter
             .securityContextRepository(securityContextRepository)
             .authorizeExchange()
             .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()

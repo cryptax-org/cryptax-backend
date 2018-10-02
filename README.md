@@ -5,7 +5,7 @@
 
 ### Pre-requisite
 
-Java 10
+Java 11
 
 ### Configuration
 
