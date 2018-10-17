@@ -12,11 +12,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZonedDateTime
-
-private val log: Logger = LoggerFactory.getLogger(GenerateReport::class.java)
 
 class GenerateReport(
     private val userRepository: UserRepository,
