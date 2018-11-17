@@ -5,6 +5,8 @@ open module cryptax.spring.app {
     requires com.fasterxml.jackson.module.kotlin;
     requires com.fasterxml.jackson.annotation;
 
+    requires com.hazelcast.core;
+
     requires cryptax.controller;
     requires cryptax.config;
     requires cryptax.cache;
@@ -41,5 +43,4 @@ open module cryptax.spring.app {
     requires spring.security.web;
     requires spring.web;
     requires spring.webflux;
-    requires hazelcast;
 }

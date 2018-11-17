@@ -2,7 +2,6 @@ apply plugin: 'java-library'
 
 ext {
     moduleName = 'cryptax.health'
-    javaUuidGeneratorVersion = '3.1.5'
 }
 
 dependencies {

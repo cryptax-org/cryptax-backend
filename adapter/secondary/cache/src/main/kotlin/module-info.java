@@ -5,5 +5,5 @@ module cryptax.cache {
     requires io.reactivex.rxjava2;
     requires kotlin.stdlib;
     requires org.slf4j;
-    requires hazelcast;
+    requires com.hazelcast.core;
 }

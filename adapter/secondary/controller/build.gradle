@@ -14,12 +14,12 @@ dependencies {
         project(':domain'),
         project(':parser'),
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
-        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernatesValidator],
+        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidator],
     )
     testImplementation(
         [group: 'org.mockito', name: 'mockito-core', version: mockitoVersion],
         [group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockitoVersion],
         [group: 'com.nhaarman.mockitokotlin2', name: 'mockito-kotlin', version: mockitoKotlinVersion],
-        [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.0']
+        [group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.4']
     )
 }

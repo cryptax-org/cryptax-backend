@@ -1,6 +1,11 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.0.M4'
+        googleAuthEngineVersion = '0.12.0'
+        gradleInfoVersion = '4.0.3'
+        jaxbVersion = '2.3.1'
+        jjwtVersion = '0.9.1'
+        reactorAdapterVersion = '3.2.0.RELEASE'
+        springBootVersion = '2.1.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -12,7 +17,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion")
-        classpath 'com.netflix.nebula:gradle-info-plugin:3.8.0'
+        classpath("com.netflix.nebula:gradle-info-plugin:$gradleInfoVersion")
     }
 }
 
@@ -64,12 +69,12 @@ dependencies {
         [group: 'com.hazelcast', name: 'hazelcast-spring'],
         [group: 'com.squareup.okhttp3', name: 'okhttp', version: okHttpVersion],
         [group: 'com.google.cloud', name: 'google-cloud-datastore', version: googleCloudDatastoreVersion],
-        [group: 'com.google.auth', name: 'google-auth-library-appengine', version: '0.10.0'],
-        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernatesValidator],
-        [group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'],
-        [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.12'],
+        [group: 'com.google.auth', name: 'google-auth-library-appengine', version: googleAuthEngineVersion],
+        [group: 'org.hibernate.validator', name: 'hibernate-validator', version: hibernateValidator],
+        [group: 'io.jsonwebtoken', name: 'jjwt', version: jjwtVersion],
+        [group: 'javax.xml.bind', name: 'jaxb-api', version: jaxbVersion],
         [group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxjava2Version],
-        [group: 'io.projectreactor.addons', name: 'reactor-adapter', version: '3.1.7.RELEASE'],
+        [group: 'io.projectreactor.addons', name: 'reactor-adapter', version: reactorAdapterVersion],
         [group: 'io.dropwizard.metrics', name: 'metrics-healthchecks', version: dropwizardVersion],
     )
 
