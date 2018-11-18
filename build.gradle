@@ -68,6 +68,7 @@ subprojects {
         exclude module: 'kotlin-stdlib-jdk7'
         exclude module: 'slf4j-ext'
         exclude module: 'grpc-context'
+        exclude module: 'log4j-slf4j-impl'
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
 
         resolutionStrategy {
@@ -91,7 +92,7 @@ subprojects {
             [group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
             [group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
             [group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
-            [group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4j2Version],
+            [group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: log4j2Version],
             [group: 'com.lmax', name: 'disruptor', version: disruptorVersion]
         )
 
