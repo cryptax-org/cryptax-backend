@@ -12,7 +12,7 @@ import java.time.ZonedDateTime
 class BreakdownTest {
 
     @Test
-    fun testDetails() {
+    fun `test details`() {
         // given
         val lines = listOf(Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0))
         val breakdown = Breakdown(lines)
@@ -26,7 +26,7 @@ class BreakdownTest {
     }
 
     @Test
-    fun testDetailsFail() {
+    fun `test details, fails`() {
         // given
         val lines = listOf(Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0))
         val breakdown = Breakdown(lines)
@@ -41,7 +41,7 @@ class BreakdownTest {
     }
 
     @Test
-    fun testComputeFail() {
+    fun `compute test fails`() {
         // given
         val line1 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0)
         line1.metadata.ignored = false
@@ -64,7 +64,7 @@ class BreakdownTest {
     }
 
     @Test
-    fun testLineToCompute() {
+    fun `line to compute`() {
         // given
         val line1 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.BUY, 15.0, 5.0)
         val line2 = Line("", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.SELL, 15.0, 2.0)
@@ -79,7 +79,7 @@ class BreakdownTest {
     }
 
     @Test
-    fun testLineToCompute2() {
+    fun `line to compute 2`() {
         // given
         val line1 = Line("id1", ZonedDateTime.now(), Currency.ETH, Currency.USD, Transaction.Type.BUY, 15.0, 5.0)
         val line2 = Line("id2", ZonedDateTime.now(), Currency.USD, Currency.ETH, Transaction.Type.BUY, 15.0, 2.0)

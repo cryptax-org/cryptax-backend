@@ -76,7 +76,7 @@ class TransactionValidatorTest {
     }
 
     @Test
-    fun testValidateUpdateTransaction() {
+    fun `validate update transaction fails`() {
         // given
         val transaction = oneTransaction
 

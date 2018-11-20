@@ -27,7 +27,7 @@ class FindUserTest {
 
     @Test
     @DisplayName("Find a user by id")
-    fun testFindById() {
+    fun `find a user by id`() {
         //given
         given(userRepository.findById(id)).willReturn(Maybe.just(user))
 
@@ -41,7 +41,7 @@ class FindUserTest {
 
     @Test
     @DisplayName("Find a user by id not found")
-    fun testFindByIdNotFound() {
+    fun `find a user by id, not found`() {
         //given
         given(userRepository.findById(id)).willReturn(Maybe.empty())
 

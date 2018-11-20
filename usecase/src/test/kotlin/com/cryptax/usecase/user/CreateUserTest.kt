@@ -47,7 +47,7 @@ class CreateUserTest {
 
     @Test
     @DisplayName("Create a user")
-    fun testCreate() {
+    fun `create a user`() {
         //given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.empty())
         given(idGenerator.generate()).willReturn(id)
@@ -96,7 +96,7 @@ class CreateUserTest {
 
     @Test
     @DisplayName("User already exists")
-    fun testCreateAlreadyExists() {
+    fun `create a user, already ecists`() {
         //given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
 
@@ -115,7 +115,7 @@ class CreateUserTest {
 
     @Test
     @DisplayName("Send welcome email")
-    fun testSendEmail() {
+    fun `send welcome email`() {
         //given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
         given(securePassword.generateToken(user)).willReturn(token)
@@ -132,7 +132,7 @@ class CreateUserTest {
 
     @Test
     @DisplayName("Send welcome email, user not found")
-    fun testSendEmailUserNotFound() {
+    fun `send welcome email, user not found`() {
         //given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.empty())
 

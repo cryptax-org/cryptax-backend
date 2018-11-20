@@ -15,7 +15,7 @@ import java.util.stream.Stream
 class UserValidatorTest {
 
     @Test
-    fun testValidateCreateUser() {
+    fun `validate create user`() {
         //given
         val user = User("eeqqqw", "eeee", "eeeee".toCharArray(), "ee", "ee", true)
 
@@ -28,7 +28,7 @@ class UserValidatorTest {
 
     @ParameterizedTest
     @MethodSource("userProvider")
-    fun testValidateCreateUserFail(user: User, errorMessage: String) {
+    fun `validate create user fails`(user: User, errorMessage: String) {
         //when
         val exception = assertThrows(UserValidationException::class.java) {
             validateCreateUser(user).blockingGet()

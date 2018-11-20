@@ -46,7 +46,7 @@ class AddTransactionTest {
     private val transactionsExcepted = twoTransactionExpected
 
     @Test
-    fun testAdd() {
+    fun `add a transaction`() {
         // given
         given(idGenerator.generate()).willReturn(id)
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
@@ -63,7 +63,7 @@ class AddTransactionTest {
     }
 
     @Test
-    fun testAddUserNotFound() {
+    fun `add a transaction, user not found`() {
         // given
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.empty())
 
@@ -81,7 +81,7 @@ class AddTransactionTest {
     }
 
     @Test
-    fun testAddSeveral() {
+    fun `add several transactions`() {
         // given
         given(idGenerator.generate()).willReturn(id)
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.just(user))
@@ -98,7 +98,7 @@ class AddTransactionTest {
     }
 
     @Test
-    fun testAddSeveralUserNotFound() {
+    fun `add several transactions, user not found`() {
         // given
         given(userRepository.findById(transaction.userId)).willReturn(Maybe.empty())
 

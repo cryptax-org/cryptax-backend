@@ -35,7 +35,7 @@ class LoginUserTest {
 
     @Test
     @DisplayName("Login a user")
-    fun testLogin() {
+    fun `login a user`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
         given(securePassword.matchPassword(password, user.password)).willReturn(true)
@@ -51,7 +51,7 @@ class LoginUserTest {
 
     @Test
     @DisplayName("Login a user not found")
-    fun testLoginUserNotFound() {
+    fun `login a user, not found`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.empty())
 
@@ -68,7 +68,7 @@ class LoginUserTest {
 
     @Test
     @DisplayName("Login a user wrong password")
-    fun testLoginWrongPassword() {
+    fun `login a user, wrong password`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
         given(securePassword.matchPassword("wrong password".toCharArray(), user.password)).willReturn(false)
@@ -87,7 +87,7 @@ class LoginUserTest {
 
     @Test
     @DisplayName("Login a user not allowed")
-    fun testLoginNotAllowed() {
+    fun `login a user, not allowed`() {
         //given
         val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", false)
         given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))

@@ -28,7 +28,7 @@ class DeleteTransactionTest {
     lateinit var deleteTransaction: DeleteTransaction
 
     @Test
-    fun testDeleteTransaction() {
+    fun `delete transaction`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transaction))
@@ -44,7 +44,7 @@ class DeleteTransactionTest {
     }
 
     @Test
-    fun testDeleteTransactionNotRightUser() {
+    fun `delete transaction, wrong user`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(oneTransactionWithId2))
@@ -61,7 +61,7 @@ class DeleteTransactionTest {
     }
 
     @Test
-    fun testDeleteTransactionNotFound() {
+    fun `delete transaction, transaction not found`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.empty())
@@ -78,7 +78,7 @@ class DeleteTransactionTest {
     }
 
     @Test
-    fun testDeleteTransactionFail() {
+    fun `delete transaction, fails`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transaction))

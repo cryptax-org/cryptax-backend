@@ -29,7 +29,7 @@ class FindTransactionTest {
     lateinit var findTransaction: FindTransaction
 
     @Test
-    fun testFindTransaction() {
+    fun `find transaction`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transaction))
@@ -43,7 +43,7 @@ class FindTransactionTest {
     }
 
     @Test
-    fun testFindTransactionNotFound() {
+    fun `find transaction, not found`() {
         // given
         val transaction = oneTransactionWithId
         val expected = transaction.id
@@ -60,7 +60,7 @@ class FindTransactionTest {
     }
 
     @Test
-    fun testFindTransactionWrongUser() {
+    fun `find transaction, wrong user`() {
         // given
         val transaction = oneTransactionWithId
         val transactionReturned = oneTransactionWithId2
@@ -78,7 +78,7 @@ class FindTransactionTest {
     }
 
     @Test
-    fun testFindAllTransaction() {
+    fun `find all transactions`() {
         // given
         val transactions = twoTransactions
         given(transactionRepository.getAllForUser(transactions[0].userId)).willReturn(Single.just(transactions))

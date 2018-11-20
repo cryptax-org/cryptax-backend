@@ -45,7 +45,7 @@ class GenerateReportTest {
 
     @ParameterizedTest
     @MethodSource("dataProvider")
-    fun testGenerate(transactions: List<Transaction>, expected: Report) {
+    fun `test generate`(transactions: List<Transaction>, expected: Report) {
         // given
         given(userRepository.findById(user.id)).willReturn(Maybe.just(user))
         given(transactionRepository.getAllForUser(user.id)).willReturn(Single.just(transactions))

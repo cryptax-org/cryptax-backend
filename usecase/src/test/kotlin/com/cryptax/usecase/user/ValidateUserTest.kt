@@ -32,7 +32,7 @@ class ValidateUserTest {
     lateinit var findUser: ValidateUser
 
     @Test
-    fun testValidate() {
+    fun `validate user`() {
         // given
         val userId = "id"
         val user = User(userId, "", "".toCharArray(), "", "", false)
@@ -55,7 +55,7 @@ class ValidateUserTest {
     }
 
     @Test
-    fun testValidateNotFound() {
+    fun `validate user, not found`() {
         // given
         val userId = "id"
         val welcomeToken = "token"
@@ -74,7 +74,7 @@ class ValidateUserTest {
     }
 
     @Test
-    fun testValidateError() {
+    fun `validate user, fails`() {
         // given
         val userId = "id"
         val welcomeToken = "token"

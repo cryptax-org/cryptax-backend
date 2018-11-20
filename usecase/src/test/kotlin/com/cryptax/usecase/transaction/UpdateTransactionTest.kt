@@ -28,7 +28,7 @@ class UpdateTransactionTest {
     lateinit var updateTransaction: UpdateTransaction
 
     @Test
-    fun testUpdateTransaction() {
+    fun `update transaction`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.just(transaction))
@@ -44,7 +44,7 @@ class UpdateTransactionTest {
     }
 
     @Test
-    fun testUpdateTransactionNotFound() {
+    fun `update transaction, transaction not found`() {
         // given
         val transaction = oneTransactionWithId
         given(transactionRepository.get(transaction.id)).willReturn(Maybe.empty())
@@ -61,7 +61,7 @@ class UpdateTransactionTest {
     }
 
     @Test
-    fun testUpdateTransactionUserDoNotMatch() {
+    fun `update transaction, wrong user`() {
         // given
         val transaction = oneTransactionWithId
         val transactionReturned = oneTransactionWithId2

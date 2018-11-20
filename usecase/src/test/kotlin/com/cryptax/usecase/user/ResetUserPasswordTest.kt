@@ -46,7 +46,7 @@ class ResetUserPasswordTest {
     lateinit var resetUserPassword: ResetUserPassword
 
     @Test
-    fun testInitiatePasswordReset() {
+    fun `initiate password reset`() {
         // given
         val resetPassword = ResetPassword(user.id, "456", ZonedDateTime.now(ZoneId.of("UTC")))
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
@@ -70,7 +70,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testInitiatePasswordResetUserNotFound() {
+    fun `initiate password reset, user not found`() {
         // given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.empty())
 
@@ -85,7 +85,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testInitiatePasswordResetFail() {
+    fun `inititate password reset fails`() {
         // given
         given(userRepository.findByEmail(user.email)).willReturn(Maybe.just(user))
         given(idGenerator.generate()).willThrow(RuntimeException())
@@ -101,7 +101,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testResetPassword() {
+    fun `reset password`() {
         // given
         val password = "derp".toCharArray()
         val hashedPassword = "hashedPassword"
@@ -135,7 +135,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testResetPasswordUserNotFound() {
+    fun `reset password, user not found`() {
         // given
         val password = "derp".toCharArray()
         val token = "mytoken"
@@ -153,7 +153,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testResetPasswordResetPasswordNotFound() {
+    fun `reset password, reset password not found`() {
         // given
         val password = "derp".toCharArray()
         val token = "mytoken"
@@ -173,7 +173,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testResetPasswordNotValid1() {
+    fun `reset password, not valid 1`() {
         // given
         val password = "derp".toCharArray()
         val token = "mytoken"
@@ -195,7 +195,7 @@ class ResetUserPasswordTest {
     }
 
     @Test
-    fun testResetPasswordNotValid2() {
+    fun `reset password, not valid 2`() {
         // given
         val password = "derp".toCharArray()
         val token = "mytoken"
