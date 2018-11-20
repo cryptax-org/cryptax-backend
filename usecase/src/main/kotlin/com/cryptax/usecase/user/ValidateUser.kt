@@ -13,10 +13,11 @@ class ValidateUser(private val userRepository: UserRepository, private val secur
     fun validate(userId: String, welcomeToken: String): Single<Boolean> {
         log.info("Validate user $userId with token $welcomeToken")
         return userRepository.findById(userId)
-            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.computation())
             .filter { user -> securePassword.generateToken(user) == welcomeToken }
             .map { user -> User(id = user.id, email = user.email, firstName = user.firstName, lastName = user.lastName, password = user.password, allowed = true) }
             .map { user: User -> userRepository.updateUser(user).flatMap { Single.just(true) } }
+            .observeOn(Schedulers.computation())
             .flatMapSingle { it }
             .onErrorResumeNext { throwable ->
                 when (throwable) {

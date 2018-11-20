@@ -6,6 +6,7 @@ import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserValidationException
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 fun validateCreateUser(user: User): Single<User> {
     return Single.defer {
@@ -16,6 +17,7 @@ fun validateCreateUser(user: User): Single<User> {
             else -> Single.just(user)
         }
     }
+        .subscribeOn(Schedulers.computation())
 }
 
 fun validateAddTransaction(transaction: Transaction): Single<Transaction> {
@@ -27,6 +29,7 @@ fun validateAddTransaction(transaction: Transaction): Single<Transaction> {
             else -> Single.just(transaction)
         }
     }
+        .subscribeOn(Schedulers.computation())
 }
 
 fun validateAddTransactions(transactions: List<Transaction>): Single<List<Transaction>> {
@@ -39,6 +42,7 @@ fun validateAddTransactions(transactions: List<Transaction>): Single<List<Transa
             .flatMap { t -> validateAddTransaction(t).toObservable() }
             .toList()
     }
+        .subscribeOn(Schedulers.computation())
 }
 
 fun validateUpdateTransaction(transaction: Transaction): Single<Transaction> {
@@ -49,4 +53,5 @@ fun validateUpdateTransaction(transaction: Transaction): Single<Transaction> {
             Single.just(transaction)
         }
     }
+        .subscribeOn(Schedulers.computation())
 }

@@ -12,6 +12,7 @@ import com.google.cloud.datastore.Query
 import com.google.cloud.datastore.StructuredQuery
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
@@ -24,6 +25,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             datastore.put(toEntity(transaction))
             transaction
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
@@ -33,6 +35,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             datastore.put(*entities)
             transactions
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun get(id: String): Maybe<Transaction> {
@@ -44,6 +47,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
                 else -> Maybe.just(toTransaction(entity))
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
@@ -58,8 +62,9 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             while (queryResults.hasNext()) {
                 result.add(toTransaction(queryResults.next()))
             }
-            Single.just(result)
+            Single.just(result.toList())
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun update(transaction: Transaction): Single<Transaction> {
@@ -68,6 +73,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             datastore.update(toEntity(transaction))
             transaction
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun delete(id: String): Single<Unit> {
@@ -75,6 +81,7 @@ class CloudDatastoreTransactionRepository(datastore: Datastore) : TransactionRep
             log.debug("Delete one transaction $id")
             datastore.delete(key(id))
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun ping(): Boolean {

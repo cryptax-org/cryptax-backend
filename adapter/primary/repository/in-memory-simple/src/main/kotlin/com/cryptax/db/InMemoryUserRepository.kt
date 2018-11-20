@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.User
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -19,6 +20,7 @@ class InMemoryUserRepository : UserRepository {
             inMemoryDb[user.id] = user
             user
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun findById(id: String): Maybe<User> {
@@ -30,6 +32,7 @@ class InMemoryUserRepository : UserRepository {
                 else -> Maybe.just(user)
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun findByEmail(email: String): Maybe<User> {
@@ -41,6 +44,7 @@ class InMemoryUserRepository : UserRepository {
                 else -> Maybe.just(user)
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun updateUser(user: User): Single<User> {
@@ -49,6 +53,7 @@ class InMemoryUserRepository : UserRepository {
             inMemoryDb[user.id] = user
             user
         }
+            .subscribeOn(Schedulers.io())
     }
 
     fun deleteAll() {

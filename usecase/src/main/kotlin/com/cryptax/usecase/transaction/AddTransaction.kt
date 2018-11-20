@@ -21,6 +21,7 @@ class AddTransaction(
         log.info("Usecase, add a transaction $transaction")
         return validateAddTransaction(transaction)
             .flatMap { userRepository.findById(transaction.userId).isEmpty }
+            .observeOn(Schedulers.computation())
             .map { isEmpty ->
                 when (isEmpty) {
                     true -> throw UserNotFoundException(transaction.userId)
@@ -37,6 +38,7 @@ class AddTransaction(
                 }
             }
             .flatMap { t -> transactionRepository.add(t) }
+            .observeOn(Schedulers.computation())
     }
 
     fun addMultiple(transactions: List<Transaction>): Single<List<Transaction>> {
@@ -44,7 +46,7 @@ class AddTransaction(
         return validateAddTransactions(transactions)
             .flatMap {
                 userRepository.findById(transactions[0].userId)
-                    .subscribeOn(Schedulers.io())
+                    .observeOn(Schedulers.computation())
                     .isEmpty
                     .map { isEmpty ->
                         when (isEmpty) {
@@ -65,6 +67,7 @@ class AddTransaction(
                     }
                     .flatMap { transaction -> transactionRepository.add(transaction) }
             }
+            .observeOn(Schedulers.computation())
     }
 
     companion object {

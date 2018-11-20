@@ -9,6 +9,7 @@ import com.google.cloud.datastore.Query
 import com.google.cloud.datastore.StructuredQuery
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -20,6 +21,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
             datastore.put(toEntity(user))
             user
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun findById(id: String): Maybe<User> {
@@ -31,6 +33,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
                 else -> Maybe.just(toUser(record))
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun findByEmail(email: String): Maybe<User> {
@@ -45,6 +48,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
                 true -> Maybe.just(toUser(queryResults.next()))
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun updateUser(user: User): Single<User> {
@@ -53,6 +57,7 @@ class CloudDatastoreUserRepository(datastore: Datastore) : UserRepository, Cloud
             datastore.update(toEntity(user))
             user
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun ping(): Boolean {

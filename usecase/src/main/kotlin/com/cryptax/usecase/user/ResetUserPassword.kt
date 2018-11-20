@@ -10,6 +10,7 @@ import com.cryptax.domain.port.ResetPasswordRepository
 import com.cryptax.domain.port.SecurePassword
 import com.cryptax.domain.port.UserRepository
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
@@ -29,6 +30,7 @@ class ResetUserPassword(
     fun initiatePasswordReset(email: String): Single<ResetPassword> {
         log.info("Initiate reset password for $email")
         return userRepository.findByEmail(email)
+            .observeOn(Schedulers.computation())
             .toSingle()
             .map { user ->
                 ResetPassword(
@@ -37,6 +39,7 @@ class ResetUserPassword(
                     ZonedDateTime.now(ZoneId.of("UTC")))
             }
             .flatMap { resetPassword -> resetPasswordRepository.save(resetPassword) }
+            .observeOn(Schedulers.computation())
             .doAfterSuccess { resetPassword -> emailService.resetPasswordEmail(email, resetPassword) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
@@ -49,9 +52,11 @@ class ResetUserPassword(
     fun resetPassword(email: String, password: CharArray, token: String): Single<Unit> {
         log.info("Reset password for $email")
         return userRepository.findByEmail(email)
+            .observeOn(Schedulers.computation())
             .toSingle()
             .flatMap { user ->
                 resetPasswordRepository.findByUserId(user.id)
+                    .observeOn(Schedulers.computation())
                     .toSingle()
                     .map { resetPassword ->
                         val nowMinusOneDay = ZonedDateTime.now(ZoneId.of("UTC")).minusDays(1)
@@ -71,7 +76,8 @@ class ResetUserPassword(
                     }
                     .flatMap { u -> resetPasswordRepository.delete(u.id) }
             }
-            .doAfterSuccess { _ -> emailService.resetPasswordConfirmationEmail(email) }
+            .observeOn(Schedulers.computation())
+            .doAfterSuccess { emailService.resetPasswordConfirmationEmail(email) }
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(ResetPasswordException(email))

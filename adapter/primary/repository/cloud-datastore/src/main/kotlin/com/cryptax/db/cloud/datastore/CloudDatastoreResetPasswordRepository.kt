@@ -10,6 +10,7 @@ import com.google.cloud.datastore.Key
 import com.google.cloud.datastore.Query
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
@@ -22,6 +23,7 @@ class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswor
             datastore.put(toEntity(resetPassword))
             resetPassword
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun findByUserId(userId: String): Maybe<ResetPassword> {
@@ -33,6 +35,7 @@ class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswor
                 else -> Maybe.just(toResetPassword(entity))
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun delete(userId: String): Single<Unit> {
@@ -40,6 +43,7 @@ class CloudDatastoreResetPasswordRepository(datastore: Datastore) : ResetPasswor
             log.debug("Delete ResetPassword $userId")
             datastore.delete(key(userId))
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun ping(): Boolean {

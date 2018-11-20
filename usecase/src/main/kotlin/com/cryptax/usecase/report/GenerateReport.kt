@@ -23,7 +23,7 @@ class GenerateReport(
     fun generate(userId: String): Single<Report> {
         log.info("Usecase, generate a report for $userId")
         return userRepository.findById(userId)
-            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.computation())
             .isEmpty
             .flatMap { isEmpty ->
                 when (isEmpty) {
@@ -31,6 +31,7 @@ class GenerateReport(
                     else -> transactionRepository.getAllForUser(userId)
                 }
             }
+            .observeOn(Schedulers.computation())
             .map { transactions ->
                 transactions.map { transaction ->
                     Line(

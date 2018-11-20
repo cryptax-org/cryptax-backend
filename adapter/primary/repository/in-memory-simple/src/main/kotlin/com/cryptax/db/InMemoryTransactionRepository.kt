@@ -4,6 +4,7 @@ import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.port.TransactionRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -17,6 +18,7 @@ class InMemoryTransactionRepository : TransactionRepository {
             inMemoryDb[transaction.id] = transaction
             transaction
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun add(transactions: List<Transaction>): Single<List<Transaction>> {
@@ -27,6 +29,7 @@ class InMemoryTransactionRepository : TransactionRepository {
             }
             transactions
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun get(id: String): Maybe<Transaction> {
@@ -38,10 +41,11 @@ class InMemoryTransactionRepository : TransactionRepository {
                 else -> Maybe.just(transaction)
             }
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun getAllForUser(userId: String): Single<List<Transaction>> {
-        return Single.fromCallable { inMemoryDb.values.filter { value -> value.userId == userId } }
+        return Single.fromCallable { inMemoryDb.values.filter { value -> value.userId == userId } }.subscribeOn(Schedulers.io())
     }
 
     override fun update(transaction: Transaction): Single<Transaction> {
@@ -49,6 +53,7 @@ class InMemoryTransactionRepository : TransactionRepository {
             inMemoryDb[transaction.id] = transaction
             transaction
         }
+            .subscribeOn(Schedulers.io())
     }
 
     override fun delete(id: String): Single<Unit> {
@@ -56,6 +61,7 @@ class InMemoryTransactionRepository : TransactionRepository {
             inMemoryDb.remove(id)
             Unit
         }
+            .subscribeOn(Schedulers.io())
     }
 
     fun deleteAll() {

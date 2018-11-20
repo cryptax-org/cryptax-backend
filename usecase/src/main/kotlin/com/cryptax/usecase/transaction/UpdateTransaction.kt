@@ -6,6 +6,7 @@ import com.cryptax.domain.exception.TransactionUserDoNotMatch
 import com.cryptax.domain.port.TransactionRepository
 import com.cryptax.usecase.validator.validateUpdateTransaction
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 class UpdateTransaction(private val transactionRepository: TransactionRepository) {
 
@@ -13,6 +14,7 @@ class UpdateTransaction(private val transactionRepository: TransactionRepository
 
         return validateUpdateTransaction(transaction)
             .flatMap { transactionRepository.get(transaction.id).toSingle() }
+            .observeOn(Schedulers.computation())
             .map { transactionDb ->
                 if (transactionDb.userId != transaction.userId) {
                     throw TransactionUserDoNotMatch(transaction.userId, transaction.id, transactionDb.userId)
@@ -20,6 +22,7 @@ class UpdateTransaction(private val transactionRepository: TransactionRepository
                 transactionDb
             }
             .flatMap { transactionRepository.update(transaction) }
+            .observeOn(Schedulers.computation())
             .onErrorResumeNext { throwable ->
                 when (throwable) {
                     is NoSuchElementException -> Single.error(TransactionNotFound(transaction.id))

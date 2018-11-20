@@ -7,6 +7,7 @@ import com.cryptax.domain.port.TransactionRepository
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.functions.Function
+import io.reactivex.schedulers.Schedulers
 import org.slf4j.LoggerFactory
 
 class FindTransaction(private val transactionRepository: TransactionRepository) {
@@ -15,6 +16,7 @@ class FindTransaction(private val transactionRepository: TransactionRepository) 
         log.info("Usecase, find a transaction $id, for user $userId")
         return transactionRepository
             .get(id)
+            .observeOn(Schedulers.computation())
             .toSingle()
             .map { transaction ->
                 if (transaction.userId != userId) {
@@ -32,7 +34,7 @@ class FindTransaction(private val transactionRepository: TransactionRepository) 
     }
 
     fun findAllForUser(userId: String): Single<List<Transaction>> {
-        return transactionRepository.getAllForUser(userId)
+        return transactionRepository.getAllForUser(userId).observeOn(Schedulers.computation())
     }
 
     companion object {
