@@ -46,7 +46,7 @@ subprojects {
         mavenCentral()
         jcenter()
     }
-
+    
     compileJava {
         doFirst {
             options.compilerArgs = [
