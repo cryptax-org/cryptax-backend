@@ -1,6 +1,6 @@
 .idea
 out
 gen
-/.gradle/
+.gradle/
 build/
 .env
