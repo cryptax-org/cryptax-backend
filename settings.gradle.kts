@@ -1,19 +1,20 @@
-rootProject.name = 'cryptax-backend'
+rootProject.name = "cryptax-backend"
 
-include ':application'
-include ':config'
-include ':domain'
-include ':usecase'
-include ':security'
-include ':id-generator'
-include ':in-memory-db-simple'
-include ':cloud-datastore'
-include ':controller'
-include ':parser'
-include ':email'
-include ':health'
-include ':price'
-include ':cache'
+include(
+    ":application",
+    ":config",
+    ":domain",
+    ":usecase",
+    ":security",
+    ":id-generator",
+    ":in-memory-db-simple",
+    ":cloud-datastore",
+    ":controller",
+    ":parser",
+    ":email",
+    ":health",
+    ":price",
+    ":cache")
 
 project(":security").projectDir = file("adapter/primary/security")
 project(":id-generator").projectDir = file("adapter/primary/id-generator")
