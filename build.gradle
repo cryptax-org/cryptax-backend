@@ -1,35 +1,13 @@
 buildscript {
-    ext {
-        projectName = rootProject.name
+    ext { projectName = rootProject.name }
 
-        assertJVersion = '3.11.1'
-        commonsIoVersion = '2.6'
-        commonsCodecVersion = '1.11'
-        disruptorVersion = '3.4.2'
-        dropwizardVersion = '4.0.3'
-        googleCloudDatastoreVersion = '1.53.0'
-        hibernateValidator = '6.0.13.Final'
-        junitVersion = '5.3.1'
-        junitPlatformVersion = '1.3.1'
-        jacksonVersion = '2.9.7'
-        jasyptVersion = '1.9.2'
-        kotlinVersion = '1.3.10'
-        log4j2Version = '2.11.1'
-        mockitoVersion = '2.23.0'
-        mockitoKotlinVersion = '2.0.0'
-        okHttpVersion = '3.11.0'
-        restAssuredVersion = '3.2.0'
-        rxjava2Version = '2.2.3'
-        slf4jVersion = '1.8.0-beta2'
-    }
+    repositories { mavenCentral() }
 
-    repositories {
-        mavenCentral()
-    }
+    dependencies { classpath Lib.kotlin_gradle }
+}
 
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
+if (JavaVersion.current() != JavaVersion.VERSION_11) {
+    throw new GradleException("This build must be run with java 11. Current version: " + JavaVersion.current())
 }
 
 subprojects {
@@ -46,7 +24,7 @@ subprojects {
         mavenCentral()
         jcenter()
     }
-    
+
     compileJava {
         doFirst {
             options.compilerArgs = [
@@ -72,39 +50,35 @@ subprojects {
         exclude group: 'com.google.code.findbugs', module: 'jsr305'
 
         resolutionStrategy {
-            force "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
-            force "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
-            force "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-            force "com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion"
-            force "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-            force "commons-codec:commons-codec:$commonsCodecVersion"
-            force "commons-io:commons-io:$commonsIoVersion"
-            force "io.reactivex.rxjava2:rxjava:$rxjava2Version"
-            force "org.apache.httpcomponents:httpclient:4.5.6"
-            force "org.apache.httpcomponents:httpcore:4.4.10"
-            force "org.mockito:mockito-core:$mockitoVersion"
+            force Lib.jackson_core
+            force Lib.jackson_annotations
+            force Lib.jackson_databind
+            force Lib.jackson_yaml
+            force Lib.kotlin_reflect
+            force Lib.commons_codec
+            force Lib.commons_io
+            force Lib.rx
+            force Lib.http_client
+            force Lib.http_core
+            force Lib.mockito
         }
     }
 
     dependencies {
-        implementation(
-            [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8'],
-            [group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion],
-            [group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4j2Version],
-            [group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4j2Version],
-            [group: 'org.apache.logging.log4j', name: 'log4j-slf4j18-impl', version: log4j2Version],
-            [group: 'com.lmax', name: 'disruptor', version: disruptorVersion]
-        )
+        implementation Lib.kotlin_stdlib
+        implementation Lib.slf4j
+        implementation Lib.log4j2_core
+        implementation Lib.log4j2_api
+        implementation Lib.log4j2_slf4j18
+        implementation Lib.disruptor
 
-        testImplementation(
-            [group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion],
-            [group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion],
-            [group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: junitVersion],
-            [group: 'org.junit.platform', name: 'junit-platform-runner', version: junitPlatformVersion],
-            [group: 'org.junit.platform', name: 'junit-platform-commons', version: junitPlatformVersion],
-            [group: 'org.junit.platform', name: 'junit-platform-engine', version: junitPlatformVersion],
-            [group: 'org.assertj', name: 'assertj-core', version: assertJVersion],
-        )
+        testImplementation Lib.junit_api
+        testImplementation Lib.junit_engine
+        testImplementation Lib.junit_params
+        testImplementation Lib.junit_platform_runner
+        testImplementation Lib.junit_platform_commons
+        testImplementation Lib.junit_platform_engine
+        testImplementation Lib.assertj
     }
 
     test {
@@ -139,9 +113,9 @@ subprojects {
 
     jacocoTestReport {
         reports {
-            xml.setEnabled(true)
-            csv.setEnabled(false)
-            html.setEnabled(true)
+            xml.enabled = true
+            csv.enabled = false
+            html.enabled = true
         }
     }
 
@@ -168,10 +142,10 @@ task testReport(type: TestReport) {
 
 task jacocoRootReport(type: JacocoReport) {
     dependsOn = subprojects.test
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
-    classDirectories = files(subprojects.sourceSets.main.output)
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    additionalSourceDirs.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(subprojects.sourceSets.main.output)
+    executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
     reports {
         xml.enabled = true
         csv.enabled = false
@@ -181,18 +155,16 @@ task jacocoRootReport(type: JacocoReport) {
         true
     }
     doFirst {
-        executionData = files(executionData.findAll {
-            it.exists()
-        })
+        executionData.setFrom(files(executionData.findAll { it.exists() }))
     }
     afterEvaluate {
-        classDirectories = files(classDirectories.files.collect {
+        classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
                 '**/com/cryptax/app/config/**',
                 '**/com/cryptax/config/**',
                 '**/entity/**',
                 '**/model/**',
                 '**/cryptax/app/Application**'])
-        })
+        }))
     }
 }
