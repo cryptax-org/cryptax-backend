@@ -44,12 +44,12 @@ class UserRoutesTest {
     lateinit var memory: InMemoryUserRepository
 
     @BeforeAll
-    internal fun beforeAll() {
+    internal fun `before all`() {
         setupRestAssured(randomServerPort.toInt())
     }
 
     @AfterAll
-    internal fun afterAll() {
+    internal fun `after all`() {
         memory.deleteAll()
     }
 

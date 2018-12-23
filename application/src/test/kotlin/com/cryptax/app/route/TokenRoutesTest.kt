@@ -13,7 +13,6 @@ import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.CoreMatchers.notNullValue
@@ -47,12 +46,12 @@ class TokenRoutesTest {
     lateinit var memory: InMemoryUserRepository
 
     @BeforeAll
-    internal fun beforeAll() {
+    internal fun `before all`() {
         setupRestAssured(randomServerPort.toInt())
     }
 
     @AfterAll
-    internal fun afterAll() {
+    internal fun `after all`() {
         memory.deleteAll()
     }
 

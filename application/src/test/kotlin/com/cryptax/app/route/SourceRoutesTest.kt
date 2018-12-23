@@ -31,7 +31,7 @@ class SourceRoutesTest {
     lateinit var randomServerPort: String
 
     @BeforeAll
-    internal fun beforeAll() {
+    internal fun `before all`() {
         setupRestAssured(randomServerPort.toInt())
     }
 

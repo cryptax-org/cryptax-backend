@@ -44,12 +44,12 @@ class ReportRoutesTest {
     lateinit var transactionRepository: InMemoryTransactionRepository
 
     @BeforeAll
-    internal fun beforeAll() {
+    internal fun `before all`() {
         setupRestAssured(randomServerPort.toInt())
     }
 
     @AfterAll
-    internal fun afterAll() {
+    internal fun `after all`() {
         userRepository.deleteAll()
         transactionRepository.deleteAll()
     }
