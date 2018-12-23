@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 class CurrencyTest {
 
     @Test
-    fun validateCurrencies() {
+    fun `validate currencies`() {
         // given
         val values = Currency.values()
 
@@ -15,5 +15,14 @@ class CurrencyTest {
 
         // then
         assertThat(actual).hasSize(values.size)
+    }
+
+    @Test
+    fun `check if currencies have only one default`() {
+        Currency.values().forEach { currency ->
+            val actual = currency.codes.count { code -> code.default }
+
+            assertThat(actual).`as`("Currency $currency").isEqualTo(1)
+        }
     }
 }
