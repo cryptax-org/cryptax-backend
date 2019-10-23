@@ -12,7 +12,7 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.kotlin.plugin.spring") version "1.3.10"
+    id("org.jetbrains.kotlin.plugin.spring") version Version.kotlin
     id("org.springframework.boot") version Version.spring_boot
     id("io.spring.dependency-management") version "1.0.6.RELEASE"
     id("nebula.info") version "4.0.3"
