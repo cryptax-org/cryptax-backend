@@ -1,0 +1,25 @@
+server:
+  domain: 0.0.0.0
+  port: 8080
+  allowOrigin: '*'
+jwt:
+  keyStorePath: keystore-it.jceks
+  password: secret
+  algorithm: HS512
+  issuer: Cryptax
+  expiresInMinutes: 30
+  refreshExpiresInDays: 10
+email:
+  enabled: false
+  url:
+  function:
+  key:
+  from:
+  verifyUrl:
+http:
+  maxIdleConnections: 5
+  keepAliveDuration: 5
+db:
+  mode: in-memory
+  projectId:
+  credentials:

@@ -1,0 +1,6 @@
+micronaut:
+  application:
+    name: cryptax
+
+jackson:
+  bean-introspection-module: true

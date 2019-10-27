@@ -16,6 +16,7 @@ dependencies {
     implementation(project(":parser"))
     implementation(Lib.rx)
     implementation(Lib.hibernate_validator)
+    implementation("io.micronaut:micronaut-core:1.2.5")
 
     testImplementation(Lib.mockito)
     testImplementation(Lib.mockito_junit)

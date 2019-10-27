@@ -14,7 +14,7 @@ data class JwtProps(
     val refreshExpiresInDays: Int) {
 
     fun password(profile: String? = null): String {
-        if (profile == "it") return password
+        if (profile == "test") return password
         return decrypt(password)
     }
 }

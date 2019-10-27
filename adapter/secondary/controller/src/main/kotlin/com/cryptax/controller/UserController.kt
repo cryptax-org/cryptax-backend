@@ -2,6 +2,7 @@ package com.cryptax.controller
 
 import com.cryptax.controller.model.ResetPasswordWeb
 import com.cryptax.controller.model.UserWeb
+import com.cryptax.controller.validation.Validator
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
@@ -9,18 +10,24 @@ import com.cryptax.usecase.user.ResetUserPassword
 import com.cryptax.usecase.user.ValidateUser
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 
 class UserController(
     private val createUser: CreateUser,
     private val findUser: FindUser,
     private val loginUser: LoginUser,
     private val validateUser: ValidateUser,
-    private val resetUserPassword: ResetUserPassword) {
+    private val resetUserPassword: ResetUserPassword,
+    private val validator: Validator = Validator()) {
 
     fun createUser(userWeb: UserWeb): Single<Pair<UserWeb, String>> {
-        return createUser
-            .create(userWeb.toUser())
-            .map { pair -> Pair(UserWeb.toUserWeb(pair.first), pair.second) }
+        return validator.validateCreateUser(userWeb)
+            .flatMap {
+                createUser
+                    .create(userWeb.toUser())
+                    .map { pair -> Pair(UserWeb.toUserWeb(pair.first), pair.second) }
+            }
+            .subscribeOn(Schedulers.computation())
     }
 
     fun login(email: String, password: CharArray): Single<UserWeb> {

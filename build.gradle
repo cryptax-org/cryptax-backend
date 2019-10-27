@@ -6,11 +6,12 @@ buildscript {
     dependencies { classpath Lib.kotlin_gradle }
 }
 
-if (JavaVersion.current() != JavaVersion.VERSION_12) {
-    throw new GradleException("This build must be run with java 12. Current version: " + JavaVersion.current())
-}
+//if (JavaVersion.current() != JavaVersion.VERSION_12) {
+//    throw new GradleException("This build must be run with java 12. Current version: " + JavaVersion.current())
+//}
 
 subprojects {
+    //apply plugin: 'java'
     apply plugin: 'kotlin'
     apply plugin: 'jacoco'
 
@@ -38,7 +39,7 @@ subprojects {
         exclude module: 'slf4j-ext'
         exclude module: 'grpc-context'
         exclude module: 'log4j-slf4j-impl'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        //exclude group: 'com.google.code.findbugs', module: 'jsr305'
 
         resolutionStrategy {
             force Lib.jackson_core
@@ -118,7 +119,7 @@ subprojects {
 }
 
 apply plugin: 'java'
-apply plugin: 'jacoco'
+//apply plugin: 'jacoco'
 
 repositories {
     jcenter()

@@ -1,6 +1,5 @@
 package com.cryptax.controller.model
 
-import com.cryptax.controller.validation.Create
 import com.cryptax.domain.entity.Currency
 import com.cryptax.domain.entity.Details
 import com.cryptax.domain.entity.Line
@@ -15,13 +14,9 @@ import javax.validation.constraints.NotNull
 
 data class UserWeb(
     val id: String = "DEFAULT",
-    @get:NotEmpty(groups = [Create::class], message = "{user.email}")
     val email: String = "",
-    @get:NotEmpty(groups = [Create::class], message = "{user.password}")
     val password: CharArray? = null,
-    @get:NotEmpty(groups = [Create::class], message = "{user.lastname}")
     val lastName: String = "",
-    @get:NotEmpty(groups = [Create::class], message = "{user.firstname}")
     val firstName: String = "") {
 
     fun toUser(): User {
