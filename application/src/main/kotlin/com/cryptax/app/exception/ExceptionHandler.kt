@@ -1,6 +1,7 @@
 package com.cryptax.app.exception
 
 import com.cryptax.app.jwt.JwtException
+import com.cryptax.controller.exception.ControllerValidationException
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
@@ -47,6 +48,13 @@ class ExceptionHandler {
     @ResponseBody
     fun webExchangeBindException(ex: WebExchangeBindException): ValidationErrorMessage {
         return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
+    }
+
+    @ExceptionHandler(ControllerValidationException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun controllerValidationException(ex: ControllerValidationException): ValidationErrorMessage {
+        return ValidationErrorMessage(details = ex.errors.map { e -> e.message })
     }
 
     @ExceptionHandler(UserNotFoundException::class)

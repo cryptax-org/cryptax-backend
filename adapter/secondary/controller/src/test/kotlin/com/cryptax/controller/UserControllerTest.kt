@@ -13,6 +13,7 @@ import com.nhaarman.mockitokotlin2.argumentCaptor
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -51,8 +52,12 @@ class UserControllerTest {
     lateinit var loginUser: LoginUser
     @Mock
     lateinit var resetUserPassword: ResetUserPassword
-    @InjectMocks
     lateinit var userController: UserController
+
+    @BeforeEach
+    fun beforeEach() {
+        userController = UserController(createUser = createUser, findUser = findUser, loginUser = loginUser, resetUserPassword = resetUserPassword, validateUser = validateUser)
+    }
 
     @Test
     fun testCreateUser() {

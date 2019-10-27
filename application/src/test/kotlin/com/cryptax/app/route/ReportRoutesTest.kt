@@ -26,7 +26,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @DisplayName("Report routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles("test")
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],

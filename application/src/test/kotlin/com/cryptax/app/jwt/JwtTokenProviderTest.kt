@@ -14,7 +14,7 @@ class JwtTokenProviderTest {
 
     @BeforeAll
     internal fun beforeAll() {
-        jwtTokenProvider.profile = "it"
+        jwtTokenProvider.profile = "test"
     }
 
     @Test

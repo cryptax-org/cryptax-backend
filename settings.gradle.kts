@@ -1,7 +1,7 @@
 rootProject.name = "cryptax-backend"
 
 include(
-    //":application",
+    ":application",
     ":application-micronaut",
     ":config",
     ":domain",
