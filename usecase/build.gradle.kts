@@ -2,8 +2,6 @@ plugins {
     `java-library`
 }
 
-extra["moduleName"] = "cryptax.usecase"
-
 dependencies {
     implementation(project(":domain"))
     implementation(Lib.rx)

@@ -2,8 +2,6 @@ plugins {
     `java-library`
 }
 
-extra["moduleName"] = "cryptax.price"
-
 dependencies {
     implementation(project(":domain"))
     implementation(project(":cache"))

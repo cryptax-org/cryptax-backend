@@ -2,8 +2,6 @@ plugins {
     `java-library`
 }
 
-extra["moduleName"] = "cryptax.controller"
-
 configurations.all {
     resolutionStrategy {
         force("com.fasterxml:classmate:1.4.0")

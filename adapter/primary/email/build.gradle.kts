@@ -2,8 +2,6 @@ plugins {
     `java-library`
 }
 
-extra["moduleName"] = "cryptax.email"
-
 dependencies {
     implementation(project(":domain"))
     implementation(project(":config"))

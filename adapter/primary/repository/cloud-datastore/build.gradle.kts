@@ -2,8 +2,6 @@ plugins {
     `java-library`
 }
 
-extra["moduleName"] = "cryptax.db.cloud.datastore"
-
 configurations.all {
     exclude(module = "grpc-context")
     resolutionStrategy {
