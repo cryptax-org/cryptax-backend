@@ -6,8 +6,8 @@ buildscript {
     dependencies { classpath Lib.kotlin_gradle }
 }
 
-if (JavaVersion.current() != JavaVersion.VERSION_11) {
-    throw new GradleException("This build must be run with java 11. Current version: " + JavaVersion.current())
+if (JavaVersion.current() != JavaVersion.VERSION_12) {
+    throw new GradleException("This build must be run with java ${JavaVersion.VERSION_12}. Current version: ${JavaVersion.current()}")
 }
 
 subprojects {
@@ -15,10 +15,10 @@ subprojects {
     apply plugin: 'jacoco'
 
     group = 'com.cryptax'
-    version = '2.0.1-SNAPSHOT'
+    version = '2.0.2-SNAPSHOT'
 
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_12
+    targetCompatibility = JavaVersion.VERSION_12
 
     repositories {
         mavenCentral()
