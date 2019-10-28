@@ -8,9 +8,11 @@ open class Config(private val overrideProfile: String? = null) {
 
     val profile: String by lazy { profile() }
 
-    val properties: AppProps = ObjectMapper(YAMLFactory())
-        .registerModule(KotlinModule())
-        .readValue(Config::class.java.classLoader.getResourceAsStream("config-$profile.yml"), AppProps::class.java)
+    val properties: AppProps by lazy {
+        ObjectMapper(YAMLFactory())
+            .registerModule(KotlinModule())
+            .readValue(Config::class.java.classLoader.getResourceAsStream("config-$profile.yml"), AppProps::class.java)
+    }
 
     private fun profile(): String {
         if (overrideProfile != null) return overrideProfile
