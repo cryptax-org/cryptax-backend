@@ -10,7 +10,7 @@ import org.junit.jupiter.api.TestInstance.Lifecycle
 @TestInstance(Lifecycle.PER_CLASS)
 class JwtTokenProviderTest {
 
-    private val jwtTokenProvider = JwtTokenProvider()
+/*    private val jwtTokenProvider = JwtTokenProvider()
 
     @BeforeAll
     internal fun beforeAll() {
@@ -41,5 +41,5 @@ class JwtTokenProviderTest {
 
         // then
         assertThat(actual).isFalse()
-    }
+    }*/
 }

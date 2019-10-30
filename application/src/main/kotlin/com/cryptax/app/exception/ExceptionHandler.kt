@@ -1,6 +1,5 @@
 package com.cryptax.app.exception
 
-import com.cryptax.app.jwt.JwtException
 import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
@@ -9,6 +8,7 @@ import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
 import com.cryptax.domain.exception.UserValidationException
 import com.cryptax.domain.exception.ValidationException
+import com.cryptax.jwt.exception.JwtException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ControllerAdvice

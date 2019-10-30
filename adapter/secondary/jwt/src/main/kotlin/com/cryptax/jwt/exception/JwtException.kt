@@ -1,4 +1,4 @@
-package com.cryptax.app.jwt
+package com.cryptax.jwt.exception
 
 class JwtException : RuntimeException {
 

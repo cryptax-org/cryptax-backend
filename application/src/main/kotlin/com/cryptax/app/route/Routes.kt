@@ -1,6 +1,6 @@
 package com.cryptax.app.route
 
-import com.cryptax.app.jwt.JwtException
+import com.cryptax.jwt.exception.JwtException
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import reactor.core.publisher.Mono
 

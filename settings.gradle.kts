@@ -14,7 +14,8 @@ include(
     ":email",
     ":health",
     ":price",
-    ":cache")
+    ":cache",
+    ":jwt")
 
 project(":security").projectDir = file("adapter/primary/security")
 project(":id-generator").projectDir = file("adapter/primary/id-generator")
@@ -26,3 +27,4 @@ project(":email").projectDir = file("adapter/primary/email")
 project(":health").projectDir = file("adapter/secondary/health")
 project(":price").projectDir = file("adapter/primary/price")
 project(":cache").projectDir = file("adapter/secondary/cache")
+project(":jwt").projectDir = file("adapter/secondary/jwt")
