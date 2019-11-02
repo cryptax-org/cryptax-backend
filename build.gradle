@@ -38,7 +38,7 @@ subprojects {
         exclude module: 'slf4j-ext'
         exclude module: 'grpc-context'
         exclude module: 'log4j-slf4j-impl'
-        exclude group: 'com.google.code.findbugs', module: 'jsr305'
+        //exclude group: 'com.google.code.findbugs', module: 'jsr305'
 
         resolutionStrategy {
             force Lib.jackson_core

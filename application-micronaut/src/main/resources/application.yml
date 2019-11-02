@@ -1,0 +1,10 @@
+micronaut:
+  application:
+    name: cryptax
+
+jackson:
+  bean-introspection-module: true
+  time-zone: UTC
+  serialization:
+    WRITE_DATES_AS_TIMESTAMPS: false
+  serialization-inclusion: NON_NULL

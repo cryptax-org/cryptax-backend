@@ -9,6 +9,7 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import io.reactivex.Maybe
 import io.reactivex.Single
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,6 +23,8 @@ interface TokenService {
     fun buildTokenFromRefresh(token: String): Single<Token>
 
     fun validateToken(token: String): Boolean
+
+    fun validateTokenRx(token: String): Maybe<String>
 
     fun tokenDetails(token: String): Single<TokenDetails>
 }
@@ -60,6 +63,10 @@ class JwtService(private val jwtProps: JwtProps, private val profile: String) : 
         }
         if (!result) log.warn("Expired or invalid JWT token: $token")
         return result
+    }
+
+    override fun validateTokenRx(token: String): Maybe<String> {
+        return Maybe.defer { if (validateToken(token)) Maybe.just(token) else Maybe.empty() }
     }
 
     override fun buildTokenFromRefresh(token: String): Single<Token> {

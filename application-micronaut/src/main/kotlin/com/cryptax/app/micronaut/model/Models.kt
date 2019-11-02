@@ -1,6 +1,8 @@
-package com.cryptax.app.model
+package com.cryptax.app.micronaut.model
 
 import javax.validation.constraints.NotEmpty
+
+data class ErrorResponse(val error: String, val details: List<String>? = null)
 
 class GetTokenRequest {
     @get:NotEmpty(message = "{token.email}")

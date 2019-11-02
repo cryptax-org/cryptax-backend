@@ -1,5 +1,6 @@
 package com.cryptax.config
 
+import com.cryptax.config.ProfileType.test
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor
 import java.lang.management.ManagementFactory
 
@@ -14,7 +15,7 @@ data class JwtProps(
     val refreshExpiresInDays: Int) {
 
     fun password(profile: String? = null): String {
-        if (profile == "it") return password
+        if (profile == test) return password
         return decrypt(password)
     }
 }
