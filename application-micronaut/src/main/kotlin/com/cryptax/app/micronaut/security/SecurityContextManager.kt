@@ -29,7 +29,7 @@ class SecurityContextManager(private val tokenService: TokenService) {
     fun verifyUserId(userId: String): Single<Authentication> {
         return loadSecurityContext()
             .map { authentication ->
-                if (authentication.isAuthenticated()) {
+                if (authentication.isAuthenticated() && userId == (authentication as UserAuthentication).principal) {
                     authentication
                 } else {
                     throw SecurityContextException("User [$userId] can't be accessed with the given token [$currentToken]")

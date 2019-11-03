@@ -47,12 +47,12 @@ class UserRoutes(private val userController: UserController, private val service
     }
 
     @Get("/email/{email}/reset")
-    private fun initiateResetPassword(@PathVariable email: String): Single<ResetPasswordWeb> {
+    fun initiateResetPassword(@PathVariable email: String): Single<ResetPasswordWeb> {
         return userController.initiatePasswordReset(email)
     }
 
     @Put("/password")
-    private fun resetPassword(@Body @Valid body: ResetPasswordRequest): Single<Unit> {
-        return userController.resetPassword(body.email!!, body.password!!, body.token!!)
+    fun resetPassword(@Body body: ResetPasswordRequest): Single<Unit> {
+        return userController.resetPassword(body.email, body.password, body.token)
     }
 }

@@ -13,18 +13,7 @@ class GetTokenRequest {
 
 data class GetTokenResponse(val id: String, val token: String, val refreshToken: String)
 
-class ResetPasswordRequest() {
-
-    constructor(email: String, password: CharArray, token: String) : this() {
-        this.email = email
-        this.password = password
-        this.token = token
-    }
-
-    @get:NotEmpty(message = "{reset.password.email}")
-    var email: String? = null
-    @get:NotEmpty(message = "{reset.password.password}")
-    var password: CharArray? = null
-    @get:NotEmpty(message = "{reset.password.token}")
-    var token: String? = null
-}
+class ResetPasswordRequest(
+    val email: String? = null,
+    val password: CharArray? = null,
+    val token: String? = null)

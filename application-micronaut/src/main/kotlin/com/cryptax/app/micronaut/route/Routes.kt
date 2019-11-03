@@ -2,6 +2,8 @@ package com.cryptax.app.micronaut.route
 
 import com.cryptax.app.micronaut.model.ErrorResponse
 import com.cryptax.app.micronaut.security.SecurityContextException
+import com.cryptax.controller.validation.ValidationException
+import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
@@ -45,9 +47,13 @@ interface Routes {
 
     @Error(global = true)
     fun error(request: HttpRequest<*>, throwable: Throwable): HttpResponse<*> {
-        if (throwable is UserNotFoundException) {
+        if (throwable is UserNotFoundException || throwable is ResetPasswordException) {
             log.info("User not found: ${throwable.message}")
-            return HttpResponse.unauthorized<Any>()
+            return HttpResponse.badRequest<Any>()
+        }
+        if (throwable is ValidationException) {
+            val response = ErrorResponse(INVALID_REQUEST, throwable.errors)
+            return HttpResponse.badRequest<ErrorResponse>(response)
         }
         if (throwable is SecurityContextException) {
             log.info("Security issue: ${throwable.message}")

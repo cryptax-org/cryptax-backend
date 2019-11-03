@@ -1,6 +1,9 @@
 micronaut:
   application:
     name: cryptax
+  server:
+    cors:
+      enabled: true
 
 jackson:
   bean-introspection-module: true

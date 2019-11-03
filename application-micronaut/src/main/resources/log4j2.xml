@@ -6,9 +6,15 @@
         </Console>
     </Appenders>
     <Loggers>
-<!--        <Logger name="io.micronaut.context.condition" level="debug" additivity="true">
+        <Logger name="io.micronaut.http.client" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
-        </Logger>-->
+        </Logger>
+        <Logger name="io.micronaut.context.condition" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.micronaut" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

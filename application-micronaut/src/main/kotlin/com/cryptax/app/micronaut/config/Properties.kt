@@ -36,27 +36,6 @@ internal class Properties {
     @Singleton
     @Bean
     fun tokenService(jwtProps: JwtProps): TokenService {
-        return JwtService(jwtProps, "local")
-        //return JwtService(jwtProps, context.environment.activeNames.iterator().next())
+        return JwtService(jwtProps, context.environment.activeNames.iterator().next())
     }
-
-    @RequestScope
-    class MiddleService {
-        var correlationId: String? = null
-
-        init {
-            println("Init middleware")
-        }
-    }
-
-/*    @Prototype
-    fun myService(): MyService {
-        return MyService()
-    }*/
-
-
-/*    @Prototype
-    fun contextSecurity(): ContextSecurity {
-        return ContextSecurity()
-    }*/
 }
