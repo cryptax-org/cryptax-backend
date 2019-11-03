@@ -18,7 +18,7 @@ class InMemoryTransactionRepositoryTest {
     private lateinit var transactionRepository: InMemoryTransactionRepository
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         transactionRepository = InMemoryTransactionRepository()
     }
 

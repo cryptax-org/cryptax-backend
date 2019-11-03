@@ -4,6 +4,7 @@ import com.cryptax.app.micronaut.Utils
 import com.cryptax.app.micronaut.Utils.createUser
 import com.cryptax.app.micronaut.Utils.initUserAndGetToken
 import com.cryptax.app.micronaut.Utils.initiatePasswordReset
+import com.cryptax.app.micronaut.Utils.setupRestAssured
 import com.cryptax.app.micronaut.Utils.user
 import com.cryptax.app.micronaut.model.ResetPasswordRequest
 import com.cryptax.db.InMemoryUserRepository
@@ -37,11 +38,11 @@ class UserRoutesTest {
 
     @BeforeAll
     fun beforeAll() {
-        Utils.setupRestAssured(server.port)
+        setupRestAssured(server.port)
     }
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         (memory as InMemoryUserRepository).deleteAll()
     }
 

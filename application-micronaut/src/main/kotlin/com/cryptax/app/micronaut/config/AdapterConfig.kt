@@ -10,7 +10,7 @@ import com.cryptax.domain.port.SecurePassword
 import com.cryptax.email.SendGridEmailService
 import com.cryptax.id.JugIdGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.core.Hazelcast
 import io.micronaut.context.annotation.Factory
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -47,8 +47,8 @@ class AdapterConfig {
     }
 
     @Singleton
-    fun cacheService(hazelcastInstance: HazelcastInstance): CacheService {
-        return HazelcastService(hazelcastInstance)
+    fun cacheService(): CacheService {
+        return HazelcastService(Hazelcast.newHazelcastInstance())
     }
 
     @Singleton

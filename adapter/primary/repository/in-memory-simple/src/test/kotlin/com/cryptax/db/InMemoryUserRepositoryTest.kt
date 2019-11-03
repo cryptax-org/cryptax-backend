@@ -17,7 +17,7 @@ class InMemoryUserRepositoryTest {
     private lateinit var user: User
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         userRepository = InMemoryUserRepository()
     }
 

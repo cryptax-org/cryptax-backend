@@ -2,7 +2,7 @@ package com.cryptax.app.micronaut.route
 
 import com.cryptax.app.micronaut.model.GetTokenRequest
 import com.cryptax.app.micronaut.model.GetTokenResponse
-import com.cryptax.app.micronaut.security.SecurityContextManager
+import com.cryptax.app.micronaut.security.SecurityContext
 import com.cryptax.controller.UserController
 import com.cryptax.jwt.TokenService
 import io.micronaut.http.annotation.Body
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class TokenRoutes(private val userController: UserController, private val tokenService: TokenService) {
 
     @Inject
-    internal var securityContextManager: SecurityContextManager? = null
+    internal var securityContext: SecurityContext? = null
 
     @Post("/token")
     fun obtainToken(@Body /*@Valid*/ getTokenRequest: GetTokenRequest): Single<GetTokenResponse> {

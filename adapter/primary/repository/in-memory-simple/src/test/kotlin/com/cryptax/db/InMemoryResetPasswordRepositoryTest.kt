@@ -15,7 +15,7 @@ class InMemoryResetPasswordRepositoryTest {
     private lateinit var repository: InMemoryResetPasswordRepository
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         repository = InMemoryResetPasswordRepository()
     }
 

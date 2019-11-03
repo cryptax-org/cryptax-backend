@@ -54,7 +54,7 @@ class UserRoutesTest {
     }
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         memory.deleteAll()
     }
 

@@ -33,7 +33,7 @@ class GenerateReportTest {
     private val user: User = objectMapper.readValue(javaClass.getResourceAsStream("/report/user.json"), User::class.java)
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         userRepository = mock(UserRepository::class.java)
         transactionRepository = mock(TransactionRepository::class.java)
         priceService = PriceServiceStub()

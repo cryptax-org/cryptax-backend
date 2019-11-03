@@ -36,7 +36,7 @@ class CryptoCompareTest {
     lateinit var cryptoCompare: CryptoCompare
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         cryptoCompare = CryptoCompare(client = client, objectMapper = ObjectMapper())
     }
 

@@ -56,7 +56,7 @@ class TokenRoutesTest {
     }
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         memory.deleteAll()
     }
 

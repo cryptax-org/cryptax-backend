@@ -33,7 +33,7 @@ class PriceServiceTest {
     lateinit var priceService: PriceService
 
     @BeforeEach
-    fun setUp() {
+    internal fun `before each`() {
         priceService = PriceService(
             client = client,
             objectMapper = ObjectMapper(),

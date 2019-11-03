@@ -64,8 +64,7 @@ dependencies {
     implementation(Lib.jjwt)
     implementation(Lib.jaxb)
 
-    compile 'io.micronaut.configuration:micronaut-hibernate-validator:1.2.0'
-    compile group: 'io.micronaut', name: 'micronaut-management', version: '1.2.5'
+    //compile 'io.micronaut.configuration:micronaut-hibernate-validator:1.2.0'
 
     testImplementation(Lib.rest_assured)
 }

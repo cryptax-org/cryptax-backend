@@ -1,7 +1,7 @@
 package com.cryptax.app.micronaut.route
 
 import com.cryptax.app.micronaut.model.ResetPasswordRequest
-import com.cryptax.app.micronaut.security.SecurityContextManager
+import com.cryptax.app.micronaut.security.SecurityContext
 import com.cryptax.controller.UserController
 import com.cryptax.controller.model.ResetPasswordWeb
 import com.cryptax.controller.model.UserWeb
@@ -14,10 +14,9 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.annotation.QueryValue
 import io.reactivex.Single
-import javax.validation.Valid
 
 @Controller("/users")
-class UserRoutes(private val userController: UserController, private val service: SecurityContextManager) : Routes {
+class UserRoutes(private val userController: UserController, private val service: SecurityContext) : Routes {
 
     @Post
     fun createUser(@Body userWeb: UserWeb): Single<HttpResponse<UserWeb>> {
@@ -35,7 +34,7 @@ class UserRoutes(private val userController: UserController, private val service
 
     @Get("/{userId}")
     fun getUser(@PathVariable userId: String): Single<UserWeb> {
-        return service.verifyUserId(userId).flatMap {
+        return service.validateUserId(userId).flatMap {
             val res = userController.findUser(userId)
             res.toSingle()
         }

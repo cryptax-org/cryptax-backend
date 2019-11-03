@@ -49,8 +49,8 @@ object Utils {
             .config()
             .objectMapperConfig(ObjectMapperConfig().jackson2ObjectMapperFactory { _, _ -> objectMapper })
             .httpClient(HttpClientConfig.httpClientConfig()
-                .setParam("http.connection.timeout", 3000)
-                .setParam("http.socket.timeout", 3000))
+                .setParam("http.connection.timeout", 8000)
+                .setParam("http.socket.timeout", 8000))
     }
 
     fun createUser(): Pair<User, String> {

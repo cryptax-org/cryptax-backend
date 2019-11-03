@@ -1,10 +1,13 @@
-package com.cryptax.app.route
+package com.cryptax.app.micronaut.route
 
-import com.cryptax.app.Application
-import com.cryptax.app.route.Utils.initTransaction
-import com.cryptax.app.route.Utils.setupRestAssured
+import com.cryptax.app.micronaut.Utils.initTransaction
+import com.cryptax.app.micronaut.Utils.setupRestAssured
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
+import com.cryptax.domain.port.TransactionRepository
+import com.cryptax.domain.port.UserRepository
+import io.micronaut.runtime.server.EmbeddedServer
+import io.micronaut.test.annotation.MicronautTest
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -14,54 +17,41 @@ import org.hamcrest.CoreMatchers.nullValue
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import javax.inject.Inject
 
-@DisplayName("Report routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
-@ExtendWith(SpringExtension::class)
-@SpringBootTest(
-    classes = [Application::class],
-    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@MicronautTest
 class ReportRoutesTest {
 
-    @LocalServerPort
-    lateinit var randomServerPort: String
+    @Inject
+    lateinit var server: EmbeddedServer
 
-    @Autowired
-    lateinit var userRepository: InMemoryUserRepository
+    @Inject
+    lateinit var userRepository: UserRepository
 
-    @Autowired
-    lateinit var transactionRepository: InMemoryTransactionRepository
+    @Inject
+    lateinit var transactionRepository: TransactionRepository
 
     @BeforeAll
     internal fun `before all`() {
-        setupRestAssured(randomServerPort.toInt())
+        setupRestAssured(server.port)
     }
 
     @AfterAll
     internal fun `after all`() {
-        userRepository.deleteAll()
-        transactionRepository.deleteAll()
+        (userRepository as InMemoryUserRepository).deleteAll()
+        (transactionRepository as InMemoryTransactionRepository).deleteAll()
     }
 
     @BeforeEach
     internal fun `before each`() {
-        userRepository.deleteAll()
-        transactionRepository.deleteAll()
+        (userRepository as InMemoryUserRepository).deleteAll()
+        (transactionRepository as InMemoryTransactionRepository).deleteAll()
     }
 
     @Test
-    @DisplayName("Generate report")
     fun `generate report`() {
         // given
         val result = initTransaction()
@@ -72,8 +62,8 @@ class ReportRoutesTest {
         given().
             log().ifValidationFails().
             contentType(ContentType.JSON).
-            queryParam("debug", false).
             header(Header("Authorization", "Bearer ${token.getString("token")}")).
+            queryParam("debug", false).
         get("/users/$userId/report").
         then().
             log().ifValidationFails().
@@ -104,7 +94,6 @@ class ReportRoutesTest {
     }
 
     @Test
-    @DisplayName("Generate report with metadata")
     fun `generate report with metadata`() {
         // given
         val result = initTransaction()

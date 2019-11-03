@@ -71,7 +71,7 @@ class TransactionRoutesTest {
     }
 
     @BeforeEach
-    fun `before each`() {
+    internal fun `before each`() {
         userRepository.deleteAll()
         transactionRepository.deleteAll()
     }
