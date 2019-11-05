@@ -32,8 +32,8 @@ class TransactionController(
     }
 
     fun updateTransaction(id: String, userId: String, transactionWeb: TransactionWeb): Single<TransactionWeb> {
-        return updateTransaction
-            .update(transactionWeb.toTransaction(transactionId = id, userId = userId))
+        return Validation.validateTransaction(transactionWeb)
+            .flatMap { updateTransaction.update(transactionWeb.toTransaction(transactionId = id, userId = userId)) }
             .map { transaction -> TransactionWeb.toTransactionWeb(transaction) }
     }
 

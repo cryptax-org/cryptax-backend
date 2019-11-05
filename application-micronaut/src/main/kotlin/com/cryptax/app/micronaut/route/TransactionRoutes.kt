@@ -12,7 +12,6 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.reactivex.Maybe
 import io.reactivex.Single
-import javax.validation.Valid
 
 @Controller("/users/{userId}")
 open class TransactionRoutes(private val transactionController: TransactionController, private val securityContext: SecurityContext) {
@@ -25,8 +24,8 @@ open class TransactionRoutes(private val transactionController: TransactionContr
     }
 
     @Post("/transactions/bulk")
-    open fun addMultipleTransactions(
-        @Body @Valid transactions: List<TransactionWeb>,
+    fun addMultipleTransactions(
+        @Body transactions: List<TransactionWeb>,
         @PathVariable userId: String): Single<List<TransactionWeb>> {
         return securityContext.validateUserId(userId).flatMap { transactionController.addMultipleTransactions(userId, transactions) }
     }
@@ -44,8 +43,8 @@ open class TransactionRoutes(private val transactionController: TransactionContr
     }
 
     @Put("/transactions/{transactionId}")
-    open fun updateTransaction(
-        @Body @Valid transactionWeb: TransactionWeb,
+    fun updateTransaction(
+        @Body transactionWeb: TransactionWeb,
         @PathVariable userId: String,
         @PathVariable transactionId: String): Single<TransactionWeb> {
         return securityContext.validateUserId(userId).flatMap { transactionController.updateTransaction(transactionId, userId, transactionWeb) }
