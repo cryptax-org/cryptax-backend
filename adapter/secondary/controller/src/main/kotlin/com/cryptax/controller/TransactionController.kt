@@ -1,6 +1,7 @@
 package com.cryptax.controller
 
 import com.cryptax.controller.model.TransactionWeb
+import com.cryptax.controller.validation.Validation
 import com.cryptax.domain.entity.Source
 import com.cryptax.parser.BinanceParser
 import com.cryptax.parser.CoinbaseParser
@@ -19,14 +20,14 @@ class TransactionController(
     private val deleteTransaction: DeleteTransaction) {
 
     fun addTransaction(userId: String, transactionWeb: TransactionWeb): Single<TransactionWeb> {
-        return addTransaction
-            .add(transactionWeb.toTransaction(userId))
+        return Validation.validateTransaction(transactionWeb)
+            .flatMap { addTransaction.add(transactionWeb.toTransaction(userId)) }
             .map { transaction -> TransactionWeb.toTransactionWeb(transaction) }
     }
 
     fun addMultipleTransactions(userId: String, transactionsWeb: List<TransactionWeb>): Single<List<TransactionWeb>> {
-        return addTransaction
-            .addMultiple(transactionsWeb.map { transactionWeb -> transactionWeb.toTransaction(userId) })
+        return Validation.validateTransactions(transactionsWeb)
+            .flatMap { addTransaction.addMultiple(transactionsWeb.map { transactionWeb -> transactionWeb.toTransaction(userId) }) }
             .map { transactions -> transactions.map { transaction -> TransactionWeb.toTransactionWeb(transaction) } }
     }
 

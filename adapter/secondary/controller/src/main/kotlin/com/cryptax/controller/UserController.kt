@@ -2,7 +2,7 @@ package com.cryptax.controller
 
 import com.cryptax.controller.model.ResetPasswordWeb
 import com.cryptax.controller.model.UserWeb
-import com.cryptax.controller.validation.UserValidation
+import com.cryptax.controller.validation.Validation
 import com.cryptax.usecase.user.CreateUser
 import com.cryptax.usecase.user.FindUser
 import com.cryptax.usecase.user.LoginUser
@@ -19,14 +19,14 @@ class UserController(
     private val resetUserPassword: ResetUserPassword) {
 
     fun createUser(userWeb: UserWeb): Single<Pair<UserWeb, String>> {
-        return UserValidation.validateCreateUser(userWeb)
+        return Validation.validateCreateUser(userWeb)
             .flatMap { user -> createUser.create(user.toUser()) }
             .map { pair -> Pair(UserWeb.toUserWeb(pair.first), pair.second) }
     }
 
-    fun login(email: String, password: CharArray): Single<UserWeb> {
-        return loginUser
-            .login(email, password)
+    fun login(email: String?, password: CharArray?): Single<UserWeb> {
+        return Validation.validateLogin(email, password)
+            .flatMap { pair -> loginUser.login(pair.first, pair.second) }
             .map { user -> UserWeb.toUserWeb(user) }
     }
 
@@ -49,7 +49,7 @@ class UserController(
     }
 
     fun resetPassword(email: String?, password: CharArray?, token: String?): Single<Unit> {
-        return UserValidation.validateRestPassword(email, password, token)
+        return Validation.validateRestPassword(email, password, token)
             .flatMap { triple -> resetUserPassword.resetPassword(triple.first, triple.second, triple.third) }
     }
 }

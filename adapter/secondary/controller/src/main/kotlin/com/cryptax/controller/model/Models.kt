@@ -13,6 +13,7 @@ import java.util.Arrays
 import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.NotNull
 
+// TODO remove hibernate validation annotations
 data class UserWeb(
     val id: String = "DEFAULT",
     @get:NotEmpty(groups = [Create::class], message = "{user.email}")

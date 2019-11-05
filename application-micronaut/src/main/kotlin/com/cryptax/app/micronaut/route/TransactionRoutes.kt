@@ -14,51 +14,51 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.validation.Valid
 
-@Controller
-open class TransactionRoutes(private val transactionController: TransactionController, private val service: SecurityContext) {
+@Controller("/users/{userId}")
+open class TransactionRoutes(private val transactionController: TransactionController, private val securityContext: SecurityContext) {
 
-    @Post("/users/{userId}/transactions")
-    open fun addTransaction(
-        @Body @Valid transactionWeb: TransactionWeb,
+    @Post("/transactions")
+    fun addTransaction(
+        @Body transactionWeb: TransactionWeb,
         @PathVariable userId: String): Single<TransactionWeb> {
-        return service.validateUserId(userId).flatMap { transactionController.addTransaction(userId, transactionWeb) }
+        return securityContext.validateUserId(userId).flatMap { transactionController.addTransaction(userId, transactionWeb) }
     }
 
-    @Post("/users/{userId}/transactions/bulk")
+    @Post("/transactions/bulk")
     open fun addMultipleTransactions(
         @Body @Valid transactions: List<TransactionWeb>,
         @PathVariable userId: String): Single<List<TransactionWeb>> {
-        return service.validateUserId(userId).flatMap { transactionController.addMultipleTransactions(userId, transactions) }
+        return securityContext.validateUserId(userId).flatMap { transactionController.addMultipleTransactions(userId, transactions) }
     }
 
-    @Get("/users/{userId}/transactions")
+    @Get("/transactions")
     fun getAllTransactions(@PathVariable userId: String): Single<List<TransactionWeb>> {
-        return service.validateUserId(userId).flatMap { transactionController.getAllTransactions(userId) }
+        return securityContext.validateUserId(userId).flatMap { transactionController.getAllTransactions(userId) }
     }
 
-    @Get("/users/{userId}/transactions/{transactionId}")
+    @Get("/transactions/{transactionId}")
     fun getOneTransaction(
         @PathVariable userId: String,
         @PathVariable transactionId: String): Maybe<TransactionWeb> {
-        return service.validateUserId(userId).toMaybe().flatMap { transactionController.getTransaction(transactionId, userId) }
+        return securityContext.validateUserId(userId).toMaybe().flatMap { transactionController.getTransaction(transactionId, userId) }
     }
 
-    @Put("/users/{userId}/transactions/{transactionId}")
+    @Put("/transactions/{transactionId}")
     open fun updateTransaction(
         @Body @Valid transactionWeb: TransactionWeb,
         @PathVariable userId: String,
         @PathVariable transactionId: String): Single<TransactionWeb> {
-        return service.validateUserId(userId).flatMap { transactionController.updateTransaction(transactionId, userId, transactionWeb) }
+        return securityContext.validateUserId(userId).flatMap { transactionController.updateTransaction(transactionId, userId, transactionWeb) }
     }
 
-    @Delete("/users/{userId}/transactions/{transactionId}")
+    @Delete("/transactions/{transactionId}")
     fun deleteTransaction(
         @PathVariable userId: String,
         @PathVariable transactionId: String): Single<Unit> {
-        return service.validateUserId(userId).flatMap { transactionController.deleteTransaction(transactionId, userId) }
+        return securityContext.validateUserId(userId).flatMap { transactionController.deleteTransaction(transactionId, userId) }
     }
 
-/*    @Post("/users/{userId}/transactions/upload", consumes = [MediaType.MULTIPART_FORM_DATA])
+/*    @Post("/transactions/upload", consumes = [MediaType.MULTIPART_FORM_DATA])
     fun uploadCsv(
         @RequestPart("file") file: Mono<FilePart>,
         @PathVariable userId: String,

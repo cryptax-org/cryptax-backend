@@ -3,10 +3,13 @@ package com.cryptax.app.micronaut.route
 import com.cryptax.app.micronaut.model.ErrorResponse
 import com.cryptax.app.micronaut.security.SecurityContextException
 import com.cryptax.controller.validation.ValidationException
+import com.cryptax.domain.exception.LoginException
 import com.cryptax.domain.exception.ResetPasswordException
 import com.cryptax.domain.exception.TransactionNotFound
+import com.cryptax.domain.exception.TransactionValidationException
 import com.cryptax.domain.exception.UserAlreadyExistsException
 import com.cryptax.domain.exception.UserNotFoundException
+import com.cryptax.jwt.exception.JwtException
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Error
@@ -50,6 +53,16 @@ interface Routes {
         if (throwable is UserNotFoundException || throwable is ResetPasswordException) {
             log.info("User not found: ${throwable.message}")
             return HttpResponse.badRequest<Any>()
+        }
+        if (throwable is TransactionValidationException) {
+            val error = ErrorResponse(throwable.message!!)
+            return HttpResponse.badRequest<ErrorResponse>(error)
+        }
+        if (throwable is JwtException) {
+            return HttpResponse.unauthorized<Any>()
+        }
+        if (throwable is LoginException) {
+            return HttpResponse.unauthorized<Any>()
         }
         if (throwable is ValidationException) {
             val response = ErrorResponse(INVALID_REQUEST, throwable.errors)

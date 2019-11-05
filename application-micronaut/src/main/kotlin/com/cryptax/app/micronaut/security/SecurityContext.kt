@@ -1,5 +1,6 @@
 package com.cryptax.app.micronaut.security
 
+import com.cryptax.app.micronaut.web.extractToken
 import com.cryptax.jwt.TokenService
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.context.ServerRequestContext
@@ -9,11 +10,10 @@ import io.reactivex.Single
 @RequestScope
 class SecurityContext(private val tokenService: TokenService) {
 
-    private val currentToken: String
+    private val currentToken: String = extractToken(ServerRequestContext.currentRequest<Any>().get())
     private val token: Single<String>
 
     init {
-        currentToken = extractToken(ServerRequestContext.currentRequest<Any>().get())
         token = Single.just(currentToken)
     }
 
@@ -37,24 +37,15 @@ class SecurityContext(private val tokenService: TokenService) {
             }
     }
 
-    fun validateRequest(): Single<Boolean> {
+    fun validateRequest(): Single<Authentication> {
         return loadSecurityContext()
             .map { authentication ->
                 if (authentication.isAuthenticated()) {
-                    authentication.isAuthenticated()
+                    authentication
                 } else {
                     throw SecurityContextException("User is not authenticated. Token used: [$currentToken]")
                 }
             }
-    }
-
-    private fun extractToken(currentRequest: HttpRequest<Any>?): String {
-        if (currentRequest == null) return ""
-        val authHeader: String? = currentRequest.headers.authorization?.orElseGet { "" }
-        if (authHeader != null && authHeader.isNotBlank() && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7)
-        }
-        return ""
     }
 
     private fun getCurrentAuthentication(token: String): Single<Authentication> {

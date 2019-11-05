@@ -16,7 +16,7 @@ import io.micronaut.http.annotation.QueryValue
 import io.reactivex.Single
 
 @Controller("/users")
-class UserRoutes(private val userController: UserController, private val service: SecurityContext) : Routes {
+class UserRoutes(private val userController: UserController, private val securityContext: SecurityContext) : Routes {
 
     @Post
     fun createUser(@Body userWeb: UserWeb): Single<HttpResponse<UserWeb>> {
@@ -34,7 +34,7 @@ class UserRoutes(private val userController: UserController, private val service
 
     @Get("/{userId}")
     fun getUser(@PathVariable userId: String): Single<UserWeb> {
-        return service.validateUserId(userId).flatMap {
+        return securityContext.validateUserId(userId).flatMap {
             val res = userController.findUser(userId)
             res.toSingle()
         }
