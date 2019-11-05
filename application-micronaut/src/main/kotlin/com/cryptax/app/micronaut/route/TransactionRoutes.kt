@@ -39,7 +39,9 @@ open class TransactionRoutes(private val transactionController: TransactionContr
     fun getOneTransaction(
         @PathVariable userId: String,
         @PathVariable transactionId: String): Maybe<TransactionWeb> {
-        return securityContext.validateUserId(userId).toMaybe().flatMap { transactionController.getTransaction(transactionId, userId) }
+        return securityContext.validateUserId(userId)
+            .toMaybe()
+            .flatMap { transactionController.getTransaction(transactionId, userId) }
     }
 
     @Put("/transactions/{transactionId}")

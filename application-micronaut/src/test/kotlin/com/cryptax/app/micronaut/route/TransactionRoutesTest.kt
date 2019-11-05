@@ -299,6 +299,8 @@ class TransactionRoutesTest {
         // @formatter:on
     }
 
+    // TODO add update transaction with validation failure
+
     @Test
     fun `delete one transaction`() {
         val result = initTransaction()
