@@ -7,7 +7,6 @@ import com.cryptax.app.route.Utils.initUserAndGetToken
 import com.cryptax.app.route.Utils.setupRestAssured
 import com.cryptax.app.route.Utils.validateToken
 import com.cryptax.app.route.Utils.validateUser
-import com.cryptax.config.ProfileType
 import com.cryptax.config.ProfileType.test
 import com.cryptax.db.InMemoryUserRepository
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
@@ -62,7 +61,6 @@ class TokenRoutesTest {
         memory.deleteAll()
     }
 
-    @DisplayName("Request a token")
     @Test
     fun `request a token`() {
         // given
@@ -81,7 +79,6 @@ class TokenRoutesTest {
         validateToken(actualRefreshToken, pair.first.id, true)
     }
 
-    @DisplayName("Request a token, validation test")
     @Test
     fun `request a token, validation test`() {
         // @formatter:off
@@ -99,7 +96,6 @@ class TokenRoutesTest {
         // @formatter:on
     }
 
-    @DisplayName("Obtain token, wrong credentials")
     @Test
     fun `request a token with wrong credentials`() {
         val pair = createUser()
@@ -118,9 +114,8 @@ class TokenRoutesTest {
         // @formatter:on
     }
 
-    @DisplayName("Obtain token from refresh token")
     @Test
-    fun testObtainTokenFromRefreshToken() {
+    fun `obtain token from refresh token`() {
         val token = initUserAndGetToken()
 
         // @formatter:off
@@ -137,9 +132,8 @@ class TokenRoutesTest {
         // @formatter:on
     }
 
-    @DisplayName("Obtain token with wrong token")
     @Test
-    fun getTokenRefreshTokenWithWrongToken() {
+    fun `obtain token with wrong token`() {
         val token = initUserAndGetToken()
 
         // @formatter:off
