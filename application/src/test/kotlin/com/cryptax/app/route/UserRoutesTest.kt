@@ -7,6 +7,7 @@ import com.cryptax.app.route.Utils.initUserAndGetToken
 import com.cryptax.app.route.Utils.initiatePasswordReset
 import com.cryptax.app.route.Utils.setupRestAssured
 import com.cryptax.app.route.Utils.user
+import com.cryptax.config.ProfileType.test
 import com.cryptax.db.InMemoryUserRepository
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
@@ -29,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @DisplayName("User routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles(test)
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],

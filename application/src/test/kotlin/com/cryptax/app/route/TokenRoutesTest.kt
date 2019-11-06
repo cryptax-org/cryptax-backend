@@ -7,6 +7,8 @@ import com.cryptax.app.route.Utils.initUserAndGetToken
 import com.cryptax.app.route.Utils.setupRestAssured
 import com.cryptax.app.route.Utils.validateToken
 import com.cryptax.app.route.Utils.validateUser
+import com.cryptax.config.ProfileType
+import com.cryptax.config.ProfileType.test
 import com.cryptax.db.InMemoryUserRepository
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import io.restassured.RestAssured.given
@@ -31,7 +33,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @DisplayName("Token routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles(test)
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],

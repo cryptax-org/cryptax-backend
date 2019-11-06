@@ -3,6 +3,8 @@ package com.cryptax.app.route
 import com.cryptax.app.Application
 import com.cryptax.app.route.Utils.initTransaction
 import com.cryptax.app.route.Utils.setupRestAssured
+import com.cryptax.config.ProfileType
+import com.cryptax.config.ProfileType.test
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
 import io.restassured.RestAssured.given
@@ -26,7 +28,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @DisplayName("Report routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles(test)
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],

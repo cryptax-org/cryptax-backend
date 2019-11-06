@@ -14,32 +14,7 @@ import io.micronaut.http.HttpRequest
 import io.micronaut.http.HttpResponse
 import io.micronaut.http.annotation.Error
 import io.micronaut.web.router.exceptions.UnsatisfiedRouteException
-import io.reactivex.Single
 import org.slf4j.LoggerFactory
-
-/*import com.cryptax.app.model.ErrorResponse
-import com.cryptax.controller.exception.ControllerValidationException
-import com.cryptax.domain.exception.UserAlreadyExistsException
-import com.cryptax.domain.exception.UserNotFoundException
-import com.hazelcast.spi.impl.operationservice.impl.responses.ErrorResponse
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpResponse
-import io.micronaut.http.annotation.Error
-import io.micronaut.web.router.exceptions.UnsatisfiedRouteException
-import org.slf4j.LoggerFactory
-import reactor.core.publisher.Mono*/
-
-internal fun verifyUserId(userId: String): Single<Boolean> {
-/*    return ReactiveSecurityContextHolder
-        .getContext()
-        .flatMap { context ->
-            when (context.authentication.principal as String) {
-                userId -> Mono.just(true)
-                else -> Mono.error(JwtException("User $userId can't be accessed with the given token ${context.authentication.credentials}"))
-            }
-        }*/
-    return Single.just(true)
-}
 
 private val log = LoggerFactory.getLogger(Routes::class.java)
 

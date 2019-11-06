@@ -12,6 +12,8 @@ import com.cryptax.app.route.Utils.transaction
 import com.cryptax.app.route.Utils.transaction2
 import com.cryptax.app.route.Utils.transaction3
 import com.cryptax.app.route.Utils.validateUser
+import com.cryptax.config.ProfileType
+import com.cryptax.config.ProfileType.test
 import com.cryptax.controller.model.TransactionWeb
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
@@ -42,7 +44,7 @@ import java.time.ZonedDateTime
 
 @DisplayName("Transaction routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles(test)
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],

@@ -1,10 +1,10 @@
 package com.cryptax.app.config
 
-import com.cryptax.app.config.ProfileType.dev
-import com.cryptax.app.config.ProfileType.it
-import com.cryptax.app.config.ProfileType.local
-import com.cryptax.app.config.ProfileType.prod
 import com.cryptax.config.AppProps
+import com.cryptax.config.ProfileType.dev
+import com.cryptax.config.ProfileType.local
+import com.cryptax.config.ProfileType.prod
+import com.cryptax.config.ProfileType.test
 import com.cryptax.db.InMemoryResetPasswordRepository
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
@@ -29,13 +29,13 @@ class RepositoryConfig {
     lateinit var properties: AppProps
 
     // Users
-    @Profile(value = [local, it])
+    @Profile(value = [local, test])
     @Bean
     fun inMemoryUserRepository(): UserRepository {
         return InMemoryUserRepository()
     }
 
-    @Profile(value = [local, it])
+    @Profile(value = [local, test])
     @Bean
     fun inMemoryResetPasswordRepository(): ResetPasswordRepository {
         return InMemoryResetPasswordRepository()
@@ -63,7 +63,7 @@ class RepositoryConfig {
     }
 
     // Transactions
-    @Profile(value = [local, it])
+    @Profile(value = [local, test])
     @Bean
     fun inMemoryTransactionRepository(): TransactionRepository {
         return InMemoryTransactionRepository()

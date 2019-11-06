@@ -3,6 +3,7 @@ package com.cryptax.app.route
 import com.cryptax.app.Application
 import com.cryptax.app.route.Utils.initUserAndGetToken
 import com.cryptax.app.route.Utils.setupRestAssured
+import com.cryptax.config.ProfileType.test
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
@@ -19,7 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @DisplayName("Source routes integration tests")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles("it")
+@ActiveProfiles(test)
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(
     classes = [Application::class],
