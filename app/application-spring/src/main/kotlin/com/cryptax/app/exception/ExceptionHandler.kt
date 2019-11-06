@@ -49,6 +49,13 @@ class ExceptionHandler {
         return ValidationErrorMessage(details = ex.bindingResult.allErrors.map { e -> e.defaultMessage ?: "Field validation issue" })
     }
 
+    @ExceptionHandler(com.cryptax.controller.validation.ValidationException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    fun validationControllerException(ex: com.cryptax.controller.validation.ValidationException): ValidationErrorMessage {
+        return ValidationErrorMessage(details = ex.errors)
+    }
+
     @ExceptionHandler(UserNotFoundException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun userNotFoundException(ex: UserNotFoundException) {

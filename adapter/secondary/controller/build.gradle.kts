@@ -13,7 +13,6 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":parser"))
     implementation(Lib.rx)
-    implementation(Lib.hibernate_validator)
 
     testImplementation(Lib.mockito)
     testImplementation(Lib.mockito_junit)

@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
 import org.springframework.http.codec.multipart.FilePart
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
-import reactor.core.publisher.Mono
 import reactor.adapter.rxjava.toMono
+import reactor.core.publisher.Mono
 import java.io.InputStream
 import java.io.SequenceInputStream
 import java.time.Duration
@@ -29,14 +28,14 @@ class TransactionRoutes @Autowired constructor(private val transactionController
 
     @PostMapping("/users/{userId}/transactions")
     fun addTransaction(
-        @RequestBody @Validated transactionWeb: TransactionWeb,
+        @RequestBody transactionWeb: TransactionWeb,
         @PathVariable userId: String): Mono<TransactionWeb> {
         return verifyUserId(userId).flatMap { transactionController.addTransaction(userId, transactionWeb).toMono() }
     }
 
     @PostMapping("/users/{userId}/transactions/bulk")
     fun addMultipleTransactions(
-        @RequestBody @Validated transactions: List<TransactionWeb>,
+        @RequestBody transactions: List<TransactionWeb>,
         @PathVariable userId: String): Mono<List<TransactionWeb>> {
         return verifyUserId(userId).flatMap { transactionController.addMultipleTransactions(userId, transactions).toMono() }
     }
@@ -55,7 +54,7 @@ class TransactionRoutes @Autowired constructor(private val transactionController
 
     @PutMapping("/users/{userId}/transactions/{transactionId}")
     fun updateTransaction(
-        @RequestBody @Validated transactionWeb: TransactionWeb,
+        @RequestBody transactionWeb: TransactionWeb,
         @PathVariable userId: String,
         @PathVariable transactionId: String): Mono<TransactionWeb> {
         return verifyUserId(userId).flatMap { transactionController.updateTransaction(transactionId, userId, transactionWeb).toMono() }

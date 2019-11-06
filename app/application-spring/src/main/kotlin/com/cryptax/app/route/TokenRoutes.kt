@@ -9,7 +9,6 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.server.reactive.ServerHttpRequest
-import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController
 class TokenRoutes @Autowired constructor(private val userController: UserController, private val tokenService: TokenService) {
 
     @PostMapping("/token")
-    fun obtainToken(@RequestBody @Validated getTokenRequest: GetTokenRequest): Single<GetTokenResponse> {
+    fun obtainToken(@RequestBody getTokenRequest: GetTokenRequest): Single<GetTokenResponse> {
         return userController
-            .login(getTokenRequest.email!!, getTokenRequest.password!!)
+            .login(getTokenRequest.email, getTokenRequest.password)
             .subscribeOn(Schedulers.io())
             .flatMap { userWeb -> tokenService.buildToken(userWeb.id) }
             .map { token -> GetTokenResponse(id = token.userId, token = token.token, refreshToken = token.refresh) }

@@ -57,7 +57,6 @@ dependencies {
     implementation(Lib.okhttp)
     implementation(Lib.google_cloud_datasource)
     implementation(Lib.google_auth)
-    implementation(Lib.hibernate_validator)
     implementation(Lib.jaxb)
     implementation(Lib.rx)
     implementation(Lib.reactor)
