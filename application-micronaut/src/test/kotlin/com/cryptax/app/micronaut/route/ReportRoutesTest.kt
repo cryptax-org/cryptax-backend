@@ -1,7 +1,7 @@
 package com.cryptax.app.micronaut.route
 
-import com.cryptax.app.micronaut.Utils.initTransaction
-import com.cryptax.app.micronaut.Utils.setupRestAssured
+import com.cryptax.app.micronaut.route.Utils.initTransaction
+import com.cryptax.app.micronaut.route.Utils.setupRestAssured
 import com.cryptax.db.InMemoryTransactionRepository
 import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.port.TransactionRepository

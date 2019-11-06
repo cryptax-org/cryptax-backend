@@ -1,11 +1,11 @@
 package com.cryptax.app.micronaut.route
 
-import com.cryptax.app.micronaut.Utils.createUser
-import com.cryptax.app.micronaut.Utils.getToken
-import com.cryptax.app.micronaut.Utils.initUserAndGetToken
-import com.cryptax.app.micronaut.Utils.setupRestAssured
-import com.cryptax.app.micronaut.Utils.validateToken
-import com.cryptax.app.micronaut.Utils.validateUser
+import com.cryptax.app.micronaut.route.Utils.createUser
+import com.cryptax.app.micronaut.route.Utils.getToken
+import com.cryptax.app.micronaut.route.Utils.initUserAndGetToken
+import com.cryptax.app.micronaut.route.Utils.setupRestAssured
+import com.cryptax.app.micronaut.route.Utils.validateToken
+import com.cryptax.app.micronaut.route.Utils.validateUser
 import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.port.UserRepository
 import com.fasterxml.jackson.databind.node.JsonNodeFactory
@@ -21,7 +21,6 @@ import org.hamcrest.CoreMatchers.notNullValue
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import javax.inject.Inject

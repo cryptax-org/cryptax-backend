@@ -1,11 +1,10 @@
 package com.cryptax.app.micronaut.route
 
-import com.cryptax.app.micronaut.Utils
-import com.cryptax.app.micronaut.Utils.createUser
-import com.cryptax.app.micronaut.Utils.initUserAndGetToken
-import com.cryptax.app.micronaut.Utils.initiatePasswordReset
-import com.cryptax.app.micronaut.Utils.setupRestAssured
-import com.cryptax.app.micronaut.Utils.user
+import com.cryptax.app.micronaut.route.Utils.createUser
+import com.cryptax.app.micronaut.route.Utils.initUserAndGetToken
+import com.cryptax.app.micronaut.route.Utils.initiatePasswordReset
+import com.cryptax.app.micronaut.route.Utils.setupRestAssured
+import com.cryptax.app.micronaut.route.Utils.user
 import com.cryptax.app.micronaut.model.ResetPasswordRequest
 import com.cryptax.db.InMemoryUserRepository
 import com.cryptax.domain.port.UserRepository
@@ -14,8 +13,6 @@ import io.micronaut.test.annotation.MicronautTest
 import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
 import io.restassured.http.Header
-import org.hamcrest.Matchers.`is`
-import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasItems
 import org.hamcrest.Matchers.isEmptyOrNullString

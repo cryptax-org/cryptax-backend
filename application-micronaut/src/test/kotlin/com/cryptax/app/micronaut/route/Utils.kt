@@ -1,4 +1,4 @@
-package com.cryptax.app.micronaut
+package com.cryptax.app.micronaut.route
 
 import com.cryptax.app.micronaut.config.JacksonConfig
 import com.cryptax.controller.model.TransactionWeb

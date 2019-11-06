@@ -1,7 +1,7 @@
 package com.cryptax.app.micronaut.route
 
-import com.cryptax.app.micronaut.Utils.initUserAndGetToken
-import com.cryptax.app.micronaut.Utils.setupRestAssured
+import com.cryptax.app.micronaut.route.Utils.initUserAndGetToken
+import com.cryptax.app.micronaut.route.Utils.setupRestAssured
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.annotation.MicronautTest
 import io.restassured.RestAssured.given
