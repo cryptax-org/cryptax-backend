@@ -10,7 +10,7 @@ class SecurePasswordTest {
     private val securePassword = SecurePassword()
 
     @TestFactory
-    fun testSecurePassword(): List<DynamicTest> {
+    fun `secure password`(): List<DynamicTest> {
         return PASSWORDS.map { password ->
             DynamicTest.dynamicTest("Test secure password ${password.joinToString("")}") {
                 val actual = securePassword.securePassword(password)
@@ -20,7 +20,7 @@ class SecurePasswordTest {
     }
 
     @TestFactory
-    fun testMatchPassword(): List<DynamicTest> {
+    fun `match password`(): List<DynamicTest> {
         return PASSWORDS.map { password ->
             DynamicTest.dynamicTest("Test match password ${password.joinToString("")}") {
                 // given

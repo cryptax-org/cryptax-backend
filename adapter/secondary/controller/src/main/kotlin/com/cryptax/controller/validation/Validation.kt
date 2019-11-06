@@ -70,7 +70,7 @@ object Validation {
     fun validateTransaction(transaction: TransactionWeb): Single<TransactionWeb> {
         return Single.fromCallable {
             val errors = mutableListOf<String>()
-            if (transaction.source == null || transaction.source!!.isBlank()) {
+            if (transaction.source == null || transaction.source.isBlank()) {
                 errors.add("Source can not be empty")
             }
             if (transaction.date == null) {

@@ -20,7 +20,6 @@ import java.util.stream.Stream
 @DisplayName("Transaction data validation")
 class TransactionValidatorTest {
 
-    @DisplayName("Validate transaction")
     @Test
     fun `validate transaction`() {
         //given

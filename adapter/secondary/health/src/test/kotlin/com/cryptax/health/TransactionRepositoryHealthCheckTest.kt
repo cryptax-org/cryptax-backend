@@ -21,7 +21,7 @@ class TransactionRepositoryHealthCheckTest {
     lateinit var healthCheck: TransactionRepositoryHealthCheck
 
     @Test
-    fun testCheck() {
+    fun `check health`() {
         // given
         given(transactionRepository.ping()).willReturn(true)
 
@@ -34,7 +34,7 @@ class TransactionRepositoryHealthCheckTest {
     }
 
     @Test
-    fun testCheckFailed() {
+    fun `check health fails`() {
         // given
         given(transactionRepository.ping()).willReturn(false)
 

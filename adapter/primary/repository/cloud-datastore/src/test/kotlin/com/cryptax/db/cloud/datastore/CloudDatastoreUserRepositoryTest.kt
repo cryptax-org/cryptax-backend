@@ -35,7 +35,7 @@ class CloudDatastoreUserRepositoryTest {
     lateinit var repo: CloudDatastoreUserRepository
 
     @Test
-    fun testAdd() {
+    fun `add`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
@@ -59,7 +59,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testFindById() {
+    fun `find by id`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
@@ -83,7 +83,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testGetNotFound() {
+    fun `get, not found`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
@@ -100,7 +100,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testFindByEmail() {
+    fun `find by email`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
@@ -131,7 +131,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testFindByEmailNotFound() {
+    fun `find by email, not found`() {
         // given
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
         given(datastore.run(any<EntityQuery>())).willReturn(queryResults)
@@ -152,7 +152,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testUpdate() {
+    fun `update`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val user = User("1", "john.doe@proton.com", "".toCharArray(), "Doe", "John", true)
@@ -176,7 +176,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testPing() {
+    fun `ping`() {
         // when
         val actual = repo.ping()
 
@@ -189,7 +189,7 @@ class CloudDatastoreUserRepositoryTest {
     }
 
     @Test
-    fun testPingFail() {
+    fun `ping, fails`() {
         // given
         given(datastore.run(any<GqlQuery<Boolean>>())).willThrow(DatastoreException(0, "", ""))
 

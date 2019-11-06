@@ -55,7 +55,7 @@ class UserControllerTest {
     lateinit var userController: UserController
 
     @Test
-    fun testCreateUser() {
+    fun `create a user`() {
         // given
         given(createUser.create(any())).willReturn(Single.just(Pair(user, welcomeToken)))
 
@@ -81,7 +81,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testLoginUser() {
+    fun `login user`() {
         // given
         val email = "email@email.com"
         val password = "mypassword".toCharArray()
@@ -99,7 +99,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testFindUser() {
+    fun `find a user`() {
         // given
         val userId = "random user id"
         given(findUser.findById(userId)).willReturn(Maybe.just(user))
@@ -117,7 +117,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testFindUserNotFound() {
+    fun `find user, user not found`() {
         // given
         val userId = "random user id"
         given(findUser.findById(userId)).willReturn(Maybe.empty())
@@ -131,7 +131,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testAllowUser() {
+    fun `allow a user`() {
         // given
         val userId = "userId"
         val token = "token"
@@ -146,7 +146,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testSendWelcomeEmail() {
+    fun `send welcome email`() {
         // given
         val userId = "userId"
         given(createUser.sendWelcomeEmail(userId)).willReturn(Single.just(Pair(user, "")))
@@ -160,7 +160,7 @@ class UserControllerTest {
     }
 
     @Test
-    fun testInitiatePasswordReset() {
+    fun `initiate password reset`() {
         // given
         val email = "email@email.com"
         val resetPassword = ResetPassword("", "", ZonedDateTime.now())

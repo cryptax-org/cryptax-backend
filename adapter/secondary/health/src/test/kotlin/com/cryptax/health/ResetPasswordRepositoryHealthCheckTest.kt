@@ -21,7 +21,7 @@ class ResetPasswordRepositoryHealthCheckTest {
     lateinit var healthCheck: ResetPasswordRepositoryHealthCheck
 
     @Test
-    fun testCheck() {
+    fun `check health`() {
         // given
         given(resetPasswordRepository.ping()).willReturn(true)
 
@@ -34,7 +34,7 @@ class ResetPasswordRepositoryHealthCheckTest {
     }
 
     @Test
-    fun testCheckFailed() {
+    fun `check health fails`() {
         // given
         given(resetPasswordRepository.ping()).willReturn(false)
 

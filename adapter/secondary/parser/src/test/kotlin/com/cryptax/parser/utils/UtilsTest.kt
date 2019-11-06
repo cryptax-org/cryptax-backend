@@ -13,7 +13,7 @@ class UtilsTest {
 
     @ParameterizedTest
     @MethodSource("marketProvider")
-    fun testExtractCurrencies(market: String, expected: Pair<Currency, Currency>) {
+    fun `extract currencies`(market: String, expected: Pair<Currency, Currency>) {
         // when
         val actual = extractCurrencies(market)
 
@@ -23,7 +23,7 @@ class UtilsTest {
 
     @ParameterizedTest
     @ValueSource(strings = ["DERPDERP", "ETHPPPPPPPPP", "FHIKUWEHFKJ#EWHK", "", "1"])
-    fun testExtractCurrencyFail(market: String) {
+    fun `extract currencies fail`(market: String) {
         assertThrows(RuntimeException::class.java) {
             extractCurrencies(market)
         }

@@ -41,7 +41,7 @@ class CryptoCompareTest {
     }
 
     @Test
-    fun testFindUsdPriceAt() {
+    fun `find USD price at`() {
         // given
         val currency = Currency.ETH
         val body = "{\"${currency.code}\":{\"USD\":15.0}}"
@@ -69,7 +69,7 @@ class CryptoCompareTest {
     }
 
     @Test
-    fun testFindUsdPriceAtBodyNull() {
+    fun `find USD price at, body null`() {
         // given
         val response = Response.Builder()
             .request(Request.Builder().url("https://google.com").build())
@@ -91,7 +91,7 @@ class CryptoCompareTest {
     }
 
     @Test
-    fun testFindUsdPriceAtWrongBodyFormat() {
+    fun `find USD price at, wrong body format`() {
         // given
         val currency = Currency.ETH
         val body = "{\"derp\":\"derp\"}"

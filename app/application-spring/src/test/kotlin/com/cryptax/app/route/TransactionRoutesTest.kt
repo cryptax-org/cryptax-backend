@@ -285,7 +285,6 @@ class TransactionRoutesTest {
 
         val transactionId = addTransaction(userId, token).getString("id")
         val transactionUpdated = TransactionWeb(
-            id = null,
             source = Source.UNKNOWN.name.toLowerCase(),
             date = ZonedDateTime.now(),
             type = Transaction.Type.SELL,

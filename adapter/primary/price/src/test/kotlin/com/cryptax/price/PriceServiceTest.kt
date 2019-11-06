@@ -42,7 +42,7 @@ class PriceServiceTest {
     }
 
     @Test
-    fun testCurrencyUsdValue() {
+    fun `currency USD value`() {
         // given
         val date = ZonedDateTime.now()
         val timestamp = date.toInstant().toEpochMilli() / 1000
@@ -63,7 +63,7 @@ class PriceServiceTest {
     }
 
     @Test
-    fun testCurrencyUsdValueAtFromCache() {
+    fun `currency USD value at, from cache`() {
         // given
         val date = ZonedDateTime.now()
         val currency = Currency.ETH

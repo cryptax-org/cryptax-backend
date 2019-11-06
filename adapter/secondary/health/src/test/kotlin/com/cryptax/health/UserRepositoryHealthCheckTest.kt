@@ -21,7 +21,7 @@ class UserRepositoryHealthCheckTest {
     lateinit var healthCheck: UserRepositoryHealthCheck
 
     @Test
-    fun testCheck() {
+    fun `check health`() {
         // given
         given(userRepository.ping()).willReturn(true)
 
@@ -34,7 +34,7 @@ class UserRepositoryHealthCheckTest {
     }
 
     @Test
-    fun testCheckFailed() {
+    fun `check health fails`() {
         // given
         given(userRepository.ping()).willReturn(false)
 

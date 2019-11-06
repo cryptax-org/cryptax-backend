@@ -14,7 +14,7 @@ class JugIdGeneratorTest {
     private val jugIdGenerator = JugIdGenerator()
 
     @TestFactory
-    fun testGenerateId(): List<DynamicTest> {
+    fun `generate id`(): List<DynamicTest> {
         return IntRange(0, 50).map {
             DynamicTest.dynamicTest("Test generate uuid") {
                 // when

@@ -39,9 +39,8 @@ class SendGridEmailServiceTest {
     @Mock
     lateinit var call: Call
 
-    @DisplayName("Send welcome email")
     @Test
-    fun testWelcomeEmail() {
+    fun `welcome email`() {
         // given
         val user = User(
             id = "userId",
@@ -75,9 +74,8 @@ class SendGridEmailServiceTest {
         }
     }
 
-    @DisplayName("Send welcome email not enabled")
     @Test
-    fun testWelcomeEmailNotEnabled() {
+    fun `welcome email, not enabled`() {
         // given
         val user = User(
             id = "userId",
@@ -96,9 +94,8 @@ class SendGridEmailServiceTest {
         then(client).shouldHaveZeroInteractions()
     }
 
-    @DisplayName("Send welcome email failed")
     @Test
-    fun testWelcomeEmailFailed() {
+    fun `welcome email failed`() {
         // given
         val user = User(
             id = "userId",
@@ -138,9 +135,8 @@ class SendGridEmailServiceTest {
         }
     }
 
-    @DisplayName("Reset password email")
     @Test
-    fun testResetPasswordEmail() {
+    fun `reset password email`() {
         // given
         val email = "email@email.com"
         val resetPassword = ResetPassword("userId", "token", ZonedDateTime.now())
@@ -169,9 +165,8 @@ class SendGridEmailServiceTest {
         }
     }
 
-    @DisplayName("Reset password email not enabled")
     @Test
-    fun testResetPasswordEmailNotEnabled() {
+    fun `reset password email, not enabled`() {
         // given
         val email = "email@email.com"
         val resetPassword = ResetPassword("userId", "token", ZonedDateTime.now())
@@ -185,9 +180,8 @@ class SendGridEmailServiceTest {
         then(client).shouldHaveZeroInteractions()
     }
 
-    @DisplayName("Reset password confirmation email")
     @Test
-    fun testResetPasswordConfirmationEmail() {
+    fun `reset password confirmation email`() {
         // given
         val email = "email@email.com"
         val config = EmailProps(enabled = true, url = "http://baseurl/", function = "sendEmail", from = "from@cryptax.app")
@@ -215,9 +209,8 @@ class SendGridEmailServiceTest {
         }
     }
 
-    @DisplayName("Reset password confirmation email not enabled")
     @Test
-    fun testResetPasswordConfirmationEmailNotEnabled() {
+    fun `reset password confirmation email not enabled`() {
         // given
         val email = "email@email.com"
         val config = EmailProps(enabled = false)

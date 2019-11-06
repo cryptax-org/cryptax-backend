@@ -8,7 +8,6 @@ import com.cryptax.domain.entity.Report
 import com.cryptax.domain.entity.Transaction
 import com.cryptax.domain.entity.User
 import java.time.ZonedDateTime
-import java.util.Arrays
 
 data class UserWeb(
     val id: String = "DEFAULT",
@@ -26,30 +25,6 @@ data class UserWeb(
             firstName = firstName)
     }
 
-/*    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as UserWeb
-
-        if (id != other.id) return false
-        if (email != other.email) return false
-        if (!Arrays.equals(password, other.password)) return false
-        if (lastName != other.lastName) return false
-        if (firstName != other.firstName) return false
-
-        return true
-    }*/
-
-/*    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + email.hashCode()
-        result = 31 * result + (password?.let { Arrays.hashCode(it) } ?: 0)
-        result = 31 * result + lastName.hashCode()
-        result = 31 * result + firstName.hashCode()
-        return result
-    }*/
-
     companion object {
         fun toUserWeb(user: User): UserWeb {
             return UserWeb(id = user.id,
@@ -60,29 +35,15 @@ data class UserWeb(
     }
 }
 
-class TransactionWeb() {
-
-    constructor(id: String?, source: String, date: ZonedDateTime, type: Transaction.Type, price: Double, quantity: Double, currency1: Currency, currency2: Currency) : this() {
-        if (id != null) {
-            this.id = id
-        }
-        this.source = source
-        this.date = date
-        this.type = type
-        this.price = price
-        this.quantity = quantity
-        this.currency1 = currency1
-        this.currency2 = currency2
-    }
-
-    var id: String = "DEFAULT"
-    var source: String? = null
-    var date: ZonedDateTime? = null
-    var type: Transaction.Type? = null
-    var price: Double? = null
-    var quantity: Double? = null
-    var currency1: Currency? = null
-    var currency2: Currency? = null
+data class TransactionWeb(
+    val id: String = "DEFAULT",
+    val source: String? = null,
+    val date: ZonedDateTime? = null,
+    val type: Transaction.Type? = null,
+    val price: Double? = null,
+    val quantity: Double? = null,
+    val currency1: Currency? = null,
+    val currency2: Currency? = null) {
 
     fun toTransaction(userId: String): Transaction {
         return Transaction(

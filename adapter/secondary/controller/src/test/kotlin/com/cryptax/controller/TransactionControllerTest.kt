@@ -14,7 +14,6 @@ import com.nhaarman.mockitokotlin2.given
 import io.reactivex.Maybe
 import io.reactivex.Single
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -44,7 +43,6 @@ class TransactionControllerTest {
         currency1 = Currency.BTC,
         currency2 = Currency.ETH)
     private val transactionWeb = TransactionWeb(
-        id = null,
         source = Source.UNKNOWN.name.toLowerCase(),
         date = now,
         type = Transaction.Type.BUY,
@@ -93,7 +91,6 @@ class TransactionControllerTest {
     fun `add multiple transactions`() {
         // given
         val transactionWeb2 = TransactionWeb(
-            id = null,
             source = Source.UNKNOWN.name.toLowerCase(),
             date = now,
             type = Transaction.Type.BUY,

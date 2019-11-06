@@ -32,7 +32,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     lateinit var repo: CloudDatastoreResetPasswordRepository
 
     @Test
-    fun testSave() {
+    fun `save`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val date = ZonedDateTime.now()
@@ -53,7 +53,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     }
 
     @Test
-    fun testFindByUserId() {
+    fun `find by user id`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val date = ZonedDateTime.now()
@@ -79,7 +79,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     }
 
     @Test
-    fun testFindByUserIdNotFound() {
+    fun `find by user id, not found`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val date = ZonedDateTime.now()
@@ -99,7 +99,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     }
 
     @Test
-    fun testDelete() {
+    fun `delete`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val userId = "123"
@@ -117,7 +117,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     }
 
     @Test
-    fun testPing() {
+    fun `ping`() {
         // when
         val actual = repo.ping()
 
@@ -130,7 +130,7 @@ class CloudDatastoreResetPasswordRepositoryTest {
     }
 
     @Test
-    fun testPingFail() {
+    fun `ping fails`() {
         // given
         given(datastore.run(any<GqlQuery<Boolean>>())).willThrow(DatastoreException(0, "", ""))
 

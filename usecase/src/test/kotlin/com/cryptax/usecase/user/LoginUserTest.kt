@@ -34,7 +34,6 @@ class LoginUserTest {
     private val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", true)
 
     @Test
-    @DisplayName("Login a user")
     fun `login a user`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
@@ -50,7 +49,6 @@ class LoginUserTest {
     }
 
     @Test
-    @DisplayName("Login a user not found")
     fun `login a user, not found`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.empty())
@@ -67,7 +65,6 @@ class LoginUserTest {
     }
 
     @Test
-    @DisplayName("Login a user wrong password")
     fun `login a user, wrong password`() {
         //given
         given(userRepository.findByEmail(email)).willReturn(Maybe.just(user))
@@ -86,7 +83,6 @@ class LoginUserTest {
     }
 
     @Test
-    @DisplayName("Login a user not allowed")
     fun `login a user, not allowed`() {
         //given
         val user = User(id, "john.doe@proton.com", hashedPassword.toCharArray(), "Doe", "John", false)

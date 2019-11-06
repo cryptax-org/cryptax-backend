@@ -41,7 +41,7 @@ class CloudDatastoreTransactionRepositoryTest {
     lateinit var repo: CloudDatastoreTransactionRepository
 
     @Test
-    fun testAdd() {
+    fun `add`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transaction = Transaction(
@@ -77,7 +77,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testAddList() {
+    fun `add list`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transaction1 = Transaction(
@@ -135,7 +135,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testGet() {
+    fun `get`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transactionId = "id"
@@ -179,7 +179,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testGetNotFound() {
+    fun `get, not found`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transactionId = "id"
@@ -196,7 +196,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testGetAllForUser() {
+    fun `get all for user`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transactionId = "id"
@@ -248,7 +248,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testUpdate() {
+    fun `update`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transaction = Transaction(
@@ -284,7 +284,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testDelete() {
+    fun `delete`() {
         // given
         val keyFactory = KeyFactory("cryptax-212416")
         val transaction = Transaction(
@@ -312,7 +312,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testPing() {
+    fun `ping`() {
         // when
         val actual = repo.ping()
 
@@ -325,7 +325,7 @@ class CloudDatastoreTransactionRepositoryTest {
     }
 
     @Test
-    fun testPingFail() {
+    fun `ping fails`() {
         // given
         given(datastore.run(any<GqlQuery<Boolean>>())).willThrow(DatastoreException(0, "", ""))
 
