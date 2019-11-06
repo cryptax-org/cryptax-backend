@@ -1,7 +1,7 @@
 rootProject.name = "cryptax-backend"
 
 include(
-    ":application",
+    ":application-spring",
     ":application-micronaut",
     ":config",
     ":domain",
@@ -18,6 +18,8 @@ include(
     ":cache",
     ":jwt")
 
+project(":application-spring").projectDir = file("app/application-spring")
+project(":application-micronaut").projectDir = file("app/application-micronaut")
 project(":security").projectDir = file("adapter/primary/security")
 project(":id-generator").projectDir = file("adapter/primary/id-generator")
 project(":in-memory-db-simple").projectDir = file("adapter/primary/repository/in-memory-simple")
