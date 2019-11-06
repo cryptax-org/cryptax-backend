@@ -3,6 +3,9 @@ package com.cryptax.app.micronaut.route
 import com.cryptax.app.micronaut.security.SecurityContext
 import com.cryptax.controller.TransactionController
 import com.cryptax.controller.model.TransactionWeb
+import com.cryptax.controller.validation.ValidationException
+import com.cryptax.domain.entity.Source
+import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
@@ -10,8 +13,13 @@ import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.QueryValue
+import io.micronaut.http.multipart.StreamingFileUpload
 import io.reactivex.Maybe
 import io.reactivex.Single
+import org.reactivestreams.Publisher
+import java.io.File
+import java.io.FileInputStream
 
 @Controller("/users/{userId}")
 open class TransactionRoutes(private val transactionController: TransactionController, private val securityContext: SecurityContext) {
@@ -59,21 +67,23 @@ open class TransactionRoutes(private val transactionController: TransactionContr
         return securityContext.validateUserId(userId).flatMap { transactionController.deleteTransaction(transactionId, userId) }
     }
 
-/*    @Post("/transactions/upload", consumes = [MediaType.MULTIPART_FORM_DATA])
+    @Post("/transactions/upload", consumes = [MediaType.MULTIPART_FORM_DATA])
     fun uploadCsv(
-        @RequestPart("file") file: Mono<FilePart>,
+        file: StreamingFileUpload?,
         @PathVariable userId: String,
-        @RequestParam(value = "source", required = true) source: String,
-        @RequestParam(value = "delimiter", required = false, defaultValue = ",") delimiter: Char): Mono<List<TransactionWeb>> {
-        return verifyUserId(userId)
-            .flatMap { file.timeout(Duration.ofMillis(200), Mono.error(ParamException())) }
-            .flatMap { filePart ->
-                filePart
-                    .content()
-                    .reduce(object : InputStream() {
-                        override fun read() = -1
-                    }) { inputStream: InputStream, dataBuffer: DataBuffer -> SequenceInputStream(inputStream, dataBuffer.asInputStream()) }
-                    .flatMap { inputStream -> transactionController.uploadCSVTransactions(inputStream, userId, Source.valueOf(source.toUpperCase()), delimiter).toMono() }
+        @QueryValue("source") source: String,
+        @QueryValue(value = "delimiter", defaultValue = ",") delimiter: Char): Single<List<TransactionWeb>> {
+        if(file == null) throw ValidationException(listOf("Csv file is mandatory"))
+        val tempFile: File = File.createTempFile(file.filename, "temp")
+        val uploadPublisher: Publisher<Boolean> = file.transferTo(tempFile)
+        return securityContext.validateUserId(userId)
+            .flatMap { Single.fromPublisher(uploadPublisher) }
+            .map { success -> if (success) tempFile else throw RuntimeException() }
+            .flatMap { currentFile ->
+                val inputStream = FileInputStream(currentFile)
+                transactionController.uploadCSVTransactions(inputStream, userId, Source.valueOf(source.toUpperCase()), delimiter)
+                    .doAfterSuccess { inputStream.close() }
             }
-    }*/
+            .doAfterSuccess { tempFile.delete() }
+    }
 }
