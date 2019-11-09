@@ -69,14 +69,14 @@ dependencies {
 
 val copyJarToRoot: Task by tasks.creating {
     doLast {
-        val jarName = "application-$version.jar"
+        val jarName = "${project.name}-$version.jar"
         val outputDirectory = "$rootDir/build"
 
         val currentJar = file("$buildDir/libs/$jarName")
-        val outputJar = file("$outputDirectory/${rootProject.name}"+".jar")
+        val outputJar = file("$outputDirectory/${rootProject.name}-spring"+".jar")
 
         currentJar.renameTo(outputJar)
-        println("Move $jarName to $outputDirectory/${rootProject.name}" + ".jar")
+        println("Move $currentJar to $outputJar")
     }
 }
 
