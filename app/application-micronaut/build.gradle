@@ -59,7 +59,7 @@ dependencies {
     implementation(Lib.jackson_kotlin)
     implementation(Lib.google_cloud_datasource)
     implementation(Lib.google_auth)
-    implementation(Lib.reactor)
+    implementation(Lib.reactor_kotlin)
     implementation(Lib.dropwizard_healthchecks)
     implementation(Lib.jjwt)
     implementation(Lib.jaxb)

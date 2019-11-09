@@ -59,7 +59,7 @@ dependencies {
     implementation(Lib.google_auth)
     implementation(Lib.jaxb)
     implementation(Lib.rx)
-    implementation(Lib.reactor)
+    implementation(Lib.reactor_kotlin)
     implementation(Lib.reactor_addons)
     implementation(Lib.dropwizard_healthchecks)
 
